@@ -144,19 +144,7 @@ Registry::Internal::add_defaults()
     wtschemes[weighting_scheme->name()] = weighting_scheme;
     weighting_scheme = new Xapian::TradWeight;
     wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::TfIdfWeight;
-    wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::InL2Weight;
-    wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::IfB2Weight;
-    wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::IneB2Weight;
-    wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::DLHWeight;
-    wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::PL2Weight;
-    wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::DPHWeight;
+    weighting_scheme = new Xapian::UnigramLMWeight;
     wtschemes[weighting_scheme->name()] = weighting_scheme;
 
     Xapian::PostingSource * source;
