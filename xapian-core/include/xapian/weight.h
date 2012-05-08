@@ -45,7 +45,8 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
 	DOC_LENGTH = 256,
 	DOC_LENGTH_MIN = 512,
 	DOC_LENGTH_MAX = 1024,
-	WDF_MAX = 2048
+	WDF_MAX = 2048,
+	COLLECTION_FREQ = 4096
     } stat_flags;
 
     /** Tell Xapian that your subclass will want a particular statistic.
@@ -88,6 +89,9 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
 
     /// The number of relevant documents which this term indexes.
     Xapian::doccount reltermfreq_;
+
+    // The collection frequency of the term.
+    Xapian::termcount collectionfreq_;
 
     /// The length of the query.
     Xapian::termcount query_length_;
@@ -282,6 +286,9 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
 
     /// The number of relevant documents which this term indexes.
     Xapian::doccount get_reltermfreq() const { return reltermfreq_; }
+
+    // The collection frequency of the term.
+    Xapian::termcount get_collectionfreq() const { return collectionfreq_;}
 
     /// The length of the query.
     Xapian::termcount get_query_length() const { return query_length_; }
@@ -497,6 +504,57 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
 
     std::string serialise() const;
     TradWeight * unserialise(const std::string & s) const;
+
+    double get_sumpart(Xapian::termcount wdf,
+		       Xapian::termcount doclen) const;
+    double get_maxpart() const;
+
+    double get_sumextra(Xapian::termcount doclen) const;
+    double get_maxextra() const;
+};
+
+/** Xapian::Weight subclass implementing the unigram Language Model formula.
+ *
+ * This class implements the "unigram Language Model "  Weighting scheme, as
+ * described by the early papers on LM by bruce croft generally
+ * gives better results.
+ *
+ * LM have no parameter as it doenot assume hueristic and work on comparing query with Language
+ * model of the document.
+ */
+class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
+    /// Variable to be used to store collection frequency of the term to be used for calculating the smoothning factor in case the withing document frequency of term is zero.
+     Xapian::termcount collection_freq;
+
+    /// variable approximating the approximate number of terms in the collection to be used while smoothing for the term in document.
+     Xapian::termcount total_collection_term;
+
+    UnigramLMWeight * clone() const;
+
+    void init(double factor);
+
+  public:
+    /** Construct a UnigramLMWeight.
+     * Since LM is not heuristic based hence have no heuristic paramenters.
+     */
+    explicit UnigramLMWeight()  {
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+    }
+
+    std::string name() const;
+
+    std::string serialise() const;
+    UnigramLMWeight * unserialise(const std::string & s) const;
 
     double get_sumpart(Xapian::termcount wdf,
 		       Xapian::termcount doclen) const;
