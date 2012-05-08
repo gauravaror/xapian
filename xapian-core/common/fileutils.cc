@@ -26,7 +26,7 @@
 #include "xapian/error.h"
 #include "safedirent.h"
 #include "safeerrno.h"
-
+#include "safeunistd.h"
 #include <cstring>
 #include <string>
 #include <sys/types.h>

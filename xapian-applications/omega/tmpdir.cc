@@ -21,13 +21,12 @@
 #include <config.h>
 
 #include "tmpdir.h"
-
+#include "safeunistd.h"
 #include "safesysstat.h"
 #include <sys/types.h>
 #include <stdlib.h> // Not cstdlib as we want mkdtemp.
 #include <cstring>
 #include <string>
-
 #ifndef HAVE_MKDTEMP
 extern char * mkdtemp(char *);
 #endif
