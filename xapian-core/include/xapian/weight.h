@@ -49,6 +49,16 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
 	WDF_MAX = 2048,
 	COLLECTION_FREQ = 4096
     } stat_flags;
+   
+ /** Type of smoothing available for selection with Langauge Model Weighting scheme
+   *  Default smoothing is TWO_STAGE_SMOOTHING */
+
+    typedef enum {
+	TWO_STAGE_SMOOTHING = 1,
+	DIRICHLET_SMOOTHING = 2,
+	ABSOLUTE_DISCOUNT_SMOOTHING = 3,
+	JELINEK_MERCER_SMOOTHING = 4
+    } type_smoothing;
 
     /** Tell Xapian that your subclass will want a particular statistic.
      *
@@ -742,7 +752,7 @@ class XAPIAN_VISIBILITY_DEFAULT IfB2Weight : public Weight {
     IfB2Weight * unserialise(const std::string & serialised) const;
 
     double get_sumpart(Xapian::termcount wdf,
-		       Xapian::termcount doclen) const;
+    Xapian::termcount doclen) const;
     double get_maxpart() const;
 
     double get_sumextra(Xapian::termcount doclen) const;
@@ -1090,12 +1100,25 @@ class XAPIAN_VISIBILITY_DEFAULT DPHWeight : public Weight {
  * model of the document.
  */
 class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
-    /// Variable to be used to store collection frequency of the term to be used for calculating the smoothning factor in case the withing document frequency of term is zero.
-     Xapian::termcount collection_freq;
+    /// Variable to be used to store collection frequency of the term to be used for 
+    //  calculating the smoothning factor in case the withing document frequency of term is zero.
+    Xapian::termcount collection_freq;
+     
 
-    /// variable approximating the approximate number of terms in the collection to be used while smoothing for the term in document.
-     Xapian::termcount total_collection_term;
+    // variable approximating the approximate number of terms in the collection to be used
+    //  while smoothing for the term in document.
+    Xapian::termcount total_collection_term;
 
+    /*  parameter for selecting type out of following:
+      * Two Stage Smoothing - 1
+      * Dirichlets Smoothing - 2
+      * Absolute Discounting Smoothing - 3
+      * Jelinek Mercer Smoothing -4 */
+    type_smoothing select_smoothing;
+
+    // Parameter for handelling negative value of log,smoothing.
+    double param_log,param_smoothing1,param_smoothing2;
+   
     UnigramLMWeight * clone() const;
 
     void init(double factor);
@@ -1104,7 +1127,14 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
     /** Construct a UnigramLMWeight.
      * Since LM is not heuristic based hence have no heuristic paramenters.
      */
-    explicit UnigramLMWeight()  {
+
+   // Unigram LM constructor to select smoothing type and select parameter for log handelling automatically
+
+    UnigramLMWeight(type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_ = -1.0)
+	: select_smoothing(select_smoothing_),param_log(0.0), param_smoothing1(param_smoothing1_), 
+	  param_smoothing2(param_smoothing2_)
+	{
+	
 	need_stat(AVERAGE_LENGTH);
         need_stat(DOC_LENGTH);
 	need_stat(COLLECTION_SIZE);
@@ -1116,6 +1146,66 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
 	need_stat(WDF_MAX);
 	need_stat(WDF);
 	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
+    }
+
+// Unigram LM Constructor to specifically mention all parameters for handelling negative log value and smoothing.
+
+    UnigramLMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_ = -1.0)
+	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_), 
+	  param_smoothing2(param_smoothing2_)
+	{
+	
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+    }
+
+	//Unigram LM Constructor to specifically mention parameter for handelling negetive log value 
+	//and select default value for smoothing.
+    UnigramLMWeight(double param_log_)
+	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7), 
+	  param_smoothing2(2000.0)
+	{
+	
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+    }
+     
+	//Unigram LM Constructure to use default value for smoothing.
+    UnigramLMWeight() 
+	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
+	  param_smoothing2(2000.0)
+	{
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
     }
 
     std::string name() const;

@@ -55,9 +55,10 @@ UnigramLMWeight::init(double )
     LOGVALUE(WTCALC, total_collection_terms);
     // There can't be more relevant term in collection than total number of term
     AssertRel(collection_freq,<=,total_collection_terms);
-
+    if(param_log == 0.0) {
+	param_log = get_doclength_upper_bound();
+    }
 }
-
 string
 UnigramLMWeight::name() const
 {
@@ -87,18 +88,28 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
     // varioable to store weight contribution of term in the document socring for unigram LM.
     double weight_sum;
     if (wdf_double == 0) {
-	/* In case the within document frequency og term is zero smoothining will be required and should be return instead of returnin         * g zero,as returning LM score are multiplication of contribution of all terms,due to absence of single term whole document i         * s scored zero,hence apply collection frequency smoothining*/
+	/* In case the within document frequency of term is zero smoothining
+	*  will be required and should be return instead of returning zero,
+	*  as returning LM score are multiplication of contribution of all terms,due to absence of single term
+	*  whole document is scored zero,hence apply collection frequency smoothining*/
       weight_sum = collection_freq / total_collection_term;
     }
     else {
 	/*Maximum likelihood of current term ,weight contribution of term incase query term is present in the document.*/
       weight_sum = wdf_double / len_double;
     }
-    /* Since unigram LM score is calculated with multiplication,instead of changing the current implementation log trick have been use     * d to calculate the product since (sum of log is log of product and since aim is ranking ranking document by product or log of p     * roduct wont make large diffrence hence log(product) will be used for ranking */
+    /* Since unigram LM score is calculated with multiplication,
+	* instead of changing the current implementation log trick have been used
+	* to calculate the product since (sum of log is log of product and 
+	* since aim is ranking ranking document by product or log of 
+	* product wont make large diffrence hence log(product) will be used for ranking */
 
-    /* FIXME: currently 10 is being added in the log , for calculating the score as weight_sum id a probability and log(number<1) will     * be negative so due to negative score matcher discards documents and return no matching document hence to avoid this linear weig     *  ht is added which need to be fixed */
-
-    return log(weight_sum+10);
+    /* FIXME: currently 10 is being added in the log , for calculating 
+	* the score as weight_sum id a probability and log(number<1) will
+	* be negative so due to negative score matcher discards documents
+	*  and return no matching document hence to avoid this 
+	* linear weight is added which need to be fixed */
+    return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
 }
 
 double
