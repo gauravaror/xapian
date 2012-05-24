@@ -35,11 +35,9 @@ using namespace std;
 namespace Xapian {
 
 UnigramLMWeight *
-UnigramLMWeight::clone() const
-{
-    return new UnigramLMWeight();
+UnigramLMWeight::clone() const  {
+	return new UnigramLMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2);
 }
-
 void
 UnigramLMWeight::init(double )
 {
@@ -55,9 +53,35 @@ UnigramLMWeight::init(double )
     LOGVALUE(WTCALC, total_collection_terms);
     // There can't be more relevant term in collection than total number of term
     AssertRel(collection_freq,<=,total_collection_terms);
-    if(param_log == 0.0) {
+
+	/*  * Setting default values of the param_log to handel negetive value of log.
+		* It is considered to be upperbound of document length.
+	    * intializing param_log to upperbound of document_length.*/
+
+	if(param_log == 0.0) {
 	param_log = get_doclength_upper_bound();
-    }
+	}
+
+	/*  *  since the optimal parameter for  Jelinek  mercer smoothing 
+		* is based on query  length, so if query is title query changing 
+	    * default value of smoothig parameter. */
+
+	if(select_smoothing == JELINEK_MERCER_SMOOTHING||select_smoothing == TWO_STAGE_SMOOTHING) {
+		if(param_smoothing1 == 0.7) {
+			if(get_query_length() <= 2) {
+			param_smoothing1 = 0.1;
+			}
+		}
+	}
+
+ /* *  param_smoothing1 default value should be 2000 in case DIRICHLET_SMOOTHING is selected.Tweaking param_smooothing1
+	*  if user supply his own value for param_smoothing1 value will not be set to 2000(default value) */
+
+	if(select_smoothing == DIRICHLET_SMOOTHING) {
+		if(param_smoothing1 == 0.7) {
+		param_smoothing1 = 2000;
+		}
+	}
 }
 string
 UnigramLMWeight::name() const
@@ -68,14 +92,27 @@ UnigramLMWeight::name() const
 string
 UnigramLMWeight::serialise() const
 {
-    // No parameters to serialise.
-    return string();
+    
+    string result = serialise_double(param_log);
+	result += static_cast<unsigned char>(select_smoothing);
+	result += serialise_double(param_smoothing1);
+	result += serialise_double(param_smoothing2);
+
+    return result;
 }
 
 UnigramLMWeight *
-UnigramLMWeight::unserialise(const string & ) const
+UnigramLMWeight::unserialise(const string & s) const
 {
-    return new UnigramLMWeight();
+	const char *ptr =  s.data();
+	const char *end = ptr + s.size();
+	double param_log_ = unserialise_double(&ptr,end);
+	type_smoothing select_smoothing_ = static_cast<type_smoothing>(*(ptr)++);
+	double param_smoothing1_ = unserialise_double(&ptr,end);
+	double param_smoothing2_ = unserialise_double(&ptr,end);
+	if(rare(ptr != end))
+	throw Xapian::NetworkError("Extra data in UnigramLMWeight::unserialise()");
+	return new UnigramLMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
 }
 
 double
@@ -86,30 +123,38 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
     //Length of the Document in terms of number of terms.
     double len_double(len);
     // varioable to store weight contribution of term in the document socring for unigram LM.
-    double weight_sum;
-    if (wdf_double == 0) {
+    double weight_collection,weight_document,weight_sum;
 	/* In case the within document frequency of term is zero smoothining
 	*  will be required and should be return instead of returning zero,
 	*  as returning LM score are multiplication of contribution of all terms,due to absence of single term
 	*  whole document is scored zero,hence apply collection frequency smoothining*/
-      weight_sum = collection_freq / total_collection_term;
-    }
-    else {
+    weight_collection = collection_freq / total_collection_term;
 	/*Maximum likelihood of current term ,weight contribution of term incase query term is present in the document.*/
-      weight_sum = wdf_double / len_double;
-    }
+    weight_document = wdf_double / len_double;
+	
+	// Calculating weiights considering diffrent smoothing option available to user.
+	if(select_smoothing == JELINEK_MERCER_SMOOTHING) {
+		weight_sum = ((param_smoothing1*weight_collection) +  ((1-param_smoothing1)*weight_document));
+	}
+	else if(select_smoothing == DIRICHLET_SMOOTHING) {
+		weight_sum = (wdf_double + (param_smoothing1*weight_collection))/(len_double + param_smoothing1);
+	}
+	else if(select_smoothing ==  ABSOLUTE_DISCOUNT_SMOOTHING) {
+		weight_sum = ((((wdf_double - param_smoothing1) > 0) ? (wdf_double - param_smoothing1) : 0) / len_double) + ((param_smoothing1 *weight_collection*(len_double-20))/len_double);
+	}
+	else {
+		weight_sum = (((1-param_smoothing1)*(wdf_double + (param_smoothing2*weight_collection))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
+	}
+
+
     /* Since unigram LM score is calculated with multiplication,
 	* instead of changing the current implementation log trick have been used
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
 	* product wont make large diffrence hence log(product) will be used for ranking */
-
-    /* FIXME: currently 10 is being added in the log , for calculating 
-	* the score as weight_sum id a probability and log(number<1) will
-	* be negative so due to negative score matcher discards documents
-	*  and return no matching document hence to avoid this 
-	* linear weight is added which need to be fixed */
-    return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
+	//weight_sum = weight_sum +1;
+	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
+	//return weight_sum;
 }
 
 double
