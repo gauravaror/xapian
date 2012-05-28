@@ -782,6 +782,15 @@ ChertDatabase::get_doclength(Xapian::docid did) const
     RETURN(postlist_table.get_doclength(did, ptrtothis));
 }
 
+Xapian::termcount
+ChertDatabase::get_nouniqterm(Xapian::docid did) const
+{
+    LOGCALL(DB, Xapian::termcount, "ChertDatabase::get_nouniqterm", did);
+    Assert(did != 0);
+    intrusive_ptr<const ChertDatabase> ptrtothis(this);
+    RETURN(postlist_table.get_doclength(did, ptrtothis));//Pending implementation
+}
+
 Xapian::doccount
 ChertDatabase::get_termfreq(const string & term) const
 {
@@ -1478,6 +1487,13 @@ ChertWritableDatabase::get_doclength(Xapian::docid did) const
 	}
 	RETURN(doclen);
     }
+    RETURN(ChertDatabase::get_doclength(did));
+}
+
+Xapian::termcount
+ChertWritableDatabase::get_nouniqterm(Xapian::docid did) const
+{
+    LOGCALL(DB, Xapian::termcount, "ChertWritableDatabase::get_nouniqterm", did);
     RETURN(ChertDatabase::get_doclength(did));
 }
 

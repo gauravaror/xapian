@@ -157,6 +157,13 @@ InMemoryPostList::get_doclength() const
     return db->get_doclength(get_docid());
 }
 
+Xapian::termcount
+InMemoryPostList::get_nouniqterm() const
+{
+    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
+    return db->get_nouniqterm(get_docid());
+}
+
 PositionList *
 InMemoryPostList::read_position_list()
 {
@@ -320,6 +327,13 @@ InMemoryAllDocsPostList::get_doclength() const
 {
     if (db->is_closed()) InMemoryDatabase::throw_database_closed();
     return db->get_doclength(did);
+}
+
+Xapian::termcount
+InMemoryAllDocsPostList::get_nouniqterm() const
+{
+    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
+    return db->get_nouniqterm(did);
 }
 
 Xapian::termcount
@@ -526,6 +540,12 @@ InMemoryDatabase::get_doclength(Xapian::docid did) const
 				 string(" not found"));
     }
     return doclengths[did - 1];
+}
+
+Xapian::termcount
+InMemoryDatabase::get_nouniqterm(Xapian::docid did) const
+{
+   return doclengths[did-1];
 }
 
 TermList *

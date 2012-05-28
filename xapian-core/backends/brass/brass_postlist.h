@@ -116,6 +116,7 @@ class BrassPostListTable : public BrassTable {
 	/** Returns the length of document @a did. */
 	Xapian::termcount get_doclength(Xapian::docid did,
 					Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
+	
 
 	/** Check if document @a did exists. */
 	bool document_exists(Xapian::docid did,
@@ -252,6 +253,9 @@ class BrassPostList : public LeafPostList {
 
 	/// Returns the length of current document.
 	Xapian::termcount get_doclength() const;
+
+	/// Returns the no of uniq term in the current document.
+	Xapian::termcount get_nouniqterm() const;
 
 	/** Returns the Within Document Frequency of the term in the current
 	 *  document.

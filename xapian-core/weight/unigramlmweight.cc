@@ -118,10 +118,17 @@ UnigramLMWeight::unserialise(const string & s) const
 double
 UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
 {
+	get_sumpart(wdf,len,Xapian::termcount(1));
+}
+
+double
+UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount uniqterm) const
+{
     //Withing Document Frequency of the term in document being considered.
     double wdf_double(wdf);
     //Length of the Document in terms of number of terms.
     double len_double(len);
+	double nouniqterm_double(uniqterm);
     // varioable to store weight contribution of term in the document socring for unigram LM.
     double weight_collection,weight_document,weight_sum;
 	/* In case the within document frequency of term is zero smoothining
@@ -140,7 +147,7 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
 		weight_sum = (wdf_double + (param_smoothing1*weight_collection))/(len_double + param_smoothing1);
 	}
 	else if(select_smoothing ==  ABSOLUTE_DISCOUNT_SMOOTHING) {
-		weight_sum = ((((wdf_double - param_smoothing1) > 0) ? (wdf_double - param_smoothing1) : 0) / len_double) + ((param_smoothing1 *weight_collection*(len_double-20))/len_double);
+		weight_sum = ((((wdf_double - param_smoothing1) > 0) ? (wdf_double - param_smoothing1) : 0) / len_double) + ((param_smoothing1 *weight_collection*(nouniqterm_double))/len_double);
 	}
 	else {
 		weight_sum = (((1-param_smoothing1)*(wdf_double + (param_smoothing2*weight_collection))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
@@ -152,9 +159,9 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
 	* product wont make large diffrence hence log(product) will be used for ranking */
-	//weight_sum = weight_sum +1;
-	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	//return weight_sum;
+	weight_sum = weight_sum +1;
+	//return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
+	return nouniqterm_double;
 }
 
 double

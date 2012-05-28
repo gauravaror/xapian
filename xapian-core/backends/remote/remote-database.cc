@@ -508,7 +508,21 @@ RemoteDatabase::get_doclength(Xapian::docid did) const
     }
     return doclen;
 }
-
+Xapian::termcount
+RemoteDatabase::get_nouniqterm(Xapian::docid did) const
+{
+    Assert(did != 0);
+    send_message(MSG_DOCLENGTH, encode_length(did));
+    string message;
+    get_message(message, REPLY_DOCLENGTH);
+    const char * p = message.c_str();
+    const char * p_end = p + message.size();
+    Xapian::termcount doclen = decode_length(&p, p_end, false);
+    if (p != p_end) {
+	throw Xapian::NetworkError("Bad REPLY_DOCLENGTH message received", context);
+    }
+    return doclen;
+}
 reply_type
 RemoteDatabase::get_message(string &result, reply_type required_type) const
 {

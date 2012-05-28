@@ -71,6 +71,8 @@ class ValueRangePostList : public PostList {
 
     Xapian::termcount get_doclength() const;
 
+	Xapian::termcount get_nouniqterm() const;
+
     double recalc_maxweight();
 
     PositionList * read_position_list();

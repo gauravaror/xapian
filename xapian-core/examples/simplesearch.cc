@@ -50,7 +50,7 @@ try {
     }
 
     // Open the database for searching.
-    Xapian::Database db(argv[1]);
+    Xapian::Database db(Xapian::Brass::open(argv[1]));
 
     // Start an enquire session.
     Xapian::Enquire enquire(db);

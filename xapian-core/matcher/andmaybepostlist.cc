@@ -205,6 +205,15 @@ AndMaybePostList::get_doclength() const
 }
 
 Xapian::termcount
+AndMaybePostList::get_nouniqterm() const
+{
+    LOGCALL(MATCH, Xapian::termcount, "AndMaybePostList::get_nouniqterm", NO_ARGS);
+    Assert(lhead != 0); // check we've started
+    if (lhead == rhead) AssertEq(l->get_nouniqterm(), r->get_nouniqterm());
+    RETURN(l->get_nouniqterm());
+}
+
+Xapian::termcount
 AndMaybePostList::get_wdf() const
 {
     LOGCALL(MATCH, Xapian::termcount, "AndMaybePostList::get_wdf", NO_ARGS);

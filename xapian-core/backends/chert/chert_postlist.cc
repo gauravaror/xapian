@@ -721,6 +721,15 @@ ChertPostList::get_doclength() const
     RETURN(this_db->get_doclength(did));
 }
 
+Xapian::termcount
+ChertPostList::get_nouniqterm() const
+{
+    LOGCALL(DB, Xapian::termcount, "ChertPostList::get_nouniqterm", NO_ARGS);
+    Assert(have_started);
+    Assert(this_db.get());
+    RETURN(this_db->get_nouniqterm(did));
+}
+
 bool
 ChertPostList::next_in_chunk()
 {

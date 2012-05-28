@@ -43,6 +43,8 @@ class ChertAllDocsPostList : public ChertPostList {
     Xapian::doccount get_termfreq() const;
 
     Xapian::termcount get_doclength() const;
+    
+	Xapian::termcount get_nouniqterm() const;
 
     Xapian::termcount get_wdf() const;
 
