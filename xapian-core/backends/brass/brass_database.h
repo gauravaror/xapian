@@ -258,6 +258,7 @@ class BrassDatabase : public Xapian::Database::Internal {
 	totlen_t get_total_length() const;
 	Xapian::doclength get_avlength() const;
 	Xapian::termcount get_doclength(Xapian::docid did) const;
+	Xapian::termcount get_nouniqterm(Xapian::docid did) const;
 	Xapian::doccount get_termfreq(const string & tname) const;
 	Xapian::termcount get_collection_freq(const string & tname) const;
 	Xapian::doccount get_value_freq(Xapian::valueno slot) const;
@@ -379,6 +380,7 @@ class BrassWritableDatabase : public BrassDatabase {
 	/** Virtual methods of Database::Internal. */
 	//@{
 	Xapian::termcount get_doclength(Xapian::docid did) const;
+	Xapian::termcount get_nouniqterm(Xapian::docid did) const;
 	Xapian::doccount get_termfreq(const string & tname) const;
 	Xapian::termcount get_collection_freq(const string & tname) const;
 	Xapian::doccount get_value_freq(Xapian::valueno slot) const;

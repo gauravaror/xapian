@@ -96,6 +96,12 @@ MSetPostList::get_doclength() const
     throw Xapian::UnimplementedError("MSetPostList::get_doclength() unimplemented");
 }
 
+Xapian::termcount
+MSetPostList::get_nouniqterm() const
+{
+    throw Xapian::UnimplementedError("MSetPostList::get_doclength() unimplemented");
+}
+
 double
 MSetPostList::recalc_maxweight()
 {

@@ -194,6 +194,18 @@ public:
     virtual double get_sumpart(Xapian::termcount wdf,
 			       Xapian::termcount doclen) const = 0;
 
+    /** Calculate the weight contribution for this object's term to a document.
+     *
+     *  The parameters give information about the document which may be used
+     *  in the calculations have an additional parameter for number of uniq terms:
+     *
+     *  @param wdf    The within document frequency of the term in the document.
+     *  @param doclen The document's length (unnormalised).
+	 *  @param nouniqterm Number of Unique terms in the Document(Used for absolute smoothing.
+     */
+    virtual double get_sumpart(Xapian::termcount wdf,
+			       Xapian::termcount doclen,Xapian::termcount uniqterm) const = 0;
+
     /** Return an upper bound on what get_sumpart() can return for any document.
      *
      *  This information is used by the matcher to perform various
@@ -352,6 +364,8 @@ class XAPIAN_VISIBILITY_DEFAULT BoolWeight : public Weight {
     BoolWeight * unserialise(const std::string & s) const;
 
     double get_sumpart(Xapian::termcount wdf,
+		       Xapian::termcount doclen,Xapian::termcount uniqterm) const;
+    double get_sumpart(Xapian::termcount wdf,
 		       Xapian::termcount doclen) const;
     double get_maxpart() const;
 
@@ -456,6 +470,8 @@ class XAPIAN_VISIBILITY_DEFAULT BM25Weight : public Weight {
     BM25Weight * unserialise(const std::string & s) const;
 
     double get_sumpart(Xapian::termcount wdf,
+		       Xapian::termcount doclen,Xapian::termcount uniqterm) const;
+    double get_sumpart(Xapian::termcount wdf,
 		       Xapian::termcount doclen) const;
     double get_maxpart() const;
 
@@ -515,6 +531,8 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
     std::string serialise() const;
     TradWeight * unserialise(const std::string & s) const;
 
+    double get_sumpart(Xapian::termcount wdf,
+		       Xapian::termcount doclen,Xapian::termcount uniqterm) const;
     double get_sumpart(Xapian::termcount wdf,
     Xapian::termcount doclen) const;
     double get_maxpart() const;
@@ -666,6 +684,9 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
 
     double get_sumpart(Xapian::termcount wdf,
 		       Xapian::termcount doclen) const;
+	
+    double get_sumpart(Xapian::termcount wdf,
+		       Xapian::termcount doclen,Xapian::termcount uniqterm) const;
     double get_maxpart() const;
 
     double get_sumextra(Xapian::termcount doclen) const;

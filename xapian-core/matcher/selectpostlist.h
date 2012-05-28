@@ -53,6 +53,7 @@ class SelectPostList : public PostList {
 	Xapian::docid get_docid() const { return source->get_docid(); }
 	double get_weight() const { return source->get_weight(); }
 	Xapian::termcount get_doclength() const { return source->get_doclength(); }
+	Xapian::termcount get_nouniqterm() const { return source->get_nouniqterm(); }
 	double recalc_maxweight() { return source->recalc_maxweight(); }
 	PositionList * read_position_list() { return source->read_position_list(); }
 	PositionList * open_position_list() const { return source->open_position_list(); }

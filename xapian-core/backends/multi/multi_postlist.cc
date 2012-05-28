@@ -111,6 +111,17 @@ MultiPostList::get_doclength() const
 }
 
 Xapian::termcount
+MultiPostList::get_nouniqterm() const
+{
+    LOGCALL(DB, Xapian::termcount, "MultiPostList::get_nouniqterm", NO_ARGS);
+    Assert(!at_end());
+    Assert(currdoc != 0);
+    Xapian::termcount result = postlists[(currdoc - 1) % multiplier]->get_nouniqterm();
+    AssertEqParanoid(result, this_db.get_nouniqterm(get_docid()));
+    RETURN(result);
+}
+
+Xapian::termcount
 MultiPostList::get_wdf() const
 {
     return postlists[(currdoc - 1) % multiplier]->get_wdf();

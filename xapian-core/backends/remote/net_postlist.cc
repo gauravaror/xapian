@@ -46,6 +46,12 @@ NetworkPostList::get_doclength() const
 }
 
 Xapian::termcount
+NetworkPostList::get_nouniqterm() const
+{
+    return db->get_nouniqterm(lastdocid);
+}
+
+Xapian::termcount
 NetworkPostList::get_wdf() const
 {
     return lastwdf;

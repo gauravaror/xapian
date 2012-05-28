@@ -108,6 +108,13 @@ ExternalPostList::get_doclength() const
     return 0;
 }
 
+Xapian::termcount
+ExternalPostList::get_nouniqterm() const
+{
+	Assert(false);
+	return 0;
+}
+
 double
 ExternalPostList::recalc_maxweight()
 {

@@ -95,6 +95,13 @@ ValueRangePostList::get_doclength() const
     return 0;
 }
 
+Xapian::termcount
+ValueRangePostList::get_nouniqterm() const
+{
+	Assert(db);
+	return 0;
+}
+
 double
 ValueRangePostList::recalc_maxweight()
 {

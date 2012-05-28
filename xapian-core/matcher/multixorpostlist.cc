@@ -162,6 +162,26 @@ MultiXorPostList::get_doclength() const
     return doclength;
 }
 
+Xapian::termcount
+MultiXorPostList::get_nouniqterm() const
+{
+	Assert(did);
+	Xapian::termcount nouniqterm = 0;
+	bool nouniqterm_set = false;
+	for (size_t i = 0; i < n_kids;++i) {
+	if (plist[i]->get_nouniqterm() == did) {
+		if(nouniqterm_set) {
+		AssertEq(nouniqterm,plist[i]->get_nouniqterm());
+		} else {
+		nouniqterm = plist[i]->get_nouniqterm();
+		nouniqterm_set = true;	
+		}
+	}
+	}
+	Assert(nouniqterm_set);
+	return nouniqterm;
+}
+
 double
 MultiXorPostList::get_weight() const
 {

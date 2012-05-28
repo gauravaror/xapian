@@ -95,6 +95,10 @@ class ExtraWeightPostList : public PostList {
 	virtual Xapian::termcount get_doclength() const {
 	    return pl->get_doclength();
 	}
+	
+	virtual Xapian::termcount get_nouniqterm() const {
+	    return pl->get_nouniqterm();
+	}
 
 	ExtraWeightPostList(PostList * pl_, Xapian::Weight *wt_,
 			    MultiMatch *matcher_)

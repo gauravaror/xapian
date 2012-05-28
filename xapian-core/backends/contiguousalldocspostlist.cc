@@ -52,6 +52,14 @@ ContiguousAllDocsPostList::get_doclength() const
 }
 
 Xapian::termcount
+ContiguousAllDocsPostList::get_nouniqterm() const
+{
+    Assert(did != 0);
+    Assert(!at_end());
+    return db->get_nouniqterm(did);
+}
+
+Xapian::termcount
 ContiguousAllDocsPostList::get_wdf() const
 {
     Assert(did != 0);
