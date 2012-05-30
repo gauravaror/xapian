@@ -111,14 +111,14 @@ UnigramLMWeight::unserialise(const string & s) const
 	double param_smoothing1_ = unserialise_double(&ptr,end);
 	double param_smoothing2_ = unserialise_double(&ptr,end);
 	if(rare(ptr != end))
-	throw Xapian::NetworkError("Extra data in UnigramLMWeight::unserialise()");
+	throw Xapian::SerialisationError("Extra data in UnigramLMWeight::unserialise()");
 	return new UnigramLMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
 }
 
 double
 UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
 {
-	get_sumpart(wdf,len,Xapian::termcount(1));
+	return	get_sumpart(wdf,len,Xapian::termcount(1));
 }
 
 double
@@ -161,7 +161,7 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian
 	* product wont make large diffrence hence log(product) will be used for ranking */
 	//weight_sum = weight_sum +1;
 	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	//return nouniqterm_double;
+	return weight_sum;
 }
 
 double
