@@ -159,9 +159,9 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
 	* product wont make large diffrence hence log(product) will be used for ranking */
-	weight_sum = weight_sum +1;
-	//return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	return nouniqterm_double;
+	//weight_sum = weight_sum +1;
+	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
+	//return nouniqterm_double;
 }
 
 double
