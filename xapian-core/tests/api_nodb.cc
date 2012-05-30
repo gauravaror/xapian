@@ -302,6 +302,15 @@ DEFINE_TESTCASE(weight1, !backend) {
     Xapian::BM25Weight bm25weight2(1, 0.5, 1, 0.5, 0.5);
     TEST_NOT_EQUAL(bm25weight.serialise(), bm25weight2.serialise());
 
+
+	Xapian::UnigramLMWeight unigramlmweight_dflt;
+	Xapian::BM25Weight unigramlmweight(32000,Xapian::Weight::DIRICHLET_SMOOTHING,2034.0,0.0);
+	TEST_EQUAL(unigramlmweight.name(),"Xapian::UnigramLMWeight");
+	TEST_NOT_EQUAL(unigramlmweight_dflt.serialise,unigramlmweight.serialise());
+	wt = Xapian::UnigramLMWeight().unserialise(unigramlmweight.serialise());
+	TEST_EQUAL(unigramlmweight.serialise(),wt->serialise());
+	delete wt;
+
     return true;
 }
 
