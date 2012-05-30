@@ -44,12 +44,14 @@
 %define STANDARD_IGNORES(NS, CLASS)
     %ignore NS::CLASS::internal;
     %ignore NS::CLASS::CLASS(Internal*);
+    %ignore NS::CLASS::CLASS(Internal&);
     %ignore NS::CLASS::operator=;
 %enddef
 #else
 %define STANDARD_IGNORES(NS, CLASS)
     %ignore NS::CLASS::internal;
     %ignore NS::CLASS::CLASS(Internal*);
+    %ignore NS::CLASS::CLASS(Internal&);
     %ignore NS::CLASS::operator=;
     %ignore NS::CLASS::CLASS(const CLASS &);
 %enddef
@@ -64,6 +66,13 @@
 #else
 /* Otherwise, next and prev return void. */
 #define INC_OR_DEC(METHOD, OP, NS, CLASS, RET_TYPE) void METHOD() { OP(*self); }
+#endif
+
+/* For other languages, SWIG already renames operator() suitably. */
+#if defined SWIGJAVA || defined SWIGPHP || defined SWIGTCL
+%rename(apply) *::operator();
+#elif defined SWIGCSHARP
+%rename(Apply) *::operator();
 #endif
 
 /* We use %ignore and %extend rather than %rename on operator* so that any
@@ -337,4 +346,5 @@ CONSTANT(int, Xapian, DBCHECK_SHORT_TREE);
 CONSTANT(int, Xapian, DBCHECK_FULL_TREE);
 CONSTANT(int, Xapian, DBCHECK_SHOW_BITMAP);
 CONSTANT(int, Xapian, DBCHECK_SHOW_STATS);
+CONSTANT(int, Xapian, DBCHECK_FIX);
 %include <xapian/database.h>

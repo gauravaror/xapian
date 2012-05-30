@@ -9,7 +9,8 @@ abs_builddir = @abs_builddir@
 # and provide an alternative php.ini but with "-c" it seems PHP still loads the
 # system.ini first (at least with PHP 4.3.10).
 TESTS_ENVIRONMENT = $(PHP) -n -d safe_mode=off -d enable_dl=on \
-	-d extension_dir='$(abs_builddir)/.libs' -d include_path=php5
+	-d extension_dir='$(abs_builddir)/.libs' \
+	-d include_path='php5$(PHP_PATH_SEPARATOR)$(srcdir)/php5'
 
 ## Test programs to be run
 TESTS = smoketest.php
@@ -20,7 +21,10 @@ BUILT_SOURCES =\
 	php5/php_xapian.h\
 	php5/xapian.php
 
-EXTRA_DIST = php.i except.i $(TESTS) $(BUILT_SOURCES) add-php-type-hints
+EXTRA_DIST = php.i except.i \
+	generate-php-exceptions \
+	add-php-type-hints \
+	$(TESTS) $(BUILT_SOURCES)
 
 phpextdir = $(PHP_EXTENSION_DIR)
 
@@ -51,13 +55,17 @@ xapian_la_SOURCES = php5/xapian_wrap.cc php5/xapian_wrap.h
 xapian_la_LIBADD = $(XAPIAN_LIBS) $(PHP_LIBS)
 
 if MAINTAINER_MODE
+BUILT_SOURCES += except.i
+except.i: $(srcdir)/generate-php-exceptions ../../xapian-core/exception_data.pm
+	$(PERL) -w -I$(srcdir)/../../xapian-core $(srcdir)/generate-php-exceptions
+
 # We need to explicitly set -outdir because on Windows, SWIG splits paths at
 # "\" when extracting the output directory from the value passed to the -o
 # option.
 
 php5/xapian_wrap.cc php5/xapian_wrap.h php5/php_xapian.h php5/xapian.php: php5/xapian_wrap.stamp
 	@stamp=php5/xapian_wrap.stamp; $(make_many_locked)
-php5/xapian_wrap.stamp: add-php-type-hints
+php5/xapian_wrap.stamp: except.i add-php-type-hints
 	-test -d php5 || mkdir php5
 	$(multitarget_begin)
 	$(SWIG) $(SWIG_WERROR) -I'$(srcdir)' $(SWIG_FLAGS) -c++ \

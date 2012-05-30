@@ -1,3 +1,244 @@
+Wed May 30 05:38:58 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/api_weight.cc: Add tests for BM25 parameter combinations where
+	  doclen shouldn't affect the weights.
+
+Wed May 30 05:11:34 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/Makefile.am: Move api_geospatial.cc into alphabetical order.
+
+Wed May 30 05:07:51 GMT 2012  Olly Betts <olly@survex.com>
+
+	* weight/bm25weight.cc,weight/tradweight.cc: Throw SerialisationError
+	  not NetworkError if unserialise() fails.
+	* tests/.gitignore,tests/Makefile.am,tests/api_weight.cc: Add test
+	  coverage for this.
+
+Wed May 30 05:01:33 GMT 2012  Olly Betts <olly@survex.com>
+
+	* weight/tradweight.cc: BM25Weight -> TradWeight in exception message.
+
+Wed May 30 04:28:43 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/queryparsertest.cc: Fix feature test added for STEM_ALL_Z.
+
+Tue May 29 07:29:01 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/harness/testutils.cc,tests/harness/testutils.h: Remove unused
+	  test helper mset_range_is_same_percents() (thanks, lcov!)
+
+Tue May 29 04:10:07 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/generate-api_generated: Test that the string returned by a
+	  get_description() method isn't empty.
+
+Tue May 29 03:54:15 GMT 2012  Olly Betts <olly@survex.com>
+
+	* generate-exceptions: Use function attributes in generated error.h.
+
+Tue May 29 02:10:23 GMT 2012  Olly Betts <olly@survex.com>
+
+	* configure.ac,tests/runsrv.in: In the testsuite, only run remote
+	  servers under valgrind if x87 FP instructions are in use.
+
+Tue May 29 00:24:42 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/: Use the new function attributes on various API
+	  methods.
+	* tests/api_wrdb.cc: get_termfreq() is now marked as pure, so the
+	  testsuite needs to actually use the return value to check its
+	  exception behaviour.
+
+Mon May 28 22:31:21 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/query.cc,api/queryinternal.cc,api/queryinternal.h,
+	  include/xapian/query.h: Pass vector<pair<Xapian::termpos>, string> >&
+	  argument to Query::Internal::gather_terms() as a void* to avoid
+	  having to include <vector> in query.h.
+
+Mon May 28 05:07:02 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/attributes.h: Remove unused XAPIAN_NOTHROW_API_METHOD
+	  as we're handling that a different way instead.
+
+Mon May 28 00:41:55 GMT 2012  Olly Betts <olly@survex.com>
+
+	* docs/doxygen_api.conf.in,docs/doxygen_source.conf.in: Hide new
+	  function attribute macros from doxygen.
+
+Sun May 27 14:04:34 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/query.h: Use "Internal" instead of "Query::Internal"
+	  in constructor prototype argument list for consistency with other
+	  cosntructors, and so this constructor gets ignored by SWIG.
+
+Sun May 27 07:38:56 GMT 2012  Olly Betts <olly@survex.com>
+
+	* exception_data.pm: Fix typo to fix warning and so that XAPIAN_NOTHROW
+	  on a method will work.
+
+Sun May 27 01:43:30 GMT 2012  Olly Betts <olly@survex.com>
+
+	* exception_data.pm,include/Makefile.mk,include/xapian.h,
+	  include/xapian/attributes.h,include/xapian/unicode.h: Add
+	  XAPIAN_CONST_FUNCTION, XAPIAN_PURE_FUNCTION, and XAPIAN_NOTHROW
+	  macros for marking functions and methods with those attributes.
+	  (tickets #151, #454)
+
+Fri May 25 06:42:35 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/weight.h: Fix documentation comment typo ("k1" ->
+	  "k").
+
+Fri May 25 05:44:05 GMT 2012  Olly Betts <olly@survex.com>
+
+	* backends/flint_lock.h: Mark FlintLock::throw_databaselockerror() as
+	  XAPIAN_NORETURN.
+
+Thu May 24 12:28:35 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/termgenerator.h,queryparser/termgenerator.cc,
+	  queryparser/termgenerator_internal.cc,
+	  queryparser/termgenerator_internal.h: Add
+	  TermGenerator::set_stemming_strategy() method, with strategies which
+	  correspond to those of QueryParser.  Based on patch from Sehaj Singh
+	  Kalra, with some tweaks for adding term positions in more cases.
+	  (Fixes ticket#563)
+	* tests/termgentest.cc: Add test coverage for the new features.
+
+Thu May 24 01:37:31 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/queryparser.h: Add doc comment for stem_strategy
+	  typedef.
+
+Wed May 23 11:33:08 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/queryparser.h,queryparser/queryparser.lemony:
+	  Add new QueryParser::STEM_ALL_Z stemming strategy, which stems all
+	  terms and adds a Z prefix.  (Patch from Sehaj Singh Kalra, fixes
+	  ticket#562)
+	* tests/queryparsertest.cc: Add test coverage for
+	  QueryParser::STEM_ALL_Z.
+
+Wed May 23 05:37:20 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/valuesetmatchdecider.cc,include/xapian/valuesetmatchdecider.h:
+	  "Limited" to "Ltd" in (C) two statements, for consistency (and with
+	  Charlie's agreement on IRC).
+
+Wed May 23 02:25:53 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/,include/xapian/query.h: Rework QueryBranch to use a special
+	  QueryVector class rather than std::vector<Xapian::Query>.  The
+	  special class is no bigger than std::vector<Xapian::Query>, and
+	  handles up to two entries by holding them within the object (at
+	  least GCC's std::vector doesn't currently do this space optimisation)
+	  which significantly reduces the memory used by a pairwise operator,
+	  which is very desirable as we no longer flatten a tree of the same
+	  pairwise operator as we build the query.
+
+Tue May 22 06:25:10 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/queryinternal.cc: Handle the left side of AND_NOT and
+	  AND_MAYBE being MatchNothing in add_subquery() rather than
+	  in done().
+
+Tue May 22 02:40:45 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/queryinternal.cc: Handle QueryAndLike with a MatchNothing
+	  subquery in add_subquery() rather than done().
+
+Tue May 22 02:01:00 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/queryinternal.cc,api/queryinternal.h: Drop MatchNothing
+	  subqueries in OR-like situations in add_subquery() rather than
+	  adding them and then handling it later.
+
+Sat May 19 00:27:23 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/runsrv.in: Add explanation of why we have this script.
+
+Sat May 19 00:27:10 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/runtest.in: Fix comment typo.
+
+Fri May 18 12:50:08 GMT 2012  Olly Betts <olly@survex.com>
+
+	* backends/inmemory/inmemory_database.cc: Check if the database is
+	  closed when asked to iterate metadata keys.  Fixes recently added
+	  testcase closedb10 for inmemory.
+
+Fri May 18 12:34:24 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/Makefile.am: Pass -ldl last when compiling zlib-vg.so, as that
+	  seems to be needed on Ubuntu 12.04.
+
+Fri May 18 04:54:09 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/api_closedb.cc: We now test almost all methods of Database
+	  and WritableDatabase after calling close().  (ticket#337)
+
+Thu May 17 14:26:11 GMT 2012  Olly Betts <olly@survex.com>
+
+	* backends/brass/,backends/chert/: After closing the database, methods
+	  which try to use the termlist would throw FeatureUnavailableError
+	  with message "Database has no termlist", assuming that the termlist
+	  table not being open meant it wasn't present.  Fix to check if the
+	  postlist_table is open to determine which case we're in.
+	* tests/api_closedb.cc: Improve test coverage for closed databases.
+	  (ticket#337)
+
+Tue May 15 11:24:34 GMT 2012  Olly Betts <olly@survex.com>
+
+	* NEWS: Update from ChangeLog and 1.2.10.
+
+Tue May 15 11:12:42 GMT 2012  Olly Betts <olly@survex.com>
+
+	* backends/chert/chert_cursor.cc: Fix incorrect use of "delete" to
+	  "delete []".  The type is POD, so I suspect this mistake didn't
+	  actually cause any problems, and it only happens when a cursor
+	  gets rebuilt because the B-tree has gained a level, so it's
+	  a rather rare occurrence.
+
+Tue May 15 11:09:44 GMT 2012  Olly Betts <olly@survex.com>
+
+	* backends/brass/brass_cursor.cc: Fix incorrect use of "delete" to
+	  "delete []".  The type is POD, so I suspect this mistake didn't
+	  actually cause any problems, and it only happens when a cursor
+	  gets rebuilt because the B-tree has gained a level, so it's
+	  a rather rare occurrence.
+
+Thu May 10 02:16:21 GMT 2012  Olly Betts <olly@survex.com>
+
+	* HACKING: Update Debian/Ubuntu packaging instructions.
+
+Thu May 10 02:14:48 GMT 2012  Olly Betts <olly@survex.com>
+
+	* HACKING: freshmeat -> freecode.
+
+Wed May 09 02:54:40 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/api_wrdb.cc: Add "safeunistd.h", required for GCC 4.7.
+
+Wed May 09 00:09:17 GMT 2012  Olly Betts <olly@survex.com>
+
+	* api/query.cc: Construct MatchAll using constructor rather than
+	  assignment syntax.
+
+Wed May 09 00:08:29 GMT 2012  Olly Betts <olly@survex.com>
+
+	* backends/brass/brass_cursor.h: Whitespace tweaks.
+
+Tue May 08 23:51:01 GMT 2012  Olly Betts <olly@survex.com>
+
+	* docs/admin_notes.rst: Document xapian-check for fixing corrupted
+	  databases.
+
+Tue May 08 11:30:06 GMT 2012  Olly Betts <olly@survex.com>
+
+	* common/fileutils.cc: Add safeunistd.h for mkdir, required by GCC
+	  4.7 (reported by Gaurav Arora).
+
 Wed May 02 03:44:25 GMT 2012  Olly Betts <olly@survex.com>
 
 	* weight/weightinternal.cc: Using AssertEq() on NULL doesn't compile,
