@@ -67,7 +67,7 @@
 #include "filetests.h"
 #include "noreturn.h"
 #include "stringutils.h"
-
+#include "safeunistd.h"
 using namespace std;
 
 /// The global verbose flag.

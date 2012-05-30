@@ -1771,6 +1771,9 @@ class MyWeight : public Xapian::Weight {
     double get_sumpart(Xapian::termcount, Xapian::termcount) const {
 	return scale_factor;
     }
+	double get_sumpart(Xapian::termcount,Xapian::termcount,Xapian::termcount) const {
+	return scale_factor;
+	}
     double get_maxpart() const { return scale_factor; }
 
     double get_sumextra(Xapian::termcount) const { return 0; }
