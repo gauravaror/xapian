@@ -47,8 +47,8 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
 	DOC_LENGTH_MAX = 1024,
 	WDF_MAX = 2048
     } stat_flags;
-
-    /** Tell Xapian that your subclass will want a particular statistic.
+    
+	/** Tell Xapian that your subclass will want a particular statistic.
      *
      *  Some of the statistics can be costly to fetch or calculate, so
      *  Xapian needs to know which are actually going to be used.  You
@@ -71,6 +71,17 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
      *			  call init() for such Weight objects).
      */
     virtual void init(double factor) = 0;
+   
+ /** Type of smoothing available for selection with Langauge Model Weighting scheme
+   *  Default smoothing is TWO_STAGE_SMOOTHING */
+public:
+    typedef enum {
+	TWO_STAGE_SMOOTHING = 1,
+	DIRICHLET_SMOOTHING = 2,
+	ABSOLUTE_DISCOUNT_SMOOTHING = 3,
+	JELINEK_MERCER_SMOOTHING = 4
+    } type_smoothing;
+
 
   private:
     /// Don't allow assignment.
