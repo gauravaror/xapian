@@ -162,7 +162,7 @@ BM25Weight::unserialise(const string & s) const
 double
 BM25Weight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount) const
 {
-	get_sumpart(wdf,len);
+	return get_sumpart(wdf,len);
 }
 double
 BM25Weight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
