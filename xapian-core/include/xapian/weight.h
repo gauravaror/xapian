@@ -65,6 +65,11 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
     /** Allow the subclass to perform any initialisation it needs to.
      *
      *  @param factor	  Any scaling factor (e.g. from OP_SCALE_WEIGHT).
+     *			  If the Weight object is for the term-independent
+     *			  weight supplied by get_sumextra()/get_maxextra(),
+     *			  then init(0.0) is called (starting from Xapian
+     *			  1.2.11 and 1.3.1 - earlier versions failed to
+     *			  call init() for such Weight objects).
      */
     virtual void init(double factor) = 0;
    
@@ -438,7 +443,6 @@ class XAPIAN_VISIBILITY_DEFAULT BM25Weight : public Weight {
 	need_stat(RELTERMFREQ);
 	need_stat(WDF);
 	need_stat(WDF_MAX);
-	need_stat(WDF);
 	if (param_k2 != 0 || (param_k1 != 0 && param_b != 0)) {
 	    need_stat(DOC_LENGTH_MIN);
 	    need_stat(AVERAGE_LENGTH);
@@ -458,7 +462,6 @@ class XAPIAN_VISIBILITY_DEFAULT BM25Weight : public Weight {
 	need_stat(RELTERMFREQ);
 	need_stat(WDF);
 	need_stat(WDF_MAX);
-	need_stat(WDF);
 	need_stat(DOC_LENGTH_MIN);
 	need_stat(AVERAGE_LENGTH);
 	need_stat(DOC_LENGTH);
@@ -524,7 +527,6 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
 	need_stat(DOC_LENGTH_MIN);
 	need_stat(WDF);
 	need_stat(WDF_MAX);
-	need_stat(WDF);
     }
 
     std::string name() const;

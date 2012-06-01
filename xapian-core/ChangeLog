@@ -1,3 +1,40 @@
+Fri Jun 01 07:40:48 GMT 2012  Olly Betts <olly@survex.com>
+
+	* HACKING,Makefile.am: If you run "make coverage-check" by hand, the
+	  default of compressed HTML is unhelpful, so don't default to passing
+	  --html-gzip to genhtml, but instead add support for GENHTML_ARGS.
+
+Thu May 31 11:41:19 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/api_weight.cc: Add test that init() is now called for the
+	  term-independent weight contribution.
+
+Thu May 31 11:23:05 GMT 2012  Olly Betts <olly@survex.com>
+
+	* weight/bm25weight.cc: Avoid use of undefined values when k1 or b are
+	  zero.
+
+Wed May 30 21:50:54 GMT 2012  Olly Betts <olly@survex.com>
+
+	* tests/api_matchspy.cc: Use a cached generated database for matchspy2
+	  and matchspy4.
+
+Wed May 30 13:22:54 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/weight.h,weight/weight.cc: We were failing to call
+	  init() for Weight objects providing the term-independent weight.
+	  These now get called with init(0.0).
+
+Wed May 30 13:13:03 GMT 2012  Olly Betts <olly@survex.com>
+
+	* include/xapian/weight.h: Remove duplicate "need_stat(WDF);" calls,
+	  accidentally added by merge of opsynonym branch in r12609.
+
+Wed May 30 07:44:23 GMT 2012  Olly Betts <olly@survex.com>
+
+	* weight/bm25weight.cc: Fix use of uninitialised value found by new
+	  bm25weight4 testcase.
+
 Wed May 30 05:38:58 GMT 2012  Olly Betts <olly@survex.com>
 
 	* tests/api_weight.cc: Add tests for BM25 parameter combinations where
