@@ -34,7 +34,8 @@ try:
 
     # Start an enquire session.
     enquire = xapian.Enquire(database)
-
+    unigram = xapian.UnigramLMWeight(12000.0,xapian.Weight.DIRICHLET_SMOOTHING,0.4,45.0);
+    enquire.set_weighting_scheme(unigram);
     # Combine the rest of the command line arguments with spaces between
     # them, so that simple queries don't have to be quoted at the shell
     # level.
@@ -47,7 +48,6 @@ try:
     qp.set_database(database)
     qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
     query = qp.parse_query(query_string)
-    print "Parsed query is: %s" % str(query)
 
     # Find the top 10 results for the query.
     enquire.set_query(query)
@@ -58,7 +58,7 @@ try:
     print "Results 1-%i:" % matches.size()
 
     for m in matches:
-        print "%i: %i%% docid=%i [%s]" % (m.rank + 1, m.percent, m.docid, m.document.get_data())
+        print "%i: %f docid=%i [%s]" % (m.rank + 1, m.weight, m.docid, m.document.get_data())
 
 except Exception, e:
     print >> sys.stderr, "Exception: %s" % str(e)
