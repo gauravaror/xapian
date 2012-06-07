@@ -914,6 +914,33 @@ InMemoryDatabase::term_exists(const string & tname) const
 }
 
 bool
+InMemoryDatabase::bigram_exists(const string & ) const
+{
+	throw Xapian::UnimplementedError("Inmemory currently doesn't implement bigram");
+}
+
+LeafPostList *
+InMemoryDatabase::open_postbigram_list(const string&) const
+{
+
+	throw Xapian::UnimplementedError("InMemory doesn't implement bigram");
+}
+
+BigramList *
+InMemoryDatabase::open_bigram_list(Xapian::docid) const
+{
+
+	throw Xapian::UnimplementedError("InMemory doesn't implement bigram");
+}
+
+BigramList *
+InMemoryDatabase::open_allbigrams(const string &) const
+{
+
+	throw Xapian::UnimplementedError("InMemory doesn't implement bigram");
+}
+
+bool
 InMemoryDatabase::has_positions() const
 {
     if (closed) InMemoryDatabase::throw_database_closed();

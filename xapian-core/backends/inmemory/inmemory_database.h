@@ -330,10 +330,13 @@ class InMemoryDatabase : public Xapian::Database::Internal {
     std::string get_value_lower_bound(Xapian::valueno slot) const;
     std::string get_value_upper_bound(Xapian::valueno slot) const;
     bool term_exists(const string & tname) const;
+    bool bigram_exists(const string & tname) const;
     bool has_positions() const;
 
     LeafPostList * open_post_list(const string & tname) const;
+	LeafPostList * open_postbigram_list(const string & bname) const;
     TermList * open_term_list(Xapian::docid did) const;
+	BigramList * open_bigram_list(Xapian::docid did) const;
     Xapian::Document::Internal * open_document(Xapian::docid did, bool lazy) const;
 
     std::string get_metadata(const std::string & key) const;
@@ -344,7 +347,9 @@ class InMemoryDatabase : public Xapian::Database::Internal {
 					 const string & tname) const;
     PositionList * open_position_list(Xapian::docid did,
 				      const string & tname) const;
+
     TermList * open_allterms(const string & prefix) const;
+	BigramList * open_allbigrams(const string & prefix) const;
 
     XAPIAN_NORETURN(static void throw_database_closed());
 };

@@ -2,6 +2,7 @@
  * @brief Subclass of BrassTable which holds termlists.
  */
 /* Copyright (C) 2007,2008,2009 Olly Betts
+ * Copyright (C) 2012 Gaurav Arora
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,12 @@ class BrassTermListTable : public BrassLazyTable {
 	pack_uint_preserving_sort(key, did);
 	return key;
     }
+	
+	static std::string make_bigramkey(Xapian::docid did) {
+	std::string key;
+	key = pack_bigramlist_key(did);
+	return key;
+	}
 
     /** Create a new BrassTermListTable object.
      *
@@ -68,6 +75,23 @@ class BrassTermListTable : public BrassLazyTable {
      *  @param did  The docid to delete the termlist data for.
      */
     void delete_termlist(Xapian::docid did) { del(make_key(did)); }
+    
+	/** Set the bigramlist data for document @a did.
+     *
+     *  Any existing data is replaced.
+     *
+     *  @param did	The docid to set the bigramlist data for.
+     *  @param doc	The Xapian::Document object to read term data from.
+     *  @param doclen	The document length.
+     */
+    void set_bigramlist(Xapian::docid did, const Xapian::Document & doc,
+		      brass_doclen_t doclen);
+
+    /** Delete the bigramlist data for document @a did.
+     *
+     *  @param did  The docid to delete the bigramlist data for.
+     */
+    void delete_bigramlist(Xapian::docid did) { del(make_key(did)); }
 
     /** Non-lazy override of BrassLazyTable::create_and_open().
      *

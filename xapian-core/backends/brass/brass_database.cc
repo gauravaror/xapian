@@ -8,6 +8,7 @@
  * Copyright 2009 Richard Boulton
  * Copyright 2009 Kan-Ru Chen
  * Copyright 2011 Dan Colish
+ * Copyright 2012 Gaurav Arora
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -44,6 +45,7 @@
 #include "brass_record.h"
 #include "brass_spellingwordslist.h"
 #include "brass_termlist.h"
+#include "brass_bigramlist.h"
 #include "brass_valuelist.h"
 #include "brass_values.h"
 #include "debuglog.h"
@@ -890,6 +892,15 @@ BrassDatabase::term_exists(const string & term) const
 }
 
 bool
+BrassDatabase::bigram_exists(const string & ) const
+{
+    LOGCALL(DB, bool, "BrassDatabase::bigram_exists", bterm);
+    Assert(!bterm.empty());
+    //return postlist_table.bigram_exists(bterm);
+	throw UnimplementedError("Currently not supported");
+}
+
+bool
 BrassDatabase::has_positions() const
 {
     return !position_table.empty();
@@ -912,6 +923,23 @@ BrassDatabase::open_post_list(const string& term) const
     RETURN(new BrassPostList(ptrtothis, term, true));
 }
 
+LeafPostList *
+BrassDatabase::open_postbigram_list(const string& bterm) const
+{
+    LOGCALL(DB, LeafPostList *, "BrassDatabase::open_postbigram_list", bterm);
+    intrusive_ptr<const BrassDatabase> ptrtothis(this);
+
+    if (bterm.empty()) {
+	Xapian::doccount doccount = get_doccount();
+	if (stats.get_last_docid() == doccount) {
+	    RETURN(new ContiguousAllDocsPostList(ptrtothis, doccount));
+	}
+	RETURN(new BrassAllDocsPostList(ptrtothis, doccount));
+    }
+
+    RETURN(new BrassPostList(ptrtothis, bterm, true));
+}
+
 ValueList *
 BrassDatabase::open_value_list(Xapian::valueno slot) const
 {
@@ -929,6 +957,17 @@ BrassDatabase::open_term_list(Xapian::docid did) const
 	throw_termlist_table_close_exception();
     intrusive_ptr<const BrassDatabase> ptrtothis(this);
     RETURN(new BrassTermList(ptrtothis, did));
+}
+
+BigramList *
+BrassDatabase::open_bigram_list(Xapian::docid did) const
+{
+    LOGCALL(DB, BigramList *, "BrassDatabase::open_bigram_list", did);
+    Assert(did != 0);
+    if (!termlist_table.is_open())
+	throw_termlist_table_close_exception();
+    intrusive_ptr<const BrassDatabase> ptrtothis(this);
+    RETURN(new BrassBigramList(ptrtothis,did));
 }
 
 Xapian::Document::Internal *
@@ -966,6 +1005,15 @@ BrassDatabase::open_allterms(const string & prefix) const
     LOGCALL(DB, TermList *, "BrassDatabase::open_allterms", NO_ARGS);
     RETURN(new BrassAllTermsList(intrusive_ptr<const BrassDatabase>(this),
 				 prefix));
+}
+
+BigramList *
+BrassDatabase::open_allbigrams(const string &) const
+{
+    LOGCALL(DB, TermList *, "BrassDatabase::open_allbigrams", NO_ARGS);
+//    RETURN(new BrassAllTermsList(intrusive_ptr<const BrassDatabase>(this),
+//				 prefix));
+	throw UnimplementedError("Currently not supported");
 }
 
 TermList *
@@ -1158,12 +1206,22 @@ BrassWritableDatabase::add_document_(Xapian::docid did,
 			pos, term.positionlist_end(), false);
 		}
 	    }
+		Xapian::BigramIterator bigram = document.bigramlist_begin();
+		for(;bigram != document.bigramlist_end();++bigram) {
+		//termcount wdf = bigram.get_wdf();
+		string bname = *bigram;
+		if (bname.size() > 2*(MAX_SAFE_TERM_LENGTH))
+		    throw Xapian::InvalidArgumentError("Bigram too long (> "STRINGIZE(MAX_SAFE_TERM_LENGTH)"): " + bname);
+//		inverter.addbigramposting(did,bname,wdf);
+		}
 	}
 	LOGLINE(DB, "Calculated doclen for new document " << did << " as " << new_doclen);
 
 	// Set the termlist.
-	if (termlist_table.is_open())
+	if (termlist_table.is_open()) {
 	    termlist_table.set_termlist(did, document, new_doclen);
+		termlist_table.set_bigramlist(did,document,new_doclen);
+	}
 
 	// Set the new document length
 	inverter.set_doclength(did, new_doclen, true);
@@ -1501,6 +1559,13 @@ BrassWritableDatabase::term_exists(const string & tname) const
     RETURN(get_termfreq(tname) != 0);
 }
 
+bool
+BrassWritableDatabase::bigram_exists(const string & bname) const
+{
+    LOGCALL(DB, bool, "BrassWritableDatabase::bigram_exists", bname);
+    RETURN(get_termfreq(bname) != 0);
+}
+
 LeafPostList *
 BrassWritableDatabase::open_post_list(const string& tname) const
 {
@@ -1520,6 +1585,29 @@ BrassWritableDatabase::open_post_list(const string& tname) const
     // iterate from the flushed state.
     inverter.flush_post_list(postlist_table, tname);
     RETURN(new BrassPostList(ptrtothis, tname, true));
+}
+
+LeafPostList *
+BrassWritableDatabase::open_postbigram_list(const string& tname) const
+{
+
+    LOGCALL(DB, LeafPostList *, "BrassWritableDatabase::open_post_list", tname);
+    intrusive_ptr<const BrassWritableDatabase> ptrtothis(this);
+
+    if (tname.empty()) {
+	Xapian::doccount doccount = get_doccount();
+	if (stats.get_last_docid() == doccount) {
+	    RETURN(new ContiguousAllDocsPostList(ptrtothis, doccount));
+	}
+	inverter.flush_doclengths(postlist_table);
+	RETURN(new BrassAllDocsPostList(ptrtothis, doccount));
+    }
+
+    // Flush any buffered changes for this term's postlist so we can just
+    // iterate from the flushed state.
+    inverter.flush_post_list(postlist_table, tname);
+    RETURN(new BrassPostList(ptrtothis, tname, true));
+
 }
 
 ValueList *
@@ -1550,6 +1638,25 @@ BrassWritableDatabase::open_allterms(const string & prefix) const
 	}
     }
     RETURN(BrassDatabase::open_allterms(prefix));
+}
+
+BigramList *
+BrassWritableDatabase::open_allbigrams(const string & prefix) const
+{
+    LOGCALL(DB, BigramList *, "BrassWritableDatabase::open_allbigrams", NO_ARGS);
+    if (change_count) {
+	// There are changes, and terms may have been added or removed, and so
+	// we need to flush changes for terms with the specified prefix (but
+	// don't commit - there may be a transaction in progress).
+	inverter.flush_post_lists(postlist_table, prefix);
+	if (prefix.empty()) {
+	    // We've flushed all the posting list changes, but the document
+	    // length and stats haven't been written, so set change_count to 1.
+	    // FIXME: Can we handle this better?
+	    change_count = 1;
+	}
+    }
+    RETURN(BrassDatabase::open_allbigrams(prefix));
 }
 
 void

@@ -46,6 +46,13 @@ typedef int doccount_diff; /* FIXME: can overflow with more than 2^31 docs. */
  */
 typedef unsigned docid;
 
+/** A identifier for Bigram Unique in a document.
+ * Same Bigram in diffrent document can have diffrent ids.
+ * Since Bigram in this is used for collocation here so it
+ * Beneficial to have bigramstored in this document unique bigram id.
+ */
+typedef unsigned bigramid;
+
 /** A normalised document length.
  *
  *  The normalised document length is the document length divided by the

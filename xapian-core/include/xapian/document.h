@@ -31,6 +31,7 @@
 #include <xapian/intrusive_ptr.h>
 #include <xapian/types.h>
 #include <xapian/termiterator.h>
+#include <xapian/bigramiterator.h>
 #include <xapian/valueiterator.h>
 #include <xapian/visibility.h>
 
@@ -159,6 +160,16 @@ class XAPIAN_VISIBILITY_DEFAULT Document {
 	 *                   for this term (default: 1).
 	 */
 	void add_term(const std::string & tname, Xapian::termcount wdfinc = 1);
+	
+	/** Add a bigram to the document, without positional information.
+	 *
+	 *  No positional information is stored for bigrams.
+	 *
+	 *  @param bname     The name of the bigram.
+	 *  @param wdfinc    The increment that will be applied to the wdf
+	 *                   for this bigram (default: 1).
+	 */
+	void add_bigram(const std::string & tname, Xapian::termcount wdfinc = 1);
 
 	/** Add a boolean filter term to the document.
 	 *
@@ -208,22 +219,48 @@ class XAPIAN_VISIBILITY_DEFAULT Document {
 	 *  @exception Xapian::InvalidArgumentError will be thrown if the term
 	 *  is not in the document
 	 */
-	void remove_term(const std::string & tname);
+	void remove_term(const std::string & bname);
+	
+	/** Remove a bigram.
+	 *
+	 *  @param bname  The name of the bigram.
+	 *
+	 *  @exception Xapian::InvalidArgumentError will be thrown if the term
+	 *  is not in the document
+	 */
+
+	void remove_bigram(const std::string & tname);
 
 	/// Remove all terms (and postings) from the document.
 	void clear_terms();
+	
+	/// Remove all bigrams from the document.
+	void clear_bigrams();
 
 	/** The length of the termlist - i.e. the number of different terms
 	 *  which index this document.
 	 */
 	Xapian::termcount termlist_count() const;
+	
+	/** The length of the bigramlist - i.e. the number of different bigrams
+	 *  which index this document.
+	 */
+	Xapian::termcount bigramlist_count() const;
 
 	/// Iterator for the terms in this document.
 	TermIterator termlist_begin() const;
+	
+	/// Iterator for the bigrams in this document.
+	BigramIterator bigramlist_begin() const;
 
 	/// Equivalent end iterator for termlist_begin().
 	TermIterator XAPIAN_NOTHROW(termlist_end() const) {
 	    return TermIterator();
+	}
+	
+	/// Equivalent end iterator for bigramlist_begin().
+	BigramIterator XAPIAN_NOTHROW(bigramlist_end() const) {
+	    return BigramIterator();
 	}
 
 	/// Count the values in this document.

@@ -73,6 +73,19 @@ class XAPIAN_VISIBILITY_DEFAULT TermGenerator {
      */
     void set_stopper(const Xapian::Stopper *stop = NULL);
 
+	/** Set the Xapian indexer to index bigrams to  be used for Bigram Langauge Modelling.
+	 *
+	 * Enabling this parameter will index the bigrams from the document in the backend.
+	 * Stopwords harms the statistics of bigram and create unecessary and meaningless bigrams.
+	 * End user should set stopword list in case bigram are enabled for better results.
+	 * We cannot prefeed stopwords due to language barriers.
+	 * 
+	 * @param index_bigram The boolean object which is set true to index bigrams.
+	 *
+	 */
+
+	void set_bigrams(bool index_bigram = false);
+
     /// Set the current document.
     void set_document(const Xapian::Document & doc);
 

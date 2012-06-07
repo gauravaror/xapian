@@ -868,6 +868,33 @@ ChertDatabase::term_exists(const string & term) const
 }
 
 bool
+ChertDatabase::bigram_exists(const string &) const
+{
+	throw Xapian::UnimplementedError("Chert doesn't implement bigram");
+}
+
+LeafPostList *
+ChertDatabase::open_postbigram_list(const string&) const
+{
+
+	throw Xapian::UnimplementedError("Chert doesn't implement bigram");
+}
+
+BigramList *
+ChertDatabase::open_bigram_list(Xapian::docid) const
+{
+
+	throw Xapian::UnimplementedError("Chert doesn't implement bigram");
+}
+
+BigramList *
+ChertDatabase::open_allbigrams(const string &) const
+{
+
+	throw Xapian::UnimplementedError("Chert doesn't implement bigram");
+}
+
+bool
 ChertDatabase::has_positions() const
 {
     return !position_table.empty();
@@ -1571,6 +1598,7 @@ ChertWritableDatabase::term_exists(const string & tname) const
     RETURN(get_termfreq(tname) != 0);
 }
 
+
 LeafPostList *
 ChertWritableDatabase::open_post_list(const string& tname) const
 {
@@ -1620,6 +1648,7 @@ ChertWritableDatabase::open_allterms(const string & prefix) const
     if (change_count) flush_postlist_changes();
     RETURN(ChertDatabase::open_allterms(prefix));
 }
+
 
 void
 ChertWritableDatabase::cancel()

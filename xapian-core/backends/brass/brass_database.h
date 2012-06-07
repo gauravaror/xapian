@@ -54,6 +54,7 @@ class RemoteConnection;
 class BrassDatabase : public Xapian::Database::Internal {
     friend class BrassWritableDatabase;
     friend class BrassTermList;
+    friend class BrassBigramList;
     friend class BrassPostList;
     friend class BrassAllTermsList;
     friend class BrassAllDocsPostList;
@@ -270,15 +271,19 @@ class BrassDatabase : public Xapian::Database::Internal {
 	Xapian::termcount get_doclength_upper_bound() const;
 	Xapian::termcount get_wdf_upper_bound(const string & term) const;
 	bool term_exists(const string & tname) const;
+	bool bigram_exists(const string & tname) const;
 	bool has_positions() const;
 
 	LeafPostList * open_post_list(const string & tname) const;
+	LeafPostList * open_postbigram_list(const string & tname) const;
 	ValueList * open_value_list(Xapian::valueno slot) const;
 	Xapian::Document::Internal * open_document(Xapian::docid did, bool lazy) const;
 
 	PositionList * open_position_list(Xapian::docid did, const string & term) const;
 	TermList * open_term_list(Xapian::docid did) const;
 	TermList * open_allterms(const string & prefix) const;
+	BigramList * open_bigram_list(Xapian::docid did) const;
+	BigramList * open_allbigrams(const string & prefix) const;
 
 	TermList * open_spelling_termlist(const string & word) const;
 	TermList * open_spelling_wordlist() const;
@@ -390,10 +395,13 @@ class BrassWritableDatabase : public BrassDatabase {
 	std::string get_value_lower_bound(Xapian::valueno slot) const;
 	std::string get_value_upper_bound(Xapian::valueno slot) const;
 	bool term_exists(const string & tname) const;
+	bool bigram_exists(const string & tname) const;
 
 	LeafPostList * open_post_list(const string & tname) const;
+	LeafPostList * open_postbigram_list(const string & tname) const;
 	ValueList * open_value_list(Xapian::valueno slot) const;
 	TermList * open_allterms(const string & prefix) const;
+	BigramList * open_allbigrams(const string & prefix) const;
 
 	void add_spelling(const string & word, Xapian::termcount freqinc) const;
 	void remove_spelling(const string & word, Xapian::termcount freqdec) const;

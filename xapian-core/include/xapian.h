@@ -44,6 +44,7 @@
 #include <xapian/positioniterator.h>
 #include <xapian/postingiterator.h>
 #include <xapian/termiterator.h>
+#include <xapian/bigramiterator.h>
 #include <xapian/valueiterator.h>
 
 // Indexing

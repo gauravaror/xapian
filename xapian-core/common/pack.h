@@ -447,4 +447,11 @@ pack_brass_postlist_key(const std::string &term, Xapian::docid did)
     return pack_chert_postlist_key(term, did);
 }
 
+inline std::string
+pack_bigramlist_key(Xapian::docid did)
+{
+	std::string key("\x42\x49",2);
+	pack_uint_preserving_sort(key,did);
+	return key;
+}
 #endif // XAPIAN_INCLUDED_PACK_H

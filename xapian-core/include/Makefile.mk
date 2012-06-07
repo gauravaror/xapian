@@ -32,6 +32,7 @@ xapianinclude_HEADERS =\
 	include/xapian/stem.h\
 	include/xapian/termgenerator.h\
 	include/xapian/termiterator.h\
+	include/xapian/bigramiterator.h\
 	include/xapian/types.h\
 	include/xapian/unicode.h\
 	include/xapian/valueiterator.h\

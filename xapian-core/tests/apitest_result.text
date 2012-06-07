@@ -1,0 +1,69 @@
+[gaurav@myhost tests]$ ./apitest
+Running tests with backend "none"...
+./apitest backend none: All 65 tests passed.                                   
+Running tests with backend "inmemory"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: uuid1... SKIPPED                                                 
+Running test: metadata5... SKIPPED                                             
+Running test: adddoc5... SKIPPED                                               
+Running test: adddoc6... SKIPPED
+Running test: nomoredocids1... SKIPPED                                         
+Running test: termtoolong1... SKIPPED
+Running test: valueweightsource5... SKIPPED                                    
+./apitest backend inmemory: All 218 tests passed, 8 skipped.
+Running tests with backend "brass"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: consistency1...                                                  
+Running test: replicate2... SKIPPED                                            
+./apitest backend brass: All 285 tests passed, 2 skipped.                      
+Running tests with backend "chert"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: replicate5... SKIPPED                                            
+Running test: matchspy2... DocNotFoundError: Document 48 not found             
+Running test: matchspy4... DocNotFoundError: Document 21 not found
+Running test: adddoc1... DocNotFoundError: Document 40617600 not found         
+Running test: sortfunctor2... DocNotFoundError: Document 196611 not found      
+./apitest backend chert: 283 tests passed, 4 failed, 2 skipped.                
+Running tests with backend "multi_brass"...
+Running test: eliteset1... SKIPPED                                             
+Running test: eliteset2... SKIPPED
+Running test: eliteset4... SKIPPED                                             
+Running test: eliteset5... SKIPPED
+Running test: collapsekey2... SKIPPED                                          
+./apitest backend multi_brass: All 147 tests passed, 5 skipped.                
+Running tests with backend "multi_chert"...
+Running test: eliteset1... SKIPPED                                             
+Running test: eliteset2... SKIPPED
+Running test: eliteset4... SKIPPED                                             
+Running test: eliteset5... SKIPPED
+Running test: collapsekey2... SKIPPED                                          
+./apitest backend multi_chert: All 147 tests passed, 5 skipped.                
+Running tests with backend "remoteprog_brass"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: positfromtermit1... SKIPPED                                      
+Running test: valueweightsource5... SKIPPED                                    
+./apitest backend remoteprog_brass: All 223 tests passed, 3 skipped.
+Running tests with backend "remotetcp_brass"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: positfromtermit1... SKIPPED                                      
+Running test: valueweightsource5... SKIPPED                                    
+./apitest backend remotetcp_brass: All 223 tests passed, 3 skipped.
+Running tests with backend "remoteprog_chert"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: positfromtermit1... SKIPPED                                      
+Running test: keepalive1...                                                    
+Running test: matchspy2... DocNotFoundError: REMOTE:Document 0 not found (context: remote:prog(../bin/xapian-progsrv -t300000 --writable .chert/dbw)
+Running test: matchspy4... DocNotFoundError: REMOTE:Document 0 not found (context: remote:prog(../bin/xapian-progsrv -t300000 --writable .chert/dbw)
+Running test: adddoc1... DocNotFoundError: REMOTE:Document 0 not found (context: remote:prog(../bin/xapian-progsrv -t300000 --writable .chert/dbw)
+Running test: valueweightsource5... SKIPPED                                    
+./apitest backend remoteprog_chert: 220 tests passed, 3 failed, 3 skipped.
+Running tests with backend "remotetcp_chert"...
+Running test: collapsekey2... SKIPPED                                          
+Running test: positfromtermit1... SKIPPED                                      
+Running test: matchspy2... DocNotFoundError: REMOTE:Document 0 not found (context: remote:tcp(127.0.0.1:1239))
+Running test: matchspy4... DocNotFoundError: REMOTE:Document 0 not found (context: remote:tcp(127.0.0.1:1239))
+Running test: adddoc1... DocNotFoundError: REMOTE:Document 0 not found (context: remote:tcp(127.0.0.1:1239))
+Running test: valueweightsource5... SKIPPED                                    
+./apitest backend remotetcp_chert: 220 tests passed, 3 failed, 3 skipped.
+./apitest total: 2031 tests passed, 10 failed, 34 skipped.
+

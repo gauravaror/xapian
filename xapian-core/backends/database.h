@@ -35,6 +35,7 @@
 #include <xapian/document.h>
 #include <xapian/positioniterator.h>
 #include <xapian/termiterator.h>
+#include <xapian/bigramiterator.h>
 #include <xapian/valueiterator.h>
 
 using namespace std;
@@ -43,6 +44,7 @@ class LeafPostList;
 class RemoteDatabase;
 
 typedef Xapian::TermIterator::Internal TermList;
+typedef Xapian::BigramIterator::Internal BigramList;
 typedef Xapian::PositionIterator::Internal PositionList;
 typedef Xapian::ValueIterator::Internal ValueList;
 
@@ -214,6 +216,12 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	 *  @param tname  The term whose presence is being checked.
 	 */
 	virtual bool term_exists(const string & tname) const = 0;
+	
+	/** Check whether a given bigram is in the database.
+	 *
+	 *  @param bname  The bigram whose presence is being checked.
+	 */
+	virtual bool bigram_exists(const string & tname) const = 0;
 
 	/** Check whether this database contains any positional information.
 	 */
@@ -238,6 +246,22 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	 *                use.
 	 */
 	virtual LeafPostList * open_post_list(const string & tname) const = 0;
+	
+	/** Open a posting list of bigram.
+	 *
+	 *  Method defined by subclass to open a posting list.
+	 *  This is a list of all the documents which contain a given bigram.
+	 *
+	 *  @param bname  The bigram whose posting list is being requested.
+	 *
+	 *  @return       A pointer to the newly created posting list.
+	 *		  If the bigram doesn't exist, a LeafPostList object
+	 *		  returning no documents is returned, which makes it
+	 *		  easier to implement a search over multiple databases.
+	 *		  This object must be deleted by the caller after
+	 *                use.
+	 */
+	virtual LeafPostList * open_postbigram_list(const string & tname) const = 0;
 
 	/** Open a value stream.
 	 *
@@ -261,6 +285,18 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	 *                use.
 	 */
 	virtual TermList * open_term_list(Xapian::docid did) const = 0;
+	
+	/** Open a bigram list.
+	 *
+	 *  This is a list of all the bigrams contained by a given document.
+	 *
+	 *  @param did    The document id whose term bigram is being requested.
+	 *
+	 *  @return       A pointer to the newly created bigram list.
+	 *                This object must be deleted by the caller after
+	 *                use.
+	 */
+	virtual BigramList * open_bigram_list(Xapian::docid did) const = 0;
 
 	/** Open an allterms list.
 	 *
@@ -272,6 +308,17 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	 *                use.
 	 */
 	virtual TermList * open_allterms(const string & prefix) const = 0;
+	
+	/** Open an allbigram list.
+	 *
+	 *  This is a list of all the bigrams in the database
+	 *
+	 *  @param prefix The prefix to restrict the bigrams to.
+	 *  @return       A pointer to the newly created allbigram list.
+	 *                This object must be deleted by the caller after
+	 *                use.
+	 */
+	virtual BigramList * open_allbigrams(const string & prefix) const = 0;
 
 	/** Open a position list for the given term in the given document.
 	 *

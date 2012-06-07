@@ -36,13 +36,14 @@ class TermGenerator::Internal : public Xapian::Internal::intrusive_base {
     Stem stemmer;
     stem_strategy strategy;
     const Stopper * stopper;
+	bool index_bigram;
     Document doc;
     termcount termpos;
     TermGenerator::flags flags;
     WritableDatabase db;
 
   public:
-    Internal() : strategy(STEM_SOME), stopper(NULL), termpos(0),
+    Internal() : strategy(STEM_SOME), stopper(NULL),index_bigram(false) ,termpos(0),
 	flags(TermGenerator::flags(0)) { }
     void index_text(Utf8Iterator itor,
 		    termcount weight,

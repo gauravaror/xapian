@@ -393,6 +393,32 @@ RemoteDatabase::term_exists(const string & tname) const
     return (type == REPLY_TERMEXISTS);
 }
 
+bool
+RemoteDatabase::bigram_exists(const string & ) const
+{
+	throw Xapian::UnimplementedError("Remote doesn't implement bigram");
+}
+
+LeafPostList *
+RemoteDatabase::open_postbigram_list(const string&) const
+{
+
+	throw Xapian::UnimplementedError("Remote doesn't implement bigram");
+}
+
+BigramList *
+RemoteDatabase::open_bigram_list(Xapian::docid) const
+{
+	throw Xapian::UnimplementedError("Remote doesn't Implement bigram");
+}
+
+BigramList *
+RemoteDatabase::open_allbigrams(const string& ) const
+{
+	throw Xapian::UnimplementedError("Remote doesn't Implement bigram");
+}
+	
+
 Xapian::doccount
 RemoteDatabase::get_termfreq(const string & tname) const
 {

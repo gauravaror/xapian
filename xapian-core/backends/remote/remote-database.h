@@ -178,9 +178,11 @@ class RemoteDatabase : public Xapian::Database::Internal {
 
     /// Get remote termlist.
     TermList * open_term_list(Xapian::docid did) const;
+	BigramList * open_bigram_list(Xapian::docid did) const;
 
     /// Iterate all terms.
     TermList * open_allterms(const string & prefix) const;
+	BigramList * open_allbigrams(const string & prefix) const;
 
     bool has_positions() const;
 
@@ -189,6 +191,7 @@ class RemoteDatabase : public Xapian::Database::Internal {
     void close();
 
     LeafPostList * open_post_list(const string & tname) const;
+	LeafPostList * open_postbigram_list(const string & bname) const;
 
     Xapian::doccount read_post_list(const string &term, NetworkPostList & pl) const;
 
@@ -214,6 +217,7 @@ class RemoteDatabase : public Xapian::Database::Internal {
 
     /// Check if term exists.
     bool term_exists(const string & tname) const;
+	bool bigram_exists(const string & bname) const;
 
     /// Find frequency of term.
     Xapian::doccount get_termfreq(const string & tname) const;

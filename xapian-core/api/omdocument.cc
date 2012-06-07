@@ -28,6 +28,7 @@
 #include "backends/document.h"
 #include "documentvaluelist.h"
 #include "maptermlist.h"
+#include "mapbigramlist.h"
 #include "net/serialise.h"
 #include "str.h"
 
@@ -139,6 +140,16 @@ Document::add_term(const string & tname, Xapian::termcount wdfinc)
 }
 
 void
+Document::add_bigram(const string & bname, Xapian::termcount wdfinc)
+{
+    LOGCALL_VOID(API, "Document::add_bigram", bname | wdfinc);
+    if (bname.empty()) {
+	throw InvalidArgumentError("Empty bigramnames aren't allowed.");
+    }
+    internal->add_bigram(bname, wdfinc);
+}
+
+void
 Document::remove_posting(const string & tname, Xapian::termpos tpos,
 			 Xapian::termcount wdfdec)
 {
@@ -157,10 +168,24 @@ Document::remove_term(const string & tname)
 }
 
 void
+Document::remove_bigram(const string & bname)
+{
+    LOGCALL_VOID(API, "Document::remove_bigram", bname);
+    internal->remove_bigram(bname);
+}
+
+void
 Document::clear_terms()
 {
     LOGCALL_VOID(API, "Document::clear_terms", NO_ARGS);
     internal->clear_terms();
+}
+
+void
+Document::clear_bigrams()
+{
+    LOGCALL_VOID(API, "Document::clear_bigrams", NO_ARGS);
+    internal->clear_bigrams();
 }
 
 Xapian::termcount
@@ -169,11 +194,24 @@ Document::termlist_count() const {
     RETURN(internal->termlist_count());
 }
 
+Xapian::termcount
+Document::bigramlist_count() const {
+    LOGCALL(API, Xapian::termcount, "Document::bigramlist_count", NO_ARGS);
+    RETURN(internal->bigramlist_count());
+}
+
 TermIterator
 Document::termlist_begin() const
 {
     LOGCALL(API, TermIterator, "Document::termlist_begin", NO_ARGS);
     RETURN(TermIterator(internal->open_term_list()));
+}
+
+BigramIterator
+Document::bigramlist_begin() const
+{
+    LOGCALL(API, BigramIterator, "Document::bigramlist_begin", NO_ARGS);
+    RETURN(BigramIterator(internal->open_bigram_list()));
 }
 
 Xapian::termcount
@@ -258,6 +296,18 @@ OmDocumentTerm::remove_position(Xapian::termpos tpos)
 }
 
 string
+BigramDocumentTerm::get_description() const
+{
+    string description;
+
+    description = "BigramDocumentTerm(" + bname +
+	    ", wdf = " + str(wdf) +
+	    ", term1" + term1 + 
+	    ")";
+    return description;
+}
+
+string
 OmDocumentTerm::get_description() const
 {
     string description;
@@ -268,7 +318,6 @@ OmDocumentTerm::get_description() const
 	    ")";
     return description;
 }
-
 string
 Xapian::Document::Internal::get_value(Xapian::valueno slot) const
 {
@@ -306,6 +355,17 @@ Xapian::Document::Internal::open_term_list() const
     }
     if (!database.get()) RETURN(NULL);
     RETURN(database->open_term_list(did));
+}
+
+BigramList *
+Xapian::Document::Internal::open_bigram_list() const
+{
+    LOGCALL(DB, BigramList *, "Document::Internal::open_bigram_list", NO_ARGS);
+    if (bigrams_here) {
+	RETURN(new MapBigramList(bigrams.begin(), bigrams.end()));
+    }
+    if (!database.get()) RETURN(NULL);
+    RETURN(database->open_bigram_list(did));
 }
 
 void
@@ -376,6 +436,21 @@ Xapian::Document::Internal::add_term(const string & tname, Xapian::termcount wdf
 }
 
 void
+Xapian::Document::Internal::add_bigram(const string & bname, Xapian::termcount wdfinc)
+{
+    need_bigrams();
+
+    map<string, BigramDocumentTerm>::iterator i;
+    i = bigrams.find(bname);
+    if (i == bigrams.end()) {
+	BigramDocumentTerm newterm(bname, wdfinc);
+	bigrams.insert(make_pair(bname, newterm));
+    } else {
+	if (wdfinc) i->second.inc_wdf(wdfinc);
+    }
+}
+
+void
 Xapian::Document::Internal::remove_posting(const string & tname,
 					   Xapian::termpos tpos,
 					   Xapian::termcount wdfdec)	
@@ -408,6 +483,20 @@ Xapian::Document::Internal::remove_term(const string & tname)
     positions_modified = !i->second.positions.empty();
     terms.erase(i);
 }
+
+void
+Xapian::Document::Internal::remove_bigram(const string & bname)
+{
+    need_bigrams();
+    map<string, BigramDocumentTerm>::iterator i;
+    i = bigrams.find(bname);
+    if (i == bigrams.end()) {
+	throw Xapian::InvalidArgumentError("Bigram `" + bname +
+		"' is not present in document, in "
+		"Xapian::Document::Internal::remove_bigram()");
+    }
+    bigrams.erase(i);
+}
 	
 void
 Xapian::Document::Internal::clear_terms()
@@ -417,6 +506,13 @@ Xapian::Document::Internal::clear_terms()
     // Assume there was a term with positions for now.
     // FIXME: may be worth checking...
     positions_modified = true;
+}
+
+void
+Xapian::Document::Internal::clear_bigrams()
+{
+    bigrams.clear();
+    bigrams_here = true;
 }
 
 Xapian::termcount
@@ -429,6 +525,16 @@ Xapian::Document::Internal::termlist_count() const
     }
     Assert(terms_here);
     return terms.size();
+}
+
+Xapian::termcount
+Xapian::Document::Internal::bigramlist_count() const
+{
+    if (!bigrams_here) {
+	need_bigrams();
+    }
+    Assert(bigrams_here);
+    return bigrams.size();
 }
 
 void
@@ -448,6 +554,21 @@ Xapian::Document::Internal::need_terms() const
 	}
     }
     terms_here = true;
+}
+
+void
+Xapian::Document::Internal::need_bigrams() const
+{
+    if (bigrams_here) return;
+    if (database.get()) {
+	Xapian::BigramIterator t(database->open_bigram_list(did));
+	Xapian::BigramIterator tend(NULL);
+	for ( ; t != tend; ++t) {
+	    BigramDocumentTerm bigram(*t, t.get_wdf());
+	    bigrams.insert(make_pair(*t, bigram));
+	}
+    }
+    bigrams_here = true;
 }
 
 Xapian::valueno
@@ -475,9 +596,15 @@ Xapian::Document::Internal::get_description() const
 	if (data_here || values_here) description += ", ";
 	description += "terms[" + str(terms.size()) + "]";
     }
+    
+	if (bigrams_here) {
+	if (data_here || values_here || bigrams_here) description += ", ";
+	description += "bigrams[" + str(bigrams.size()) + "]";
+    }
+
 
     if (database.get()) {
-	if (data_here || values_here || terms_here) description += ", ";
+	if (data_here || values_here || terms_here || bigrams_here) description += ", ";
 	description += "doc=";
 	description += "?"; // do_get_description(); ?
     }

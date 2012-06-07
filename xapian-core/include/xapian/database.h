@@ -35,6 +35,7 @@
 #include <xapian/positioniterator.h>
 #include <xapian/postingiterator.h>
 #include <xapian/termiterator.h>
+#include <xapian/bigramiterator.h>
 #include <xapian/valueiterator.h>
 #include <xapian/visibility.h>
 
@@ -192,10 +193,28 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	 *			meaning for this quantity in this case.
 	 */
 	PostingIterator postlist_begin(const std::string &tname) const;
+	
+	/** An iterator pointing to the start of the postlist
+	 *  for a given bigram.
+	 *
+	 *  @param bname	The bigram to iterate postings for.  If the
+	 *			bigram name is the empty string, the iterator
+	 *			returned will list all the documents in the
+	 *			database.  Such an iterator will always return
+	 *			a WDF value of 1, since there is no obvious
+	 *			meaning for this quantity in this case.
+	 */
+	PostingIterator postlistbigram_begin(const std::string &bname) const;
 
 	/** Corresponding end iterator to postlist_begin().
 	 */
 	PostingIterator XAPIAN_NOTHROW(postlist_end(const std::string &) const) {
+	    return PostingIterator();
+	}
+	
+	/** Corresponding end iterator to postlistbigram_begin().
+	 */
+	PostingIterator XAPIAN_NOTHROW(postlistbigram_end(const std::string &) const) {
 	    return PostingIterator();
 	}
 
@@ -205,12 +224,26 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	 *  @param did	The document id of the document to iterate terms for.
 	 */
 	TermIterator termlist_begin(Xapian::docid did) const;
+	
+	/** An iterator pointing to the start of the bigramlist
+	 *  for a given document.
+	 *
+	 *  @param did	The document id of the document to iterate bigrams for.
+	 */
+	BigramIterator bigramlist_begin(Xapian::docid did) const;
 
 	/** Corresponding end iterator to termlist_begin().
 	 */
 	TermIterator XAPIAN_NOTHROW(termlist_end(Xapian::docid) const) {
 	    return TermIterator();
 	}
+	
+	/** Corresponding end iterator to bigramlist_begin().
+	 */
+	BigramIterator XAPIAN_NOTHROW(bigramlist_end(Xapian::docid) const) {
+	    return BigramIterator();
+	}
+
 
 	/** Does this database have any positional information? */
 	bool has_positions() const;
@@ -229,10 +262,20 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	/** An iterator which runs across all terms in the database.
 	 */
 	TermIterator allterms_begin() const;
+	
+	/** An iterator which runs across all bigrams in the database.
+	 */
+	TermIterator allbigrams_begin() const;
 
 	/** Corresponding end iterator to allterms_begin().
 	 */
 	TermIterator XAPIAN_NOTHROW(allterms_end() const) {
+	    return TermIterator();
+	}
+	
+	/** Corresponding end iterator to allbigrams_begin().
+	 */
+	TermIterator XAPIAN_NOTHROW(allbigrams_end() const) {
 	    return TermIterator();
 	}
 
@@ -248,10 +291,29 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	 *  @param prefix The prefix to restrict the returned terms to.
 	 */
 	TermIterator allterms_begin(const std::string & prefix) const;
+	
+	/** An iterator which runs across all bigrams with a given prefix.
+	 *
+	 *  This is functionally similar to getting an iterator with
+	 *  allbigrams_begin() and then calling skip_to(prefix) on that iterator
+	 *  to move to the start of the prefix, but is more convenient (because
+	 *  it detects the end of the prefixed terms), and may be more
+	 *  efficient than simply calling skip_to() after opening the iterator,
+	 *  particularly for remote databases.
+	 *
+	 *  @param prefix The prefix to restrict the returned bigrams to.
+	 */
+	TermIterator allbigrams_begin(const std::string & prefix) const;
 
 	/** Corresponding end iterator to allterms_begin(prefix).
 	 */
 	TermIterator XAPIAN_NOTHROW(allterms_end(const std::string &) const) {
+	    return TermIterator();
+	}
+
+	/** Corresponding end iterator to allbigrams_begin(prefix).
+	 */
+	TermIterator XAPIAN_NOTHROW(allbigrams_end(const std::string &) const) {
 	    return TermIterator();
 	}
 
@@ -276,6 +338,17 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	 *		will often be more efficient.
 	 */
 	bool term_exists(const std::string & tname) const;
+	
+	/** Check if a given bigram exists in the database.
+	 *
+	 *  @param bname	The bigram to test the existence of.
+	 *
+	 *  @return	true if and only if the bigram exists in the database.
+	 *		This is the same as (get_termfreq(tname) != 0), but
+	 *		will often be more efficient.
+	 */
+	bool bigram_exists(const std::string & tname) const;
+
 
 	/** Return the total number of occurrences of the given term.
 	 *

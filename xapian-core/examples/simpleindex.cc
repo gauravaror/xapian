@@ -50,9 +50,24 @@ try {
     // Open the database for update, creating a new database if necessary.
     Xapian::WritableDatabase db(Xapian::Brass::open(argv[1], Xapian::DB_CREATE_OR_OPEN));
 
+    Xapian::Database db1(Xapian::Brass::open("fest", Xapian::DB_CREATE_OR_OPEN));
     Xapian::TermGenerator indexer;
     Xapian::Stem stemmer("english");
     indexer.set_stemmer(stemmer);
+	Xapian::SimpleStopper stopper;
+	Xapian::BigramIterator bi  = db1.bigramlist_begin(Xapian::docid(1));
+	while(bi != db1.bigramlist_end(Xapian::docid(1)))
+	{
+	cout<<"Bigram"<<*bi<<"\n";
+	bi++;
+	} 
+	stopper.add("a");
+	stopper.add("the");
+	stopper.add("of");
+	stopper.add("about");
+	indexer.set_stopper(&stopper);
+	indexer.set_bigrams(true);
+
 
     string para;
     while (true) {
@@ -71,7 +86,6 @@ try {
 
 		indexer.set_document(doc);
 		indexer.index_text(para);
-
 		// Add the document to the database.
 		db.add_document(doc);
 

@@ -5,13 +5,16 @@ noinst_HEADERS +=\
 	api/emptypostlist.h\
 	api/leafpostlist.h\
 	api/maptermlist.h\
+	api/mapbigramlist.h\
 	api/omenquireinternal.h\
 	api/postlist.h\
 	api/queryinternal.h\
 	api/queryvector.h\
 	api/replication.h\
 	api/termlist.h\
-	api/vectortermlist.h
+	api/bigramlist.h\
+	api/vectortermlist.h\
+	api/bigramdocumentterm.h
 
 EXTRA_DIST +=\
 	api/dir_contents\
@@ -42,7 +45,9 @@ lib_src +=\
 	api/replication.cc\
 	api/sortable-serialise.cc\
 	api/termiterator.cc\
+	api/bigramiterator.cc\
 	api/termlist.cc\
+	api/bigramlist.cc\
 	api/valueiterator.cc\
 	api/valuerangeproc.cc\
 	api/valuesetmatchdecider.cc\

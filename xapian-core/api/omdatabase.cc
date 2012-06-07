@@ -29,6 +29,7 @@
 #include <xapian/positioniterator.h>
 #include <xapian/postingiterator.h>
 #include <xapian/termiterator.h>
+#include <xapian/bigramiterator.h>
 #include <xapian/unicode.h>
 
 #include "omassert.h"
@@ -37,6 +38,7 @@
 #include "backends/multi/multi_alltermslist.h"
 #include "backends/multi/multi_postlist.h"
 #include "backends/multi/multi_termlist.h"
+#include "backends/multi/multi_bigramlist.h"
 #include "backends/multivaluelist.h"
 #include "backends/database.h"
 #include "editdistance.h"
@@ -168,6 +170,42 @@ Database::postlist_begin(const string &tname) const
     RETURN(PostingIterator(new MultiPostList(pls, *this)));
 }
 
+PostingIterator
+Database::postlistbigram_begin(const string &bname) const
+{
+    LOGCALL(API, PostingIterator, "Database::postlistbigram_begin", bname);
+
+    // Don't bother checking that the bigram exists first.  If it does, we
+    // just end up doing more work, and if it doesn't, we save very little
+    // work.
+
+    // Handle the common case of a single database specially.
+    if (internal.size() == 1)
+	RETURN(PostingIterator(internal[0]->open_postbigram_list(bname)));
+
+    if (rare(internal.size() == 0))
+	RETURN(PostingIterator());
+
+    vector<LeafPostList *> pls;
+    try {
+	vector<intrusive_ptr<Database::Internal> >::const_iterator i;
+	for (i = internal.begin(); i != internal.end(); ++i) {
+	    pls.push_back((*i)->open_postbigram_list(bname));
+	    pls.back()->next();
+	}
+	Assert(pls.begin() != pls.end());
+    } catch (...) {
+	vector<LeafPostList *>::iterator i;
+	for (i = pls.begin(); i != pls.end(); ++i) {
+	    delete *i;
+	    *i = 0;
+	}
+	throw;
+    }
+
+    RETURN(PostingIterator(new MultiPostList(pls, *this)));
+}
+
 TermIterator
 Database::termlist_begin(Xapian::docid did) const
 {
@@ -191,6 +229,31 @@ Database::termlist_begin(Xapian::docid did) const
 	tl = new MultiTermList(internal[n]->open_term_list(m), *this, n);
     }
     RETURN(TermIterator(tl));
+}
+
+BigramIterator
+Database::bigramlist_begin(Xapian::docid did) const
+{
+    LOGCALL(API, TermIterator, "Database::bigramlist_begin", did);
+    if (did == 0)
+	docid_zero_invalid();
+
+    unsigned int multiplier = internal.size();
+    if (rare(multiplier == 0))
+	no_subdatabases();
+    BigramList *tl;
+    if (multiplier == 1) {
+	// There's no need for the MultiTermList wrapper in the common case
+	// where we're only dealing with a single database.
+	tl = internal[0]->open_bigram_list(did);
+    } else {
+	Assert(multiplier != 0);
+	Xapian::doccount n = (did - 1) % multiplier; // which actual database
+	Xapian::docid m = (did - 1) / multiplier + 1; // real docid in that database
+
+	tl = new MultiBigramList(internal[n]->open_bigram_list(m), *this, n);
+    }
+    RETURN(BigramIterator(tl));
 }
 
 TermIterator
@@ -491,6 +554,20 @@ Database::term_exists(const string & tname) const
     vector<intrusive_ptr<Database::Internal> >::const_iterator i;
     for (i = internal.begin(); i != internal.end(); ++i) {
 	if ((*i)->term_exists(tname)) RETURN(true);
+    }
+    RETURN(false);
+}
+
+bool
+Database::bigram_exists(const string & bname) const
+{
+    LOGCALL(API, bool, "Database::bigram_exists", bname);
+    if (bname.empty()) {
+	RETURN(get_doccount() != 0);
+    }
+    vector<intrusive_ptr<Database::Internal> >::const_iterator i;
+    for (i = internal.begin(); i != internal.end(); ++i) {
+	if ((*i)->bigram_exists(bname)) RETURN(true);
     }
     RETURN(false);
 }

@@ -27,6 +27,7 @@ noinst_HEADERS +=\
 	backends/brass/brass_synonym.h\
 	backends/brass/brass_table.h\
 	backends/brass/brass_termlist.h\
+	backends/brass/brass_bigramlist.h\
 	backends/brass/brass_termlisttable.h\
 	backends/brass/brass_types.h\
 	backends/brass/brass_valuelist.h\
@@ -55,6 +56,7 @@ lib_src +=\
 	backends/brass/brass_synonym.cc\
 	backends/brass/brass_table.cc\
 	backends/brass/brass_termlist.cc\
+	backends/brass/brass_bigramlist.cc\
 	backends/brass/brass_termlisttable.cc\
 	backends/brass/brass_valuelist.cc\
 	backends/brass/brass_values.cc\

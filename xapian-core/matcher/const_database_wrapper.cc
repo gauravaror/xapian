@@ -114,6 +114,12 @@ ConstDatabaseWrapper::term_exists(const string & tname) const
 }
 
 bool
+ConstDatabaseWrapper::bigram_exists(const string & tname) const
+{
+    return realdb->bigram_exists(tname);
+}
+
+bool
 ConstDatabaseWrapper::has_positions() const
 {
     return realdb->has_positions();
@@ -123,6 +129,12 @@ LeafPostList *
 ConstDatabaseWrapper::open_post_list(const string & tname) const
 {
     return realdb->open_post_list(tname);
+}
+
+LeafPostList *
+ConstDatabaseWrapper::open_postbigram_list(const string & bname) const
+{
+    return realdb->open_postbigram_list(bname);
 }
 
 ValueList *
@@ -137,10 +149,22 @@ ConstDatabaseWrapper::open_term_list(Xapian::docid did) const
     return realdb->open_term_list(did);
 }
 
+BigramList *
+ConstDatabaseWrapper::open_bigram_list(Xapian::docid did) const
+{
+    return realdb->open_bigram_list(did);
+}
+
 TermList *
 ConstDatabaseWrapper::open_allterms(const string & prefix) const
 {
     return realdb->open_allterms(prefix);
+}
+
+BigramList *
+ConstDatabaseWrapper::open_allbigrams(const string & prefix) const
+{
+    return realdb->open_allbigrams(prefix);
 }
 
 PositionList *

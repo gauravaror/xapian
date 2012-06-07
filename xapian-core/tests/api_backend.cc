@@ -733,14 +733,10 @@ DEFINE_TESTCASE(unigramlmweight2,backend) {
 	Xapian::Enquire enquire(db);
 	enquire.set_query(Xapian::Query("the"));
 	enquire.set_weighting_scheme(Xapian::UnigramLMWeight());
-	Xapian::Mset mset = enquire.get_mset(0,100);
-	TEST_REL(mset.size,>=,2);
+	Xapian::MSet mset = enquire.get_mset(0,100);
+	TEST_REL(mset.size(),>=,2);
 	return true;
 }
-
-DEFINE_TESTCASE(unigramlmweight3,backend) {
-	Xapian::Database db(get_database("etext"));
-	Xapian::Enquire enquire
 
 DEFINE_TESTCASE(tradweight2, backend) {
     Xapian::Database db(get_database("etext"));

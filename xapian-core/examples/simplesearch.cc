@@ -50,7 +50,7 @@ try {
     }
 
     // Open the database for searching.
-    Xapian::Database db(Xapian::Brass::open(argv[1]));
+    Xapian::Database db(Xapian::Chert::open(argv[1]));
 
     // Start an enquire session.
     Xapian::Enquire enquire(db);
@@ -76,7 +76,7 @@ try {
 
     // Find the top 10 results for the query.
     enquire.set_query(query);
-    enquire.set_weighting_scheme(Xapian::UnigramLMWeight(700.0,Xapian::Weight::JELINEK_MERCER_SMOOTHING,0.4,2000));
+    enquire.set_weighting_scheme(Xapian::UnigramLMWeight(Xapian::Weight::DIRICHLET_SMOOTHING,0,0));
     Xapian::MSet matches = enquire.get_mset(0, 10);
 
     // Display the results.

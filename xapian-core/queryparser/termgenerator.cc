@@ -56,6 +56,12 @@ TermGenerator::set_stopper(const Xapian::Stopper * stopper)
 }
 
 void
+TermGenerator::set_bigrams(bool index_bigram)
+{
+	internal->index_bigram = index_bigram;
+}
+
+void
 TermGenerator::set_document(const Xapian::Document & doc)
 {
     internal->doc = doc;
@@ -132,6 +138,8 @@ TermGenerator::get_description() const
 	if (internal->stopper) {
 	    s += ", stopper set";
 	}
+	s += "bigramidexing=";
+	s += internal->index_bigram;
 	s += ", doc=";
 	s += internal->doc.get_description();
 	s += ", termpos=";
