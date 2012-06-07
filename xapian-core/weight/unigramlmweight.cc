@@ -161,13 +161,14 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian
 	* product wont make large diffrence hence log(product) will be used for ranking */
 	//weight_sum = weight_sum +1;
 	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	return weight_sum;
+	//return weight_sum;
 }
 
 double
 UnigramLMWeight::get_maxpart() const
 {
- // Sufficiently large bound is being returned ,to optimize the matching process this needs to be fixed and changed to good max bound 
+ // Sufficiently large bound is being returned ,to optimize the matching process this needs to be fixed and changed to good max bound
+// Need to be fixed 
    double wdf_max(max(get_wdf_upper_bound(), Xapian::termcount(1)));
     return  (wdf_max);
 }
