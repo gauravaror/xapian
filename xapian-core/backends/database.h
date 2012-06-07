@@ -220,6 +220,7 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	/** Check whether a given bigram is in the database.
 	 *
 	 *  @param bname  The bigram whose presence is being checked.
+	Currenly this menthod is not supported.
 	 */
 	virtual bool bigram_exists(const string & tname) const = 0;
 
