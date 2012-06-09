@@ -49,6 +49,18 @@ Inverter::flush_post_list(BrassPostListTable & table, const string & term)
 }
 
 void
+Inverter::flush_post_bigram_list(BrassPostListTable & table, const string & bigram)
+{
+    map<string, PostingChanges>::iterator i;
+    i = postbigram_changes.find(bigram);
+    if (i == postbigram_changes.end()) return;
+
+    // Flush buffered changes for just this term's postlist.
+    table.merge_changes(bigram, i->second);
+    postbigram_changes.erase(i);
+}
+
+void
 Inverter::flush_all_post_lists(BrassPostListTable & table)
 {
     map<string, PostingChanges>::const_iterator i;
@@ -56,6 +68,16 @@ Inverter::flush_all_post_lists(BrassPostListTable & table)
 	table.merge_changes(i->first, i->second);
     }
     postlist_changes.clear();
+}
+
+void
+Inverter::flush_all_post_bigram_lists(BrassPostListTable & table)
+{
+    map<string, PostingChanges>::const_iterator i;
+    for (i = postbigram_changes.begin(); i != postbigram_changes.end(); ++i) {
+	table.merge_changes(i->first, i->second);
+    }
+    postbigram_changes.clear();
 }
 
 void
@@ -78,8 +100,28 @@ Inverter::flush_post_lists(BrassPostListTable & table, const string & pfx)
 }
 
 void
+Inverter::flush_post_bigram_lists(BrassPostListTable & table, const string & pfx)
+{
+    if (pfx.empty())
+	return flush_all_post_bigram_lists(table);
+
+    map<string, PostingChanges>::iterator i, begin, end;
+    begin = postbigram_changes.lower_bound(pfx);
+    end = postbigram_changes.upper_bound(pfx);
+
+    for (i = begin; i != end; ++i) {
+	table.merge_changes(i->first, i->second);
+    }
+
+    // Erase all the entries in one go, as that's:
+    //  O(log(postlist_changes.size()) + O(number of elements removed)
+    postbigram_changes.erase(begin, end);
+}
+
+void
 Inverter::flush(BrassPostListTable & table)
 {
     flush_doclengths(table);
     flush_all_post_lists(table);
+	flush_all_post_bigram_lists(table);
 }

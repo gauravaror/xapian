@@ -107,12 +107,16 @@ class Inverter {
 
     /// Buffered changes to postlists.
     std::map<std::string, PostingChanges> postlist_changes;
+	
+	/// Buffered Changes to postlists for bigrams.
+	std::map<std::string,PostingChanges> postbigram_changes;
 
   public:
     /// Buffered changes to document lengths.
     std::map<Xapian::docid, Xapian::termcount> doclen_changes;
 
   public:
+	/// Add posting for term.
     void add_posting(Xapian::docid did, const std::string & term,
 		     Xapian::doccount wdf) {
 	std::map<std::string, PostingChanges>::iterator i;
@@ -125,6 +129,20 @@ class Inverter {
 	}
     }
 
+	//// Add posting for this bigram.
+	void add_bigramposting(Xapian::docid did,const std::string & bigram,
+			Xapian::doccount wdf) {
+	std::map<std::string,PostingChanges>::iterator i;
+	i = postbigram_changes.find(bigram);
+	if (i == postbigram_changes.end()) {
+		postbigram_changes.insert(
+		std::make_pair(bigram, PostingChanges(did,wdf)));
+	} else {
+		i->second.add_posting(did,wdf);
+	}
+	}
+
+	/// Remove posting for this term.
     void remove_posting(Xapian::docid did, const std::string & term,
 			Xapian::doccount wdf) {
 	std::map<std::string, PostingChanges>::iterator i;
@@ -137,6 +155,20 @@ class Inverter {
 	}
     }
 
+	/// Remove posting for this bigram.
+	void remove_bigramposting(Xapian::docid did,const std::string & bigram,
+			Xapian::doccount wdf) {
+	std::map<std::string,PostingChanges>::iterator i;
+	i = postbigram_changes.find(bigram);
+	if (i == postbigram_changes.end()) {
+		postbigram_changes.insert(
+		std::make_pair(bigram,PostingChanges(did,wdf,false)));
+	} else {
+		i->second.remove_posting(did,wdf);
+	}
+	}
+	
+	/// Update posting for this term.
     void update_posting(Xapian::docid did, const std::string & term,
 			Xapian::termcount old_wdf,
 			Xapian::termcount new_wdf) {
@@ -150,9 +182,24 @@ class Inverter {
 	}
     }
 
+	/// Updated posting for this bigram.
+	void update_bigramposting(Xapian::docid did,const std::string & bigram,
+			Xapian::termcount old_wdf,
+			Xapian::termcount new_wdf) {
+	std::map<std::string,PostingChanges>::iterator i;
+	i = postbigram_changes.find(bigram);
+	if (i == postbigram_changes.end()) {
+		postbigram_changes.insert(
+		std::make_pair(bigram,PostingChanges(did,old_wdf,new_wdf)));
+	} else {
+		i->second.update_posting(did,old_wdf,new_wdf);
+	}
+	}
+
     void clear() {
 	doclen_changes.clear();
 	postlist_changes.clear();
+	postbigram_changes.clear();
     }
 
     void set_doclength(Xapian::docid did, Xapian::termcount doclen, bool add) {
@@ -190,6 +237,15 @@ class Inverter {
     /// Flush postlist changes for all terms which start with @a pfx.
     void flush_post_lists(BrassPostListTable & table, const std::string & pfx);
 
+    /// Flush postlist changes for @a bigram.
+    void flush_post_bigram_list(BrassPostListTable & table, const std::string & bigram);
+
+    /// Flush postlist changes for all terms.
+    void flush_all_post_bigram_lists(BrassPostListTable & table);
+
+    /// Flush postlist changes for all terms which start with @a pfx.
+    void flush_post_bigram_lists(BrassPostListTable & table, const std::string & pfx);
+	
     /// Flush all changes.
     void flush(BrassPostListTable & table);
 
@@ -200,11 +256,27 @@ class Inverter {
 	    return 0;
 	return i->second.get_tfdelta();
     }
+    
+	Xapian::termcount_diff get_bigramtfdelta(const std::string & bigram) const {
+	std::map<std::string, PostingChanges>::const_iterator i;
+	i = postbigram_changes.find(bigram);
+	if (i == postbigram_changes.end())
+	    return 0;
+	return i->second.get_tfdelta();
+    }
 
     Xapian::termcount_diff get_cfdelta(const std::string & term) const {
 	std::map<std::string, PostingChanges>::const_iterator i;
 	i = postlist_changes.find(term);
 	if (i == postlist_changes.end())
+	    return 0;
+	return i->second.get_cfdelta();
+    }
+    
+	Xapian::termcount_diff get_bigramcfdelta(const std::string & bigram) const {
+	std::map<std::string, PostingChanges>::const_iterator i;
+	i = postbigram_changes.find(bigram);
+	if (i == postbigram_changes.end())
 	    return 0;
 	return i->second.get_cfdelta();
     }
