@@ -40,13 +40,6 @@ class BrassTermListTable : public BrassLazyTable {
 	pack_uint_preserving_sort(key, did);
 	return key;
     }
-	
-	static std::string make_bigramkey(Xapian::docid did) {
-	std::string key;
-	key = pack_bigramlist_key(did);
-	return key;
-	}
-
     /** Create a new BrassTermListTable object.
      *
      *  This method does not create or open the table on disk - you

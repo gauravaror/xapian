@@ -161,16 +161,6 @@ class XAPIAN_VISIBILITY_DEFAULT Document {
 	 */
 	void add_term(const std::string & tname, Xapian::termcount wdfinc = 1);
 	
-	/** Add a bigram to the document, without positional information.
-	 *
-	 *  No positional information is stored for bigrams.
-	 *
-	 *  @param bname     The name of the bigram.
-	 *  @param wdfinc    The increment that will be applied to the wdf
-	 *                   for this bigram (default: 1).
-	 */
-	void add_bigram(const std::string & tname, Xapian::termcount wdfinc = 1);
-
 	/** Add a boolean filter term to the document.
 	 *
 	 *  This method adds @a term to the document with wdf of 0 -
@@ -221,22 +211,9 @@ class XAPIAN_VISIBILITY_DEFAULT Document {
 	 */
 	void remove_term(const std::string & bname);
 	
-	/** Remove a bigram.
-	 *
-	 *  @param bname  The name of the bigram.
-	 *
-	 *  @exception Xapian::InvalidArgumentError will be thrown if the term
-	 *  is not in the document
-	 */
-
-	void remove_bigram(const std::string & tname);
-
 	/// Remove all terms (and postings) from the document.
 	void clear_terms();
 	
-	/// Remove all bigrams from the document.
-	void clear_bigrams();
-
 	/** The length of the termlist - i.e. the number of different terms
 	 *  which index this document.
 	 */

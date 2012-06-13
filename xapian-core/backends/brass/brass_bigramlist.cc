@@ -39,7 +39,7 @@ BrassBigramList::BrassBigramList(intrusive_ptr<const BrassDatabase> db_,
 {
     LOGCALL_CTOR(DB, "BrassBigramList", db_ | did_);
 
-    if (!db->termlist_table.get_exact_entry(BrassTermListTable::make_bigramkey(did),
+    if (!db->termlist_table.get_exact_entry(BrassTermListTable::make_key(did),
 					    data))
 	throw Xapian::DocNotFoundError("No bigramlist for document " + str(did));
 
@@ -125,11 +125,13 @@ BrassBigramList::next()
 {
     LOGCALL(DB, BigramList *, "BrassBigramList::next", NO_ARGS);
     Assert(!at_end());
-    if (pos == end) {
+    
+	do
+	{
+	if (pos == end) {
 	pos = NULL;
 	RETURN(NULL);
     }
-
     // Reset to 0 to indicate that the termfreq needs to be read.
     current_termfreq = 0;
 
@@ -162,7 +164,7 @@ BrassBigramList::next()
 	}
 	throw Xapian::DatabaseCorruptError(msg);
     }
-
+	}while(current_bigram.find(" ") == std::string::npos);
     RETURN(NULL);
 }
 

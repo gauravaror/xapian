@@ -13,8 +13,7 @@ noinst_HEADERS +=\
 	api/replication.h\
 	api/termlist.h\
 	api/bigramlist.h\
-	api/vectortermlist.h\
-	api/bigramdocumentterm.h
+	api/vectortermlist.h
 
 EXTRA_DIST +=\
 	api/dir_contents\

@@ -32,13 +32,13 @@ using namespace std;
 
 class MapBigramList : public BigramList {
     private:
-	Xapian::Document::Internal::document_bigrams::const_iterator it;
-	Xapian::Document::Internal::document_bigrams::const_iterator it_end;
+	Xapian::Document::Internal::document_terms::const_iterator it;
+	Xapian::Document::Internal::document_terms::const_iterator it_end;
 	bool started;
 
     public:
-	MapBigramList(const Xapian::Document::Internal::document_bigrams::const_iterator &it_,
-		    const Xapian::Document::Internal::document_bigrams::const_iterator &it_end_)
+	MapBigramList(const Xapian::Document::Internal::document_terms::const_iterator &it_,
+		    const Xapian::Document::Internal::document_terms::const_iterator &it_end_)
 		: it(it_), it_end(it_end_), started(false)
 	{ }
 
@@ -68,12 +68,15 @@ class MapBigramList : public BigramList {
 	}
 
 	BigramList * next() {
+		do
+		{
 	    if (!started) {
 		started = true;
 	    } else {
 		Assert(!at_end());
 		it++;
 	    }
+		}while(it->first.find(" ") == std::string::npos);
 	    return NULL;
 	}
 

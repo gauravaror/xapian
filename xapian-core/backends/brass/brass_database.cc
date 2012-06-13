@@ -1206,21 +1206,12 @@ BrassWritableDatabase::add_document_(Xapian::docid did,
 			pos, term.positionlist_end(), false);
 		}
 	    }
-		Xapian::BigramIterator bigram = document.bigramlist_begin();
-		for(;bigram != document.bigramlist_end();++bigram) {
-		//termcount wdf = bigram.get_wdf();
-		string bname = *bigram;
-		if (bname.size() > 2*(MAX_SAFE_TERM_LENGTH))
-		    throw Xapian::InvalidArgumentError("Bigram too long (> "STRINGIZE(MAX_SAFE_TERM_LENGTH)"): " + bname);
-//		inverter.addbigramposting(did,bname,wdf);
-		}
 	}
 	LOGLINE(DB, "Calculated doclen for new document " << did << " as " << new_doclen);
 
 	// Set the termlist.
 	if (termlist_table.is_open()) {
 	    termlist_table.set_termlist(did, document, new_doclen);
-		termlist_table.set_bigramlist(did,document,new_doclen);
 	}
 
 	// Set the new document length

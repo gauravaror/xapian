@@ -30,7 +30,6 @@
 #include "api/bigramlist.h"
 #include "backends/database.h"
 #include "api/documentterm.h"
-#include "api/bigramdocumentterm.h"
 #include <map>
 #include <string>
 
@@ -50,15 +49,7 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 	/// Type to store terms in.
 	typedef map<string, OmDocumentTerm> document_terms;
 	
-	/// Type to store Bi-grams in.
-	typedef map<string,BigramDocumentTerm> document_bigrams;
 	
-	// Type to Store bigrams in the map with bigramid.
-//	typedef map<bigramid,string> bigram_map;
-
-	// Type to Store collocations.
-//	typedef map<string,bigram_map> document_collocation; 
-
     protected:
 	/// The database this document is in.
 	Xapian::Internal::intrusive_ptr<const Xapian::Database::Internal> database;
@@ -72,8 +63,6 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 	mutable bool values_here; // FIXME mutable is a hack
 	mutable bool terms_here;
 	mutable bool positions_modified;
-	mutable bool bigrams_here;
-//	mutable bool collocation_here;
 
 	/// The (user defined) data associated with this document.
 	string data;
@@ -84,8 +73,6 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 	/// The terms (and their frequencies and positions) in this document.
 	mutable document_terms terms;
 
-	/// The bigrams in this document.
-	mutable document_bigrams bigrams;
 
     protected:
 	/** The document ID of the document in that database.
@@ -139,12 +126,9 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 	void clear_values();
 	void add_posting(const string &, Xapian::termpos, Xapian::termcount);
 	void add_term(const string &, Xapian::termcount);
-	void add_bigram(const string &,Xapian::termcount);
 	void remove_posting(const string &, Xapian::termpos, Xapian::termcount);
 	void remove_term(const string &);
-	void remove_bigram(const string &);
 	void clear_terms();
-	void clear_bigrams();
 	Xapian::termcount termlist_count() const;
 	Xapian::termcount bigramlist_count() const;
 
@@ -184,7 +168,6 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 
 	void need_values() const;
 	void need_terms() const;
-	void need_bigrams() const;
 
 	/** Return true if the data in the document may have been modified.
 	 */
@@ -204,12 +187,6 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 	    return terms_here;
 	}
 
-	/** Retuen true if the bigrams in the document may have been moified */
-
-	bool bigrams_modified() const {
-		return bigrams_here;
-	}
-
 	/// Return true if term positions may have been modified.
 	bool term_positions_modified() const {
 	    return positions_modified;
@@ -217,7 +194,7 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 
 	/// Return true if the document may have been modified.
 	bool modified() const {
-	    return terms_here || values_here || data_here || bigrams_here;
+	    return terms_here || values_here || data_here;
 	}
 
 	/** Get the docid which is associated with this document (if any).
@@ -242,11 +219,11 @@ class Xapian::Document::Internal : public Xapian::Internal::intrusive_base {
 	Internal(Xapian::Internal::intrusive_ptr<const Xapian::Database::Internal> database_,
 		 Xapian::docid did_)
 	    : database(database_), data_here(false), values_here(false),
-	      terms_here(false), positions_modified(false),bigrams_here(false) ,did(did_) { }
+	      terms_here(false), positions_modified(false),did(did_) { }
 
 	Internal()
 	    : database(0), data_here(false), values_here(false),
-	      terms_here(false), positions_modified(false),bigrams_here(false),did(0) { }
+	      terms_here(false), positions_modified(false),did(0) { }
 
 	/** Destructor.
 	 *

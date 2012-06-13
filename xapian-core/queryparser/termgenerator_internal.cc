@@ -286,7 +286,7 @@ endofterm:
 			else {
 				if(prevterm != "") {
 				if(index_bigram)
-				doc.add_bigram(prefix + prevterm+" "+term, wdf_inc);
+				doc.add_term(prefix + prevterm+" "+term, wdf_inc);
 				}
 	    	} 
 		}
@@ -297,7 +297,7 @@ endofterm:
 			else { 
 				if(prevterm != "") {
 					if(index_bigram)
-					doc.add_bigram(prefix + prevterm+" "+term, wdf_inc);
+					doc.add_term(prefix + prevterm+" "+term, wdf_inc);
 				}
 	       }
 		}
@@ -327,14 +327,14 @@ endofterm:
 	    with_positions) {
 	    if(prevterm != "") {
 		if(index_bigram)
-		doc.add_bigram(prevstem+" "+stem,Xapian::termcount(1));
+		doc.add_term(prevstem+" "+stem,Xapian::termcount(1));
 		}
 		doc.add_posting(stem, ++termpos, wdf_inc);
 		
 	} else {
 		if(prevterm != "") {
 		if(index_bigram)
-		doc.add_bigram(prevstem+" "+stem,Xapian::termcount(1));
+		doc.add_term(prevstem+" "+stem,Xapian::termcount(1));
 		}
 	    doc.add_term(stem, wdf_inc);
 	}
