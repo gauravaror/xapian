@@ -824,8 +824,7 @@ BrassDatabase::get_nouniqterm(Xapian::docid did) const
     LOGCALL(DB, Xapian::termcount, "BrassDatabase::get_nouniqterm", did);
     Assert(did != 0);
 	intrusive_ptr<const BrassDatabase> ptrtothis(this);
-	BrassTermList termlist(ptrtothis, did);
-	RETURN(termlist.get_approx_size());
+	RETURN(postlist_table.get_nouniqterms(did,ptrtothis));
 }
 
 Xapian::doccount
@@ -1185,15 +1184,28 @@ BrassWritableDatabase::add_document_(Xapian::docid did,
 	value_manager.add_document(did, document, value_stats);
 
 	brass_doclen_t new_doclen = 0;
+	brass_doclen_t new_nouniqterms = 0;
+	brass_doclen_t new_bigramdoclen = 0;
+	brass_doclen_t new_nouniqbigrams = 0;
 	{
 	    Xapian::TermIterator term = document.termlist_begin();
 	    for ( ; term != document.termlist_end(); ++term) {
 		termcount wdf = term.get_wdf();
 		// Calculate the new document length
-		new_doclen += wdf;
-		stats.check_wdf(wdf);
-
 		string tname = *term;
+		if(tname.find(" ") == string::npos)
+		{
+		new_doclen += wdf;
+		new_nouniqterms++;
+		stats.check_wdf(wdf);
+		}
+		else
+		{
+		new_bigramdoclen += wdf;
+		new_nouniqbigrams++;
+		}
+
+
 		if (tname.size() > MAX_SAFE_TERM_LENGTH)
 		    throw Xapian::InvalidArgumentError("Term too long (> "STRINGIZE(MAX_SAFE_TERM_LENGTH)"): " + tname);
 
@@ -1216,6 +1228,9 @@ BrassWritableDatabase::add_document_(Xapian::docid did,
 
 	// Set the new document length
 	inverter.set_doclength(did, new_doclen, true);
+	inverter.set_nouniqterms(did, new_nouniqterms, true);
+	inverter.set_bigramdoclength(did, new_bigramdoclen, true);
+	inverter.set_nouniqbigrams(did, new_nouniqbigrams, true);
 	stats.add_document(new_doclen);
     } catch (...) {
 	// If an error occurs while adding a document, or doing any other

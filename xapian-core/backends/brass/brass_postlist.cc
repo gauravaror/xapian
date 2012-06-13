@@ -72,6 +72,45 @@ BrassPostListTable::get_doclength(Xapian::docid did,
     return doclen_pl->get_wdf();
 }
 
+Xapian::termcount
+BrassPostListTable::get_nouniqterms(Xapian::docid did,
+				  intrusive_ptr<const BrassDatabase> db) const {
+    if (!nouniqterms_pl.get()) {
+	// Don't keep a reference back to the database, since this
+	// would make a reference loop.
+	nouniqterms_pl.reset(new BrassPostList(db, string("nouniqterms"), false));
+    }
+    if (!nouniqterms_pl->jump_to(did))
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+    return nouniqterms_pl->get_wdf();
+}
+
+Xapian::termcount
+BrassPostListTable::get_bigramdoclength(Xapian::docid did,
+				  intrusive_ptr<const BrassDatabase> db) const {
+    if (!bigramdoclen_pl.get()) {
+	// Don't keep a reference back to the database, since this
+	// would make a reference loop.
+	bigramdoclen_pl.reset(new BrassPostList(db, string("bigramdoclen"), false));
+    }
+    if (!bigramdoclen_pl->jump_to(did))
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+    return bigramdoclen_pl->get_wdf();
+}
+
+Xapian::termcount
+BrassPostListTable::get_nouniqbigrams(Xapian::docid did,
+				  intrusive_ptr<const BrassDatabase> db) const {
+    if (!nouniqbigrams_pl.get()) {
+	// Don't keep a reference back to the database, since this
+	// would make a reference loop.
+	nouniqbigrams_pl.reset(new BrassPostList(db, string("nouniqbigrams"), false));
+    }
+    if (!nouniqbigrams_pl->jump_to(did))
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+    return nouniqbigrams_pl->get_wdf();
+}
+
 bool
 BrassPostListTable::document_exists(Xapian::docid did,
 				    intrusive_ptr<const BrassDatabase> db) const
@@ -1078,12 +1117,54 @@ BrassPostListTable::merge_doclen_changes(const map<Xapian::docid, Xapian::termco
 
     // The cursor in the doclen_pl will no longer be valid, so reset it.
     doclen_pl.reset(0);
+	merge_statistics_changes(doclens,string());
 
-    LOGVALUE(DB, doclens.size());
-    if (doclens.empty()) return;
+}
+
+void
+BrassPostListTable::merge_nouniqterms_changes(const map<Xapian::docid, Xapian::termcount> & nouniqterms)
+{
+    LOGCALL_VOID(DB, "BrassPostListTable::merge_nouniqterms_changes", nouniqterms);
+
+    // The cursor in the nouniqterms_pl will no longer be valid, so reset it.
+    nouniqterms_pl.reset(0);
+	merge_statistics_changes(nouniqterms,string("nouniqterms"));
+
+}
+
+void
+BrassPostListTable::merge_bigramdoclen_changes(const map<Xapian::docid, Xapian::termcount> & bigramdoclens)
+{
+    LOGCALL_VOID(DB, "BrassPostListTable::merge_bigramdoclen_changes", bigramdoclens);
+
+    // The cursor in the bigramdoclen_pl will no longer be valid, so reset it.
+    bigramdoclen_pl.reset(0);
+	merge_statistics_changes(bigramdoclens,string("bigramdoclen"));
+
+}
+
+void
+BrassPostListTable::merge_nouniqbigrams_changes(const map<Xapian::docid, Xapian::termcount> & nouniqbigrams)
+{
+    LOGCALL_VOID(DB, "BrassPostListTable::merge_nouniqbigrams_changes", nouniqbigrams);
+
+    // The cursor in the nouniqbigrams_pl will no longer be valid, so reset it.
+    nouniqbigrams_pl.reset(0);
+	merge_statistics_changes(nouniqbigrams,string("nouniqbigrams"));
+
+}
+
+void
+BrassPostListTable::merge_statistics_changes(const map<Xapian::docid, Xapian::termcount> & statlens,string keyparam)
+{
+    LOGCALL_VOID(DB, "BrassPostListTable::merge_statistics_changes", statlens);
+
+
+    LOGVALUE(DB, statlens.size());
+    if (statlens.empty()) return;
 
     // Ensure there's a first chunk.
-    string current_key = make_key(string());
+    string current_key = make_key(keyparam);
     if (!key_exists(current_key)) {
 	LOGLINE(DB, "Adding dummy first chunk");
 	string newtag = make_start_of_first_chunk(0, 0, 0);
@@ -1092,19 +1173,19 @@ BrassPostListTable::merge_doclen_changes(const map<Xapian::docid, Xapian::termco
     }
 
     map<Xapian::docid, Xapian::termcount>::const_iterator j;
-    j = doclens.begin();
-    Assert(j != doclens.end()); // This case is caught above.
+    j = statlens.begin();
+    Assert(j != statlens.end()); // This case is caught above.
 
     Xapian::docid max_did;
     PostlistChunkReader *from;
     PostlistChunkWriter *to;
-    max_did = get_chunk(string(), j->first, true, &from, &to);
+    max_did = get_chunk(keyparam, j->first, true, &from, &to);
     LOGVALUE(DB, max_did);
-    for ( ; j != doclens.end(); ++j) {
+    for ( ; j != statlens.end(); ++j) {
 	Xapian::docid did = j->first;
 
 next_doclen_chunk:
-	LOGLINE(DB, "Updating doclens, did=" << did);
+	LOGLINE(DB, "Updating statlens, did=" << did);
 	if (from) while (!from->is_at_end()) {
 	    Xapian::docid copy_did = from->get_docid();
 	    if (copy_did >= did) {
@@ -1118,13 +1199,13 @@ next_doclen_chunk:
 	    delete from;
 	    to->flush(this);
 	    delete to;
-	    max_did = get_chunk(string(), did, false, &from, &to);
+	    max_did = get_chunk(keyparam, did, false, &from, &to);
 	    goto next_doclen_chunk;
 	}
 
-	Xapian::termcount new_doclen = j->second;
-	if (new_doclen != static_cast<Xapian::termcount>(-1)) {
-	    to->append(this, did, new_doclen);
+	Xapian::termcount new_statlen = j->second;
+	if (new_statlen != static_cast<Xapian::termcount>(-1)) {
+	    to->append(this, did, new_statlen);
 	}
     }
 

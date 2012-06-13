@@ -35,6 +35,24 @@ Inverter::flush_doclengths(BrassPostListTable & table)
     table.merge_doclen_changes(doclen_changes);
     doclen_changes.clear();
 }
+void
+Inverter::flush_nouniqterms(BrassPostListTable & table)
+{
+    table.merge_nouniqterms_changes(nouniqterms_changes);
+    nouniqterms_changes.clear();
+}
+void
+Inverter::flush_bigramdoclengths(BrassPostListTable & table)
+{
+    table.merge_bigramdoclen_changes(bigramdoclen_changes);
+    bigramdoclen_changes.clear();
+}
+void
+Inverter::flush_nouniqbigrams(BrassPostListTable & table)
+{
+    table.merge_nouniqbigrams_changes(nouniqbigrams_changes);
+    nouniqbigrams_changes.clear();
+}
 
 void
 Inverter::flush_post_list(BrassPostListTable & table, const string & term)
@@ -82,5 +100,8 @@ void
 Inverter::flush(BrassPostListTable & table)
 {
     flush_doclengths(table);
+    flush_bigramdoclengths(table);
+    flush_nouniqterms(table);
+    flush_nouniqbigrams(table);
     flush_all_post_lists(table);
 }

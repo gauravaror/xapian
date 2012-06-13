@@ -112,6 +112,15 @@ class Inverter {
   public:
     /// Buffered changes to document lengths.
     std::map<Xapian::docid, Xapian::termcount> doclen_changes;
+    
+	/// Buffered changes to number of uniq terms.
+    std::map<Xapian::docid, Xapian::termcount> nouniqterms_changes;
+	
+	/// Buffered changes to  bigram document length.
+    std::map<Xapian::docid, Xapian::termcount> bigramdoclen_changes;
+	
+	/// Buffered changes to  number of uniq bigrams in document.
+    std::map<Xapian::docid, Xapian::termcount> nouniqbigrams_changes;
 
   public:
 	/// Add posting for term.
@@ -156,6 +165,9 @@ class Inverter {
 
     void clear() {
 	doclen_changes.clear();
+	nouniqterms_changes.clear();
+	bigramdoclen_changes.clear();
+	nouniqbigrams_changes.clear();
 	postlist_changes.clear();
     }
 
@@ -165,10 +177,46 @@ class Inverter {
 	}
 	doclen_changes[did] = doclen;
     }
+    
+	void set_nouniqterms(Xapian::docid did, Xapian::termcount nouniqterms, bool add) {
+	if (add) {
+	    Assert(nouniqterms_changes.find(did) == nouniqterms_changes.end() || nouniqterms_changes[did] == DELETED_POSTING);
+	}
+	nouniqterms_changes[did] = nouniqterms;
+    }
+    
+	void set_bigramdoclength(Xapian::docid did, Xapian::termcount bigramdoclen, bool add) {
+	if (add) {
+	    Assert(bigramdoclen_changes.find(did) == bigramdoclen_changes.end() || bigramdoclen_changes[did] == DELETED_POSTING);
+	}
+	bigramdoclen_changes[did] = bigramdoclen;
+    }
+    
+	void set_nouniqbigrams(Xapian::docid did, Xapian::termcount nouniqbigrams, bool add) {
+	if (add) {
+	    Assert(nouniqbigrams_changes.find(did) == nouniqbigrams_changes.end() || nouniqbigrams_changes[did] == DELETED_POSTING);
+	}
+	nouniqbigrams_changes[did] = nouniqbigrams;
+    }
 
     void delete_doclength(Xapian::docid did) {
 	Assert(doclen_changes.find(did) == doclen_changes.end() || doclen_changes[did] != DELETED_POSTING);
 	doclen_changes[did] = DELETED_POSTING;
+    }
+
+    void delete_nouniqterms(Xapian::docid did) {
+	Assert(nouniqterms_changes.find(did) == nouniqterms_changes.end() || nouniqterms_changes[did] != DELETED_POSTING);
+	nouniqterms_changes[did] = DELETED_POSTING;
+    }
+
+    void delete_bigramdoclength(Xapian::docid did) {
+	Assert(bigramdoclen_changes.find(did) == bigramdoclen_changes.end() || bigramdoclen_changes[did] != DELETED_POSTING);
+	bigramdoclen_changes[did] = DELETED_POSTING;
+    }
+
+    void delete_nouniqbigrams(Xapian::docid did) {
+	Assert(nouniqbigrams_changes.find(did) == nouniqbigrams_changes.end() || nouniqbigrams_changes[did] != DELETED_POSTING);
+	nouniqbigrams_changes[did] = DELETED_POSTING;
     }
 
     bool get_doclength(Xapian::docid did, Xapian::termcount & doclen) const  {
@@ -181,9 +229,51 @@ class Inverter {
 	doclen = i->second;
 	return true;
     }
+    
+	bool get_nouniqterms(Xapian::docid did, Xapian::termcount & nouniqterm) const  {
+	std::map<Xapian::docid, Xapian::termcount>::const_iterator i;
+	i = nouniqterms_changes.find(did);
+	if (i == nouniqterms_changes.end())
+	    return false;
+	if (rare(i->second == DELETED_POSTING))
+	    throw Xapian::DocNotFoundError("Document not found: " + str(did));
+	nouniqterm = i->second;
+	return true;
+    }
+    
+	bool get_bigramdoclength(Xapian::docid did, Xapian::termcount & bigramdoclen) const  {
+	std::map<Xapian::docid, Xapian::termcount>::const_iterator i;
+	i = bigramdoclen_changes.find(did);
+	if (i == bigramdoclen_changes.end())
+	    return false;
+	if (rare(i->second == DELETED_POSTING))
+	    throw Xapian::DocNotFoundError("Document not found: " + str(did));
+	bigramdoclen = i->second;
+	return true;
+    }
+    
+	bool get_nouniqbigrams(Xapian::docid did, Xapian::termcount & nouniqbigram) const  {
+	std::map<Xapian::docid, Xapian::termcount>::const_iterator i;
+	i = nouniqbigrams_changes.find(did);
+	if (i == nouniqbigrams_changes.end())
+	    return false;
+	if (rare(i->second == DELETED_POSTING))
+	    throw Xapian::DocNotFoundError("Document not found: " + str(did));
+	nouniqbigram = i->second;
+	return true;
+    }
 
     /// Flush document length changes.
     void flush_doclengths(BrassPostListTable & table);
+
+    /// Flush number of terms.
+    void flush_nouniqterms(BrassPostListTable & table);
+
+    /// Flush bigram document length.
+    void flush_bigramdoclengths(BrassPostListTable & table);
+
+    /// Flush number of uniq bigrams.
+    void flush_nouniqbigrams(BrassPostListTable & table);
 
     /// Flush postlist changes for @a term.
     void flush_post_list(BrassPostListTable & table, const std::string & term);
@@ -194,15 +284,6 @@ class Inverter {
     /// Flush postlist changes for all terms which start with @a pfx.
     void flush_post_lists(BrassPostListTable & table, const std::string & pfx);
 
-    /// Flush postlist changes for @a bigram.
-    void flush_post_bigram_list(BrassPostListTable & table, const std::string & bigram);
-
-    /// Flush postlist changes for all terms.
-    void flush_all_post_bigram_lists(BrassPostListTable & table);
-
-    /// Flush postlist changes for all terms which start with @a pfx.
-    void flush_post_bigram_lists(BrassPostListTable & table, const std::string & pfx);
-	
     /// Flush all changes.
     void flush(BrassPostListTable & table);
 

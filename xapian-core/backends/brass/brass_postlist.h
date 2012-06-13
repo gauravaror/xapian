@@ -52,6 +52,15 @@ class BrassPostList;
 class BrassPostListTable : public BrassTable {
 	/// PostList for looking up document lengths.
 	mutable AutoPtr<BrassPostList> doclen_pl;
+	
+	/// PostList for looking up number of uniq terms.
+	mutable AutoPtr<BrassPostList> nouniqterms_pl;
+
+	/// PostList for looking up bigrams document lengths.
+	mutable AutoPtr<BrassPostList> bigramdoclen_pl;
+
+	/// PostList for looking up .
+	mutable AutoPtr<BrassPostList> nouniqbigrams_pl;
 
     public:
 	/** Create a new table object.
@@ -68,19 +77,34 @@ class BrassPostListTable : public BrassTable {
 	 */
 	BrassPostListTable(const string & path_, bool readonly_)
 	    : BrassTable("postlist", path_ + "/postlist.", readonly_),
-	      doclen_pl()
+	      doclen_pl(),nouniqterms_pl(),bigramdoclen_pl(),nouniqbigrams_pl()
 	{ }
 
 	bool open(brass_revision_number_t revno) {
 	    doclen_pl.reset(0);
+		nouniqterms_pl.reset(0);
+		bigramdoclen_pl.reset(0);
+		nouniqbigrams_pl.reset(0);
 	    return BrassTable::open(revno);
 	}
 
 	/// Merge changes for a term.
 	void merge_changes(const string &term, const Inverter::PostingChanges & changes);
 
+	/// This is called by all statistics for storing stats.
+	void merge_statistics_changes(const map<Xapian::docid, Xapian::termcount> & statlens,string keyparam);
+
 	/// Merge document length changes.
 	void merge_doclen_changes(const map<Xapian::docid, Xapian::termcount> & doclens);
+
+	/// Merge number of uniq terms changes.
+	void merge_nouniqterms_changes(const map<Xapian::docid, Xapian::termcount> & nouniqterms);
+	
+	/// Merge bigram document length changes.
+	void merge_bigramdoclen_changes(const map<Xapian::docid, Xapian::termcount> & bigramdoclens);
+	
+	/// Merge number of uniq bigrams.
+	void merge_nouniqbigrams_changes(const map<Xapian::docid, Xapian::termcount> & nouniqbigrams);
 
 	Xapian::docid get_chunk(const string &tname,
 		Xapian::docid did, bool adding,
@@ -115,6 +139,18 @@ class BrassPostListTable : public BrassTable {
 
 	/** Returns the length of document @a did. */
 	Xapian::termcount get_doclength(Xapian::docid did,
+					Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
+	
+	/** Returns the number of unique terms @a did. */
+	Xapian::termcount get_nouniqterms(Xapian::docid did,
+					Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
+	
+	/** Returns the bigram length of document @a did. */
+	Xapian::termcount get_bigramdoclength(Xapian::docid did,
+					Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
+	
+	/** Returns the number of unique bigrams of document @a did. */
+	Xapian::termcount get_nouniqbigrams(Xapian::docid did,
 					Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
 	
 
