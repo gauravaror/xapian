@@ -160,8 +160,19 @@ InMemoryPostList::get_doclength() const
 Xapian::termcount
 InMemoryPostList::get_nouniqterm() const
 {
-    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
-    return db->get_nouniqterm(get_docid());
+	throw Xapian::UnimplementedError("Number of Unique terms not implemented for Inmemory Backend");
+}
+
+Xapian::termcount
+InMemoryPostList::get_bigramdoclength() const
+{
+	throw Xapian::UnimplementedError("Bigram document length not implemented for Inmemory Backend");
+}
+
+Xapian::termcount
+InMemoryPostList::get_nouniqbigram() const
+{
+	throw Xapian::UnimplementedError("Number of Unique bigrams not implemented for Inmemory Backend");
 }
 
 PositionList *
@@ -332,8 +343,7 @@ InMemoryAllDocsPostList::get_doclength() const
 Xapian::termcount
 InMemoryAllDocsPostList::get_nouniqterm() const
 {
-    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
-    return db->get_nouniqterm(did);
+	throw Xapian::UnimplementedError("Number of Unique terms not implemented for Inmemory Backend");
 }
 
 Xapian::termcount
@@ -543,9 +553,21 @@ InMemoryDatabase::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-InMemoryDatabase::get_nouniqterm(Xapian::docid did) const
+InMemoryDatabase::get_nouniqterm(Xapian::docid) const
 {
-   return doclengths[did-1];
+	throw Xapian::UnimplementedError("Number of Unique terms not implemented for Inmemory Backend");
+}
+
+Xapian::termcount
+InMemoryDatabase::get_bigramdoclength(Xapian::docid) const
+{
+	throw Xapian::UnimplementedError("Bigram Document Length not implemented for Inmemory Backend");
+}
+
+Xapian::termcount
+InMemoryDatabase::get_nouniqbigram(Xapian::docid) const
+{
+	throw Xapian::UnimplementedError("Number of Unique bigrams not implemented for Inmemory Backend");
 }
 
 TermList *

@@ -827,6 +827,24 @@ BrassDatabase::get_nouniqterm(Xapian::docid did) const
 	RETURN(postlist_table.get_nouniqterms(did,ptrtothis));
 }
 
+Xapian::termcount
+BrassDatabase::get_bigramdoclength(Xapian::docid did) const
+{
+    LOGCALL(DB, Xapian::termcount, "BrassDatabase::get_bigramdoclength", did);
+    Assert(did != 0);
+	intrusive_ptr<const BrassDatabase> ptrtothis(this);
+	RETURN(postlist_table.get_bigramdoclength(did,ptrtothis));
+}
+
+Xapian::termcount
+BrassDatabase::get_nouniqbigram(Xapian::docid did) const
+{
+    LOGCALL(DB, Xapian::termcount, "BrassDatabase::get_nouniqbigram", did);
+    Assert(did != 0);
+	intrusive_ptr<const BrassDatabase> ptrtothis(this);
+	RETURN(postlist_table.get_nouniqbigrams(did,ptrtothis));
+}
+
 Xapian::doccount
 BrassDatabase::get_termfreq(const string & term) const
 {
@@ -1511,7 +1529,30 @@ Xapian::termcount
 BrassWritableDatabase::get_nouniqterm(Xapian::docid did) const
 {
 	LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_nouniqterm",did);
+	Xapian::termcount nouniqterm;
+	if(inverter.get_nouniqterms(did,nouniqterm))
+	RETURN(nouniqterm);
     RETURN(BrassDatabase::get_nouniqterm(did));
+}
+
+Xapian::termcount
+BrassWritableDatabase::get_bigramdoclength(Xapian::docid did) const
+{
+    LOGCALL(DB, Xapian::termcount, "BrassWritableDatabase::get_bigramdoclength", did);
+    Xapian::termcount bigramdoclen;
+    if (inverter.get_bigramdoclength(did, bigramdoclen))
+	RETURN(bigramdoclen);
+    RETURN(BrassDatabase::get_bigramdoclength(did));
+}
+
+Xapian::termcount
+BrassWritableDatabase::get_nouniqbigram(Xapian::docid did) const
+{
+	LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_nouniqbigram",did);
+	Xapian::termcount nouniqbigram;
+	if(inverter.get_nouniqbigrams(did,nouniqbigram))
+	RETURN(nouniqbigram);
+    RETURN(BrassDatabase::get_nouniqbigram(did));
 }
 
 Xapian::doccount

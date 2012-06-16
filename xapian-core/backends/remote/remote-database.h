@@ -214,6 +214,8 @@ class RemoteDatabase : public Xapian::Database::Internal {
 
     Xapian::termcount get_doclength(Xapian::docid did) const;
     Xapian::termcount get_nouniqterm(Xapian::docid did) const;
+    Xapian::termcount get_bigramdoclength(Xapian::docid did) const;
+    Xapian::termcount get_nouniqbigram(Xapian::docid did) const;
 
     /// Check if term exists.
     bool term_exists(const string & tname) const;
