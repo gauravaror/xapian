@@ -207,16 +207,18 @@ check_tname_in_key_lite(const char **keypos, const char *keyend, const string &t
 {
     string tname_in_key;
 
-    if (keyend - *keypos >= 2 && (*keypos)[0] == '\0' && (*keypos)[1] == '\xe0') {
+    if (keyend - *keypos >= 2 && (*keypos)[0] == '\0' &&( (*keypos)[1] == '\xe0' || (*keypos)[1] == '\xe8'|| (*keypos)[1] == '\xf0' || (*keypos)[1] == '\xf8')) {
 	*keypos += 2;
+	return true;
     } else {
 	// Read the termname.
 	if (!get_tname_from_key(keypos, keyend, tname_in_key))
 	    report_read_error(*keypos);
+
+    return tname_in_key == tname;
     }
 
     // This should only fail if the postlist doesn't exist at all.
-    return tname_in_key == tname;
 }
 
 static inline bool

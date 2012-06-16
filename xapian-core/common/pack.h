@@ -418,7 +418,7 @@ pack_chert_postlist_key(const std::string &term)
 	return std::string("\x00\xe8",2);
 
  	if(term.compare("bigramdoclen") == 0)
-	return std::string("\x00\xf8",2);
+	return std::string("\x00\xf0",2);
 	
 	if(term.compare("nouniqbigrams") == 0)
 	return std::string("\x00\xf8",2);

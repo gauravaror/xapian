@@ -76,7 +76,8 @@ LeafPostList::get_weight() const
     // Fetching the document length is work we can avoid if the weighting
     // scheme doesn't use it.
     if (need_doclength) doclen = get_doclength();
-	uniqterm = get_nouniqterm();
+//	uniqterm = get_nouniqterm();
+	uniqterm = 1;
     return weight->get_sumpart(get_wdf(), doclen,uniqterm);
 }
 
