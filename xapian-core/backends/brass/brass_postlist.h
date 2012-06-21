@@ -281,11 +281,9 @@ class BrassPostList : public LeafPostList {
 	/// Returns the current docid.
 	Xapian::docid get_docid() const { Assert(have_started); return did; }
 
-	/// Returns the length of current document.
-	Xapian::termcount get_doclength() const;
 
-	/// Returns the no of uniq term in the current document.
-	Xapian::termcount get_nouniqterm() const;
+	/// Returns the Per Document statistics of the current document.
+	PerDocumentStats* get_stats() const;
 
 	/** Returns the Within Document Frequency of the term in the current
 	 *  document.

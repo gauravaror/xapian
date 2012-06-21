@@ -423,6 +423,12 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	/// Get the number of unique term in document
 	Xapian::termcount get_nouniqterm(Xapian::docid did) const;
 	
+	/// Get the Bigram length of a document.
+	Xapian::termcount get_bigramdoclength(Xapian::docid did) const;
+
+	/// Get the number of unique term in document
+	Xapian::termcount get_nouniqbigram(Xapian::docid did) const;
+	
 	/** Send a "keep-alive" to remote databases to stop them timing out.
 	 *
 	 *  Has no effect on non-remote databases.

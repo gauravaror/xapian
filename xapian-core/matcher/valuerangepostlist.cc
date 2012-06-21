@@ -23,7 +23,7 @@
 #include <config.h>
 
 #include "valuerangepostlist.h"
-
+#include <stdlib.h>
 #include "debuglog.h"
 #include "omassert.h"
 #include "str.h"
@@ -88,18 +88,12 @@ ValueRangePostList::get_weight() const
     return 0;
 }
 
-Xapian::termcount
-ValueRangePostList::get_doclength() const
-{
-    Assert(db);
-    return 0;
-}
-
-Xapian::termcount
-ValueRangePostList::get_nouniqterm() const
+PerDocumentStats*
+ValueRangePostList::get_stats() const
 {
 	Assert(db);
-	return 0;
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	return stats;
 }
 
 double

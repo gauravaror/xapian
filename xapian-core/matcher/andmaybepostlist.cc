@@ -195,22 +195,13 @@ AndMaybePostList::get_description() const
 	   ")";
 }
 
-Xapian::termcount
-AndMaybePostList::get_doclength() const
+PerDocumentStats *
+AndMaybePostList::get_stats() const
 {
-    LOGCALL(MATCH, Xapian::termcount, "AndMaybePostList::get_doclength", NO_ARGS);
+    LOGCALL(MATCH, PerDocumentStats *, "AndMaybePostList::get_stats", NO_ARGS);
     Assert(lhead != 0); // check we've started
-    if (lhead == rhead) AssertEq(l->get_doclength(), r->get_doclength());
-    RETURN(l->get_doclength());
-}
-
-Xapian::termcount
-AndMaybePostList::get_nouniqterm() const
-{
-    LOGCALL(MATCH, Xapian::termcount, "AndMaybePostList::get_nouniqterm", NO_ARGS);
-    Assert(lhead != 0); // check we've started
-    if (lhead == rhead) AssertEq(l->get_nouniqterm(), r->get_nouniqterm());
-    RETURN(l->get_nouniqterm());
+    if (lhead == rhead) AssertEq(l->get_stats()->nouniqterms, r->get_stats()->nouniqterms);
+    RETURN(l->get_stats());
 }
 
 Xapian::termcount

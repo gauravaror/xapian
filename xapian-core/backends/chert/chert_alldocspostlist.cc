@@ -47,19 +47,14 @@ ChertAllDocsPostList::get_termfreq() const
     RETURN(doccount);
 }
 
-Xapian::termcount
-ChertAllDocsPostList::get_doclength() const
+PerDocumentStats *
+ChertAllDocsPostList::get_stats() const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertAllDocsPostList::get_doclength", NO_ARGS);
-
-    RETURN(ChertPostList::get_wdf());
+	PerDocumentStats * stats = (PerDocumentStats *) malloc(sizeof(PerDocumentStats));
+	stats->doclength = ChertPostList::get_wdf();
+	RETURN(stats);
 }
 
-Xapian::termcount
-ChertAllDocsPostList::get_nouniqterm() const
-{
-	throw Xapian::UnimplementedError("Functionget_nouniqterm is not implemented for chert");
-}
 Xapian::termcount
 ChertAllDocsPostList::get_wdf() const
 {

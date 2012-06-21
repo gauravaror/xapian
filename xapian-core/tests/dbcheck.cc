@@ -69,7 +69,7 @@ postlist_to_string(const Xapian::Database & db, const string & tname)
 	}
 
 	result += "(" + str(*p) +
-		", doclen=" + str(p.get_doclength()) +
+		", doclen=" + str(p.get_stats()->doclength) +
 		", wdf=" + str(p.get_wdf()) +
 		posrepr + ")";
 	need_comma = true;
@@ -269,7 +269,7 @@ dbcheck(const Xapian::Database & db,
 		posrepr = ",[" + posrepr + "]";
 	    }
 	    posting_repr += "(" + str(*p) + "," +
-		    str(p.get_wdf()) + "/" + str(p.get_doclength()) +
+		    str(p.get_wdf()) + "/" + str(p.get_stats()->doclength) +
 		    posrepr + ")";
 	    if (wdf_upper_bound < p.get_wdf())
 		wdf_upper_bound = p.get_wdf();

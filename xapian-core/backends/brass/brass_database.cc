@@ -1317,6 +1317,9 @@ BrassWritableDatabase::delete_document(Xapian::docid did)
 
 	// Mark this document as removed.
 	inverter.delete_doclength(did);
+	inverter.delete_nouniqterms(did);
+	inverter.delete_bigramdoclength(did);
+	inverter.delete_nouniqbigrams(did);
     } catch (...) {
 	// If an error occurs while deleting a document, or doing any other
 	// transaction, the modifications so far must be cleared before
@@ -1446,6 +1449,7 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 		    stats.check_wdf(new_wdf);
 
 		    if (old_wdf != new_wdf) {
+				
 		    	new_doclen += new_wdf - old_wdf;
 			inverter.update_posting(did, new_tname, old_wdf, new_wdf);
 		    }
@@ -1474,6 +1478,9 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 	    // Set the new document length
 	    if (new_doclen != old_doclen)
 		inverter.set_doclength(did, new_doclen, false);
+		inverter.set_nouniqterms(did, new_doclen, false);
+		inverter.set_bigramdoclength(did, new_doclen, false);
+		inverter.set_nouniqbigrams(did, new_doclen, false);
 	    stats.add_document(new_doclen);
 	}
 
@@ -1529,7 +1536,7 @@ Xapian::termcount
 BrassWritableDatabase::get_nouniqterm(Xapian::docid did) const
 {
 	LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_nouniqterm",did);
-	Xapian::termcount nouniqterm;
+	Xapian::termcount nouniqterm = 100;
 	if(inverter.get_nouniqterms(did,nouniqterm))
 	RETURN(nouniqterm);
     RETURN(BrassDatabase::get_nouniqterm(did));
@@ -1539,7 +1546,7 @@ Xapian::termcount
 BrassWritableDatabase::get_bigramdoclength(Xapian::docid did) const
 {
     LOGCALL(DB, Xapian::termcount, "BrassWritableDatabase::get_bigramdoclength", did);
-    Xapian::termcount bigramdoclen;
+    Xapian::termcount bigramdoclen=0;
     if (inverter.get_bigramdoclength(did, bigramdoclen))
 	RETURN(bigramdoclen);
     RETURN(BrassDatabase::get_bigramdoclength(did));
@@ -1549,7 +1556,7 @@ Xapian::termcount
 BrassWritableDatabase::get_nouniqbigram(Xapian::docid did) const
 {
 	LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_nouniqbigram",did);
-	Xapian::termcount nouniqbigram;
+	Xapian::termcount nouniqbigram=0;
 	if(inverter.get_nouniqbigrams(did,nouniqbigram))
 	RETURN(nouniqbigram);
     RETURN(BrassDatabase::get_nouniqbigram(did));
@@ -1625,6 +1632,9 @@ BrassWritableDatabase::open_post_list(const string& tname) const
 	    RETURN(new ContiguousAllDocsPostList(ptrtothis, doccount));
 	}
 	inverter.flush_doclengths(postlist_table);
+	inverter.flush_bigramdoclengths(postlist_table);
+	inverter.flush_nouniqterms(postlist_table);
+	inverter.flush_nouniqbigrams(postlist_table);
 	RETURN(new BrassAllDocsPostList(ptrtothis, doccount));
     }
 
@@ -1647,6 +1657,9 @@ BrassWritableDatabase::open_postbigram_list(const string& tname) const
 	    RETURN(new ContiguousAllDocsPostList(ptrtothis, doccount));
 	}
 	inverter.flush_doclengths(postlist_table);
+	inverter.flush_bigramdoclengths(postlist_table);
+	inverter.flush_nouniqterms(postlist_table);
+	inverter.flush_nouniqbigrams(postlist_table);
 	RETURN(new BrassAllDocsPostList(ptrtothis, doccount));
     }
 

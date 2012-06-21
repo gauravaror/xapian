@@ -98,7 +98,10 @@ struct closedb1_iterators {
 	COUNT_CLOSEDEXC(db.postlist_begin("paragraph"));
 
 	COUNT_CLOSEDEXC(TEST_EQUAL(*pl1, 1));
-	COUNT_CLOSEDEXC(TEST_EQUAL(pl1.get_doclength(), 28));
+	PerDocumentStats * stats;
+	COUNT_CLOSEDEXC(stats = pl1.get_stats());
+	if(stats != NULL)
+	COUNT_CLOSEDEXC(TEST_EQUAL(stats->doclength, 28));
 
 	// Advancing the iterator may or may not raise an error, but if it
 	// doesn't it must return the correct answers.
@@ -110,9 +113,12 @@ struct closedb1_iterators {
 
 	if (advanced) {
 	    COUNT_CLOSEDEXC(TEST_EQUAL(*pl1, 2));
-	    COUNT_CLOSEDEXC(TEST_EQUAL(pl1.get_doclength(), 81));
+		COUNT_CLOSEDEXC(stats = pl1.get_stats());
+		if(stats != NULL)
+	    COUNT_CLOSEDEXC(TEST_EQUAL(stats->doclength, 81));
 	}
 
+	COUNT_CLOSEDEXC(free(stats));
 	return closedexc_count;
     }
 };

@@ -154,8 +154,7 @@ class InMemoryPostList : public LeafPostList {
 	Xapian::doccount get_termfreq() const;
 
 	Xapian::docid       get_docid() const;     // Gets current docid
-	Xapian::termcount   get_doclength() const; // Length of current document
-	Xapian::termcount   get_nouniqterm() const; // Number of unique terms 
+	PerDocumentStats*   get_stats() const; // Per document Stats
 	Xapian::termcount   get_bigramdoclength() const; // Length of current document
 	Xapian::termcount   get_nouniqbigram() const; // Number of Unique terms of bigrams
 	Xapian::termcount   get_wdf() const;	   // Within Document Frequency
@@ -186,8 +185,7 @@ class InMemoryAllDocsPostList : public LeafPostList {
 	Xapian::doccount get_termfreq() const;
 
 	Xapian::docid       get_docid() const;     // Gets current docid
-	Xapian::termcount   get_doclength() const; // Length of current document
-	Xapian::termcount   get_nouniqterm() const; // number of terms in current document
+	  PerDocumentStats* get_stats() const; // number of Per document stats in current document
 	Xapian::termcount   get_bigramdoclength() const; // Length of current document
 	Xapian::termcount   get_nouniqbigram() const; // number of terms in current document
 	Xapian::termcount   get_wdf() const;       // Within Document Frequency

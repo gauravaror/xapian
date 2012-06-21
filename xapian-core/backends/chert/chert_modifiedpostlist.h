@@ -57,7 +57,7 @@ class ChertModifiedPostList : public ChertPostList {
 
     Xapian::docid get_docid() const;
 
-    Xapian::termcount get_doclength() const;
+    PerDocumentStats * get_stats() const;
 
     Xapian::termcount get_wdf() const;
 

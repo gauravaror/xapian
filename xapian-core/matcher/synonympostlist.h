@@ -87,8 +87,7 @@ class SynonymPostList : public PostList {
     // because a synonym when used as a child of a synonym will be optimised
     // to an OR.
     Xapian::docid get_docid() const;
-    Xapian::termcount get_doclength() const;
-	Xapian::termcount get_nouniqterm() const;
+	PerDocumentStats * get_stats() const;
     bool at_end() const;
 
     Xapian::termcount count_matching_subqs() const;

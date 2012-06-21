@@ -24,6 +24,7 @@
 
 #include "debuglog.h"
 #include "omassert.h"
+#include <stdlib.h>
 #include "postlist.h"
 
 using namespace std;
@@ -114,20 +115,12 @@ PostingIterator::get_wdf() const
     RETURN(internal->get_wdf());
 }
 
-Xapian::termcount
-PostingIterator::get_doclength() const
+PerDocumentStats*
+PostingIterator::get_stats() const
 {
-    LOGCALL(API, Xapian::termcount, "PostingIterator::get_doclength", NO_ARGS);
-    Assert(internal);
-    RETURN(internal->get_doclength());
-}
-
-Xapian::termcount
-PostingIterator::get_nouniqterm() const
-{
-	LOGCALL(API,Xapian::termcount,"PostingIterator::get_nouniqterm",NO_ARGS);
+	LOGCALL(API,PerDocumentStats *,"PostingIterator::get_stats",NO_ARGS);
 	Assert(internal);
-	RETURN(internal->get_nouniqterm());
+	RETURN(internal->get_stats());
 }
 
 #if 0 // FIXME: TermIterator supports this, so PostingIterator really ought to.

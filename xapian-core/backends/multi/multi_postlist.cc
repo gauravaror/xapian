@@ -22,7 +22,7 @@
 #include <config.h>
 
 #include "multi_postlist.h"
-
+#include <stdlib.h>
 #include "debuglog.h"
 #include "omassert.h"
 
@@ -99,26 +99,16 @@ MultiPostList::get_docid() const
     RETURN(currdoc);
 }
 
-Xapian::termcount
-MultiPostList::get_doclength() const
+PerDocumentStats *
+MultiPostList::get_stats() const
 {
-    LOGCALL(DB, Xapian::termcount, "MultiPostList::get_doclength", NO_ARGS);
+    LOGCALL(DB, PerDocumentStats *, "MultiPostList::get_stats", NO_ARGS);
     Assert(!at_end());
     Assert(currdoc != 0);
-    Xapian::termcount result = postlists[(currdoc - 1) % multiplier]->get_doclength();
-    AssertEqParanoid(result, this_db.get_doclength(get_docid()));
-    RETURN(result);
-}
-
-Xapian::termcount
-MultiPostList::get_nouniqterm() const
-{
-    LOGCALL(DB, Xapian::termcount, "MultiPostList::get_nouniqterm", NO_ARGS);
-    Assert(!at_end());
-    Assert(currdoc != 0);
-    Xapian::termcount result = postlists[(currdoc - 1) % multiplier]->get_nouniqterm();
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+    stats = postlists[(currdoc - 1) % multiplier]->get_stats();
     AssertEqParanoid(result, this_db.get_nouniqterm(get_docid()));
-    RETURN(result);
+    RETURN(stats);
 }
 
 Xapian::termcount

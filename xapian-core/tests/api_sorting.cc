@@ -91,7 +91,6 @@ DEFINE_TESTCASE(sortfunctor2,writable && !remote) {
     db.add_document(doc);
     doc.add_value(0, "ABC\xff");
     db.add_document(doc);
-
     Xapian::Enquire enquire(db);
     enquire.set_query(Xapian::Query("foo"));
 

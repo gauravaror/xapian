@@ -31,6 +31,21 @@
 #include <xapian/types.h>
 #include <xapian/visibility.h>
 
+struct PerDocumentStats {
+	Xapian::termcount doclength;
+	Xapian::termcount bigramdoclength;
+	Xapian::termcount nouniqterms;
+	Xapian::termcount nouniqbigrams;
+	Xapian::docid did;
+	PerDocumentStats() : doclength(0), bigramdoclength(0), nouniqterms(0), nouniqbigrams(0), did(0) {}
+	PerDocumentStats(Xapian::termcount doclength_,Xapian::termcount bigramdoclength_,Xapian::termcount nouniqterms_,Xapian::termcount nouniqbigrams_,Xapian::docid did_)
+	:doclength(doclength_), bigramdoclength(bigramdoclength_), nouniqterms(nouniqterms_), nouniqbigrams(nouniqbigrams_),did(did_) {}
+
+	std::string get_description() const {
+	return "PerDocumentStats:"+ did;
+	}
+};
+
 namespace Xapian {
 
 /// Class for iterating over a list of terms.
@@ -69,11 +84,9 @@ class XAPIAN_VISIBILITY_DEFAULT PostingIterator {
     /// Return the wdf for the document at the current position.
     Xapian::termcount get_wdf() const;
 
-    /// Return the length of the document at the current position.
-    Xapian::termcount get_doclength() const;
 
-	/// Return the number of unique term in the current document.
-	Xapian::termcount get_nouniqterm() const;
+	/// Return the Per document stats of the current document.
+	PerDocumentStats* get_stats() const;
 
 #if 0 // FIXME: TermIterator supports this, so PostingIterator really ought to.
     /// Return the length of the position list for the current position.

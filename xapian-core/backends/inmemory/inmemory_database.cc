@@ -150,17 +150,14 @@ InMemoryPostList::get_description() const
     return "InMemoryPostList " + str(termfreq);
 }
 
-Xapian::termcount
-InMemoryPostList::get_doclength() const
-{
-    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
-    return db->get_doclength(get_docid());
-}
 
-Xapian::termcount
-InMemoryPostList::get_nouniqterm() const
+PerDocumentStats*
+InMemoryPostList::get_stats() const
 {
-	throw Xapian::UnimplementedError("Number of Unique terms not implemented for Inmemory Backend");
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	stats->doclength = db->get_doclength(get_docid());
+	stats->did = get_docid();
+	return stats;
 }
 
 Xapian::termcount
@@ -333,17 +330,13 @@ InMemoryAllDocsPostList::get_docid() const
     return did;
 }
 
-Xapian::termcount
-InMemoryAllDocsPostList::get_doclength() const
+PerDocumentStats*
+InMemoryAllDocsPostList::get_stats() const
 {
-    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
-    return db->get_doclength(did);
-}
-
-Xapian::termcount
-InMemoryAllDocsPostList::get_nouniqterm() const
-{
-	throw Xapian::UnimplementedError("Number of Unique terms not implemented for Inmemory Backend");
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	stats->doclength = db->get_doclength(did);
+	stats->did = did;
+	return stats;
 }
 
 Xapian::termcount

@@ -78,12 +78,8 @@ class AndMaybePostList : public BranchPostList {
 
 	std::string get_description() const;
 
-	/** Return the document length of the document the current term
-	 *  comes from.
-	 */
-	virtual Xapian::termcount get_doclength() const;
-	
-	virtual Xapian::termcount get_nouniqterm() const;
+	// Return Per document stats	
+	virtual PerDocumentStats * get_stats() const;
 
         AndMaybePostList(PostList *left_,
 			 PostList *right_,

@@ -60,13 +60,11 @@ ChertModifiedPostList::get_docid() const
     return min(it->first, ChertPostList::get_docid());
 }
 
-Xapian::termcount
-ChertModifiedPostList::get_doclength() const
+PerDocumentStats *
+ChertModifiedPostList::get_stats() const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertModifiedPostList::get_doclength", NO_ARGS);
-    if (it != mods.end() && (ChertPostList::at_end() || it->first <= ChertPostList::get_docid()))
-	RETURN(this_db->get_doclength(it->first));
-    RETURN(ChertPostList::get_doclength());
+    LOGCALL(DB, PerDocumentStats *, "ChertModifiedPostList::get_stats", NO_ARGS);
+    RETURN(ChertPostList::get_stats());
 }
 
 Xapian::termcount

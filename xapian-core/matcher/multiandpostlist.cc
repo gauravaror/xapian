@@ -148,26 +148,16 @@ MultiAndPostList::get_docid() const
     return did;
 }
 
-Xapian::termcount
-MultiAndPostList::get_doclength() const
-{
-    Assert(did);
-    Xapian::termcount doclength = plist[0]->get_doclength();
-    for (size_t i = 1; i < n_kids; ++i) {
-	AssertEq(doclength, plist[i]->get_doclength());
-    }
-    return doclength;
-}
 
-Xapian::termcount
-MultiAndPostList::get_nouniqterm() const
+PerDocumentStats *
+MultiAndPostList::get_stats() const
 {
 	Assert(did);
-	Xapian::termcount nouniqterm = plist[0]->get_nouniqterm();
+	PerDocumentStats * stats = plist[0]->get_stats();
 	for(size_t i = 1;i < n_kids; ++i) {
-	AssertEq(nouniqterm,plist[i]->get_nouniqterm());
+	AssertEq(stats,plist[i]->get_stats());
 	}
-	return nouniqterm;
+	return stats;
 }
 
 double

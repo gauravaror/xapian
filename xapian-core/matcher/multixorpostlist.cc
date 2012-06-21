@@ -142,44 +142,24 @@ MultiXorPostList::get_docid() const
     return did;
 }
 
-Xapian::termcount
-MultiXorPostList::get_doclength() const
-{
-    Assert(did);
-    Xapian::termcount doclength = 0;
-    bool doclength_set = false;
-    for (size_t i = 0; i < n_kids; ++i) {
-	if (plist[i]->get_docid() == did) {
-	    if (doclength_set) {
-		AssertEq(doclength, plist[i]->get_doclength());
-	    } else {
-		doclength = plist[i]->get_doclength();
-		doclength_set = true;
-	    }
-	}
-    }
-    Assert(doclength_set);
-    return doclength;
-}
-
-Xapian::termcount
-MultiXorPostList::get_nouniqterm() const
+PerDocumentStats *
+MultiXorPostList::get_stats() const
 {
 	Assert(did);
-	Xapian::termcount nouniqterm = 0;
-	bool nouniqterm_set = false;
+	PerDocumentStats* stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	bool stats_set = false;
 	for (size_t i = 0; i < n_kids;++i) {
-	if (plist[i]->get_nouniqterm() == did) {
-		if(nouniqterm_set) {
-		AssertEq(nouniqterm,plist[i]->get_nouniqterm());
+	if (plist[i]->get_stats()->did == did) {
+		if(stats_set) {
+		AssertEq(stats,plist[i]->get_stats());
 		} else {
-		nouniqterm = plist[i]->get_nouniqterm();
-		nouniqterm_set = true;	
+		stats = plist[i]->get_stats();
+		stats_set = true;	
 		}
 	}
 	}
-	Assert(nouniqterm_set);
-	return nouniqterm;
+	Assert(stats_set);
+	return stats;
 }
 
 double

@@ -22,7 +22,7 @@
 #include <config.h>
 
 #include "xapian/weight.h"
-
+#include <stdlib.h>
 #include "leafpostlist.h"
 #include "omassert.h"
 #include "debuglog.h"
@@ -75,10 +75,13 @@ LeafPostList::get_weight() const
 	Xapian::termcount uniqterm = 0;
     // Fetching the document length is work we can avoid if the weighting
     // scheme doesn't use it.
-    if (need_doclength) doclen = get_doclength();
-//	uniqterm = get_nouniqterm();
-	uniqterm = 1;
-    return weight->get_sumpart(get_wdf(), doclen,uniqterm);
+    if (need_doclength) {
+	PerDocumentStats * stats = get_stats();
+	doclen = stats->doclength;
+	uniqterm = stats->nouniqterms;
+	free(stats);
+	}
+    return weight->get_sumpart(get_wdf(), doclen, uniqterm);
 }
 
 double

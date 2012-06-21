@@ -24,6 +24,7 @@
 
 #include "omassert.h"
 
+#include <stdlib.h>
 using namespace std;
 
 Xapian::doccount
@@ -57,16 +58,11 @@ EmptyPostList::get_docid() const
     return 0;
 }
 
-Xapian::termcount
-EmptyPostList::get_doclength() const
+PerDocumentStats *
+EmptyPostList::get_stats() const
 {
-    return Xapian::termcount(EmptyPostList::get_docid());
-}
-
-Xapian::termcount
-EmptyPostList::get_nouniqterm() const
-{
-	return Xapian::termcount(EmptyPostList::get_docid());
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	return stats;
 }
 
 double

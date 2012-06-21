@@ -52,8 +52,7 @@ class MultiPostList : public PostList {
 	double recalc_maxweight();
 
 	Xapian::docid  get_docid() const;     // Gets current docid
-	Xapian::termcount get_doclength() const; // Get length of current document
-	Xapian::termcount get_nouniqterm() const; // Get number of unique term in current document
+	PerDocumentStats * get_stats() const; // Get Per Document Stats of current document
         Xapian::termcount get_wdf() const;	    // Within Document Frequency
 	PositionList * open_position_list() const;
 	PostList *next(double w_min);          // Moves to next docid

@@ -203,18 +203,11 @@ AndNotPostList::get_description() const
     return "(" + l->get_description() + " AndNot " + r->get_description() + ")";
 }
 
-Xapian::termcount
-AndNotPostList::get_doclength() const
-{
-    LOGCALL(MATCH, Xapian::termcount, "AndNotPostList::get_doclength", NO_ARGS);
-    RETURN(l->get_doclength());
-}
-
-Xapian::termcount
-AndNotPostList::get_nouniqterm() const
+PerDocumentStats *
+AndNotPostList::get_stats() const
 {    
-	LOGCALL(MATCH, Xapian::termcount, "AndNotPostList::get_nouniqterm", NO_ARGS);
-    RETURN(l->get_nouniqterm());
+	LOGCALL(MATCH, PerDocumentStats *, "AndNotPostList::get_stats", NO_ARGS);
+    RETURN(l->get_stats());
 }
 
 Xapian::termcount

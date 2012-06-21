@@ -152,6 +152,22 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	 *              being requested.
 	 */
 	virtual	Xapian::termcount get_nouniqterm(Xapian::docid did) const = 0;
+	
+	/** Get the bigram document length .
+	 *
+	 
+	 *  @param did  The document id of the document whose bigram document length is
+	 *              being requested.
+	 */
+	virtual	Xapian::termcount get_bigramdoclength(Xapian::docid did) const = 0;
+	
+	/** Get the number of unique bigrams  in document.
+	 *
+	 
+	 *  @param did  The document id of the document whose number of terms is
+	 *              being requested.
+	 */
+	virtual	Xapian::termcount get_nouniqbigram(Xapian::docid did) const = 0;
 
 	/** Return the number of documents indexed by a given term.  This
 	 *  may be an approximation, but must be an upper bound (ie,

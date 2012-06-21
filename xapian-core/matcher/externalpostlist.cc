@@ -23,6 +23,8 @@
 
 #include "externalpostlist.h"
 
+#include <stdlib.h>
+
 #include <xapian/postingsource.h>
 
 #include "debuglog.h"
@@ -101,18 +103,13 @@ ExternalPostList::get_weight() const
     RETURN(factor * source->get_weight());
 }
 
-Xapian::termcount
-ExternalPostList::get_doclength() const
-{
-    Assert(false);
-    return 0;
-}
 
-Xapian::termcount
-ExternalPostList::get_nouniqterm() const
+PerDocumentStats*
+ExternalPostList::get_stats() const
 {
 	Assert(false);
-	return 0;
+	PerDocumentStats* stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	return stats;
 }
 
 double

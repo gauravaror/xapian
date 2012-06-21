@@ -73,11 +73,9 @@ class NetworkPostList : public LeafPostList {
     /// Get the current document ID.
     Xapian::docid get_docid() const;
 
-    /// Get the length of the current document.
-    Xapian::termcount get_doclength() const;
     
-	/// Get the number of terms in document
-    Xapian::termcount get_nouniqterm() const;
+	/// Get the Per Document Stats of document
+    PerDocumentStats* get_stats() const;
 
     /// Get the Within Document Frequency of the term in the current document.
     Xapian::termcount get_wdf() const;

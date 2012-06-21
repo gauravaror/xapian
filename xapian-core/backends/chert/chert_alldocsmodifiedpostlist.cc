@@ -64,18 +64,19 @@ ChertAllDocsModifiedPostList::get_docid() const
     RETURN(min(doclens_it->first, ChertAllDocsPostList::get_docid()));
 }
 
-Xapian::termcount
-ChertAllDocsModifiedPostList::get_doclength() const
+PerDocumentStats *
+ChertAllDocsModifiedPostList::get_stats() const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertAllDocsModifiedPostList::get_doclength", NO_ARGS);
+    LOGCALL(DB, PerDocumentStats *, "ChertAllDocsModifiedPostList::get_stats", NO_ARGS);
     // Override with value from doclens_it (which cannot be -1, because that
     // would have been skipped past).
+/*
     if (doclens_it != doclens.end() &&
 	(ChertAllDocsPostList::at_end() ||
 	 doclens_it->first <= ChertAllDocsPostList::get_docid()))
-	RETURN(doclens_it->second);
+	RETURN(doclens_it->second);*/
 
-    RETURN(ChertAllDocsPostList::get_doclength());
+    RETURN(ChertAllDocsPostList::get_stats());
 }
 
 PostList *

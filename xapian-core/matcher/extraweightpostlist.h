@@ -52,7 +52,11 @@ class ExtraWeightPostList : public PostList {
 	Xapian::docid  get_docid() const { return pl->get_docid(); }
 
 	double get_weight() const {
-	    return pl->get_weight() + wt->get_sumextra(pl->get_doclength());
+		PerDocumentStats * stats = pl->get_stats();
+		Xapian::termcount doclen = stats->doclength;
+		free(stats);
+	    return pl->get_weight() + wt->get_sumextra(doclen);
+		
 	}
 
 	double get_maxweight() const {
@@ -89,15 +93,12 @@ class ExtraWeightPostList : public PostList {
 	    return "( ExtraWeight " + pl->get_description() + " )";
 	}
 
-	/** Return the document length of the document the current term
+	/** Return the Per Document Stats of the document the current term
 	 *  comes from.
 	 */
-	virtual Xapian::termcount get_doclength() const {
-	    return pl->get_doclength();
-	}
 	
-	virtual Xapian::termcount get_nouniqterm() const {
-	    return pl->get_nouniqterm();
+	virtual PerDocumentStats* get_stats() const {
+	    return pl->get_stats();
 	}
 
 	ExtraWeightPostList(PostList * pl_, Xapian::Weight *wt_,

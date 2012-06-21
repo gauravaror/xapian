@@ -214,20 +214,12 @@ MergePostList::get_description() const
     return desc + ")";
 }
 
-Xapian::termcount
-MergePostList::get_doclength() const
+PerDocumentStats *
+MergePostList::get_stats() const
 {
-    LOGCALL(MATCH, Xapian::termcount, "MergePostList::get_doclength", NO_ARGS);
-    Assert(current != -1);
-    return plists[current]->get_doclength();
-}
-
-Xapian::termcount
-MergePostList::get_nouniqterm() const
-{
-	LOGCALL(MATCH,Xapian::termcount,"MergePostList::get_nouniqterm",NO_ARGS);
+	LOGCALL(MATCH,PerDocumentStats *,"MergePostList::get_stats",NO_ARGS);
 	Assert(current != -1);
-	return plists[current]->get_nouniqterm();
+	return plists[current]->get_stats();
 }
 
 

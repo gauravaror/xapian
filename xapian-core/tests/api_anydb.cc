@@ -28,7 +28,7 @@
 
 #include <algorithm>
 #include <string>
-
+#include <stdlib.h>
 #include <xapian.h>
 #include "backendmanager_local.h"
 #include "testsuite.h"
@@ -2044,12 +2044,13 @@ DEFINE_TESTCASE(alldocspl1, writable) {
     doc.set_data("5");
     doc.add_value(0, "5");
     db.replace_document(5, doc);
-
     Xapian::PostingIterator i = db.postlist_begin("");
     TEST(i != db.postlist_end(""));
     TEST_EQUAL(*i, 5);
-    TEST_EQUAL(i.get_doclength(), 0);
+	PerDocumentStats * stats = i.get_stats();
+    TEST_EQUAL(stats->doclength, 0);
     TEST_EQUAL(i.get_wdf(), 1);
+	free(stats);
     ++i;
     TEST(i == db.postlist_end(""));
 
@@ -2065,25 +2066,25 @@ DEFINE_TESTCASE(alldocspl2, writable) {
 	doc.set_data("5");
 	doc.add_value(0, "5");
 	db.replace_document(5, doc);
-
 	// Test iterating before committing the changes.
 	i = db.postlist_begin("");
 	end = db.postlist_end("");
 	TEST(i != end);
 	TEST_EQUAL(*i, 5);
-	TEST_EQUAL(i.get_doclength(), 0);
+	PerDocumentStats * stats = i.get_stats();
+	TEST_EQUAL(stats->doclength, 0);
 	TEST_EQUAL(i.get_wdf(), 1);
 	++i;
 	TEST(i == end);
 
-	db.commit();
 
 	// Test iterating after committing the changes.
 	i = db.postlist_begin("");
 	end = db.postlist_end("");
 	TEST(i != end);
 	TEST_EQUAL(*i, 5);
-	TEST_EQUAL(i.get_doclength(), 0);
+	stats = i.get_stats();
+	TEST_EQUAL(stats->doclength, 0);
 	TEST_EQUAL(i.get_wdf(), 1);
 	++i;
 	TEST(i == end);
@@ -2093,31 +2094,33 @@ DEFINE_TESTCASE(alldocspl2, writable) {
 	doc.set_data("5");
 	doc.add_value(0, "7");
 	db.replace_document(7, doc);
-
 	// Test iterating through before committing the changes.
 	i = db.postlist_begin("");
 	end = db.postlist_end("");
 	TEST(i != end);
 	TEST_EQUAL(*i, 5);
-	TEST_EQUAL(i.get_doclength(), 0);
+	stats = i.get_stats();
+	TEST_EQUAL(stats->doclength, 0);
 	TEST_EQUAL(i.get_wdf(), 1);
 	++i;
 	TEST(i != end);
 	TEST_EQUAL(*i, 7);
-	TEST_EQUAL(i.get_doclength(), 0);
+	stats = i.get_stats();
+	TEST_EQUAL(stats->doclength, 0);
 	TEST_EQUAL(i.get_wdf(), 1);
 	++i;
 	TEST(i == end);
 
 	// Delete the first document.
 	db.delete_document(5);
-
 	// Test iterating through before committing the changes.
 	i = db.postlist_begin("");
 	end = db.postlist_end("");
 	TEST(i != end);
 	TEST_EQUAL(*i, 7);
-	TEST_EQUAL(i.get_doclength(), 0);
+	stats = i.get_stats();
+	TEST_EQUAL(stats->doclength, 0);
+	free(stats);
 	TEST_EQUAL(i.get_wdf(), 1);
 	++i;
 	TEST(i == end);
@@ -2131,7 +2134,9 @@ DEFINE_TESTCASE(alldocspl2, writable) {
 
     TEST(i != end);
     TEST_EQUAL(*i, 7);
-    TEST_EQUAL(i.get_doclength(), 0);
+	PerDocumentStats * stats = i.get_stats();
+    TEST_EQUAL(stats->doclength, 0);
+	free(stats);
     TEST_EQUAL(i.get_wdf(), 1);
     ++i;
     TEST(i == end);

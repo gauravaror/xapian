@@ -68,7 +68,7 @@ ChertPostListTable::get_doclength(Xapian::docid did,
 	doclen_pl.reset(new ChertPostList(db, string(), false));
     }
     if (!doclen_pl->jump_to(did))
-	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found in Chert Post List Table");
     return doclen_pl->get_wdf();
 }
 
@@ -712,22 +712,16 @@ ChertPostList::~ChertPostList()
     LOGCALL_DTOR(DB, "ChertPostList");
 }
 
-Xapian::termcount
-ChertPostList::get_doclength() const
+PerDocumentStats *
+ChertPostList::get_stats() const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertPostList::get_doclength", NO_ARGS);
+    LOGCALL(DB, PerDocumentStats *, "ChertPostList::get_stats", NO_ARGS);
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
     Assert(have_started);
     Assert(this_db.get());
-    RETURN(this_db->get_doclength(did));
-}
-
-Xapian::termcount
-ChertPostList::get_nouniqterm() const
-{
-    LOGCALL(DB, Xapian::termcount, "ChertPostList::get_nouniqterm", NO_ARGS);
-    Assert(have_started);
-    Assert(this_db.get());
-    RETURN(this_db->get_nouniqterm(did));
+	stats->doclength = this_db->get_doclength(did);
+	stats->did = did;
+    RETURN(stats);
 }
 
 bool

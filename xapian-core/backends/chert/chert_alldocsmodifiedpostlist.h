@@ -49,7 +49,7 @@ class ChertAllDocsModifiedPostList : public ChertAllDocsPostList {
 
     Xapian::docid get_docid() const;
 
-    Xapian::termcount get_doclength() const;
+    PerDocumentStats * get_stats() const;
 
     PostList * next(double w_min);
 

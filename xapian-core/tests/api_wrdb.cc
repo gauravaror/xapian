@@ -3,6 +3,11 @@
  * Copyright 1999,2000,2001 BrightStation PLC
  * Copyright 2001 Hein Ragas
  * Copyright 2002 Ananova Ltd
+ * api_wrdb.cc: tests which need a writable backend
+ *
+ * Copyright 1999,2000,2001 BrightStation PLC
+ * Copyright 2001 Hein Ragas
+ * Copyright 2002 Ananova Ltd
  * Copyright 2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012 Olly Betts
  * Copyright 2006 Richard Boulton
  * Copyright 2007 Lemur Consulting Ltd
@@ -82,8 +87,10 @@ DEFINE_TESTCASE(adddoc1, writable) {
     doc3.add_posting("foo", 2);
     doc3.add_posting("bar", 3);
     db.add_document(doc3);
+	
+	TEST_EQUAL(db.get_doclength(1),5);
 
-    Xapian::Query query("foo");
+	Xapian::Query query("foo");
 
     Xapian::Enquire enq(db);
     enq.set_query(query);
@@ -723,7 +730,7 @@ DEFINE_TESTCASE(deldoc4, writable) {
     doc3.add_posting("one", 7);
     doc3.remove_term("two");
 
-    const Xapian::docid maxdoc = 1000 * 3;
+   const Xapian::docid maxdoc = 1000 * 3;
     Xapian::docid did;
     for (Xapian::docid i = 0; i < maxdoc / 3; ++i) {
 	did = db.add_document(doc1);
@@ -736,15 +743,16 @@ DEFINE_TESTCASE(deldoc4, writable) {
 	bool is_power_of_two = ((i & (i - 1)) == 0);
 	if (is_power_of_two) {
 	    db.commit();
-	    // reopen() on a writable database shouldn't do anything.
+	     //reopen() on a writable database shouldn't do anything.
 	    TEST(!db.reopen());
 	}
     }
     db.commit();
-    // reopen() on a writable database shouldn't do anything.
+//     reopen() on a writable database shouldn't do anything.
     TEST(!db.reopen());
 
     /* delete the documents in a peculiar order */
+
     for (Xapian::docid i = 0; i < maxdoc / 3; ++i) {
 	db.delete_document(maxdoc - i);
 	db.delete_document(maxdoc / 3 + i + 1);
@@ -752,7 +760,7 @@ DEFINE_TESTCASE(deldoc4, writable) {
     }
 
     db.commit();
-    // reopen() on a writable database shouldn't do anything.
+  //   reopen() on a writable database shouldn't do anything.
     TEST(!db.reopen());
 
     TEST_EQUAL(db.postlist_begin("one"), db.postlist_end("one"));
@@ -1017,25 +1025,29 @@ DEFINE_TESTCASE(replacedoc3, writable) {
     Xapian::PostingIterator p = db.postlist_begin("foo");
     TEST_NOT_EQUAL(p, db.postlist_end("foo"));
     TEST_EQUAL(*p, 1);
-    TEST_EQUAL(p.get_doclength(), 3);
+	PerDocumentStats * stats = p.get_stats();
+    TEST_EQUAL(stats->doclength, 3);
     ++p;
     TEST_NOT_EQUAL(p, db.postlist_end("foo"));
     TEST_EQUAL(*p, 3);
-    TEST_EQUAL(p.get_doclength(), 4);
+	stats = p.get_stats();
+    TEST_EQUAL(stats->doclength, 4);
     ++p;
     TEST_EQUAL(p, db.postlist_end("foo"));
 
     p = db.postlist_begin("world");
     TEST_NOT_EQUAL(p, db.postlist_end("world"));
     TEST_EQUAL(*p, 2);
-    TEST_EQUAL(p.get_doclength(), 1);
+	stats= p.get_stats();
+    TEST_EQUAL(stats->doclength, 1);
     ++p;
     TEST_NOT_EQUAL(p, db.postlist_end("world"));
     TEST_EQUAL(*p, 3);
-    TEST_EQUAL(p.get_doclength(), 4);
+	stats = p.get_stats();
+    TEST_EQUAL(stats->doclength, 4);
     ++p;
     TEST_EQUAL(p, db.postlist_end("world"));
-
+	free(stats);
     return true;
 }
 
@@ -1761,7 +1773,8 @@ DEFINE_TESTCASE(postlist7, writable) {
     TEST(p != db_w.postlist_end("foo"));
     TEST_EQUAL(*p, 5);
     TEST_EQUAL(p.get_wdf(), 3);
-    TEST_EQUAL(p.get_doclength(), 7);
+	PerDocumentStats * stats = p.get_stats();
+    TEST_EQUAL(stats->doclength, 7);
     ++p;
     TEST(p == db_w.postlist_end("foo"));
 
@@ -1776,15 +1789,17 @@ DEFINE_TESTCASE(postlist7, writable) {
     TEST(p != db_w.postlist_end("foo"));
     TEST_EQUAL(*p, 5);
     TEST_EQUAL(p.get_wdf(), 3);
-    TEST_EQUAL(p.get_doclength(), 7);
+	stats = p.get_stats();
+    TEST_EQUAL(stats->doclength, 7);
     ++p;
     TEST(p != db_w.postlist_end("foo"));
     TEST_EQUAL(*p, 6);
     TEST_EQUAL(p.get_wdf(), 1);
-    TEST_EQUAL(p.get_doclength(), 2);
+	stats = p.get_stats();
+    TEST_EQUAL(stats->doclength, 2);
     ++p;
     TEST(p == db_w.postlist_end("foo"));
-
+	free(stats);
     return true;
 }
 

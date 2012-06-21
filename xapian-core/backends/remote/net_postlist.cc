@@ -39,16 +39,12 @@ NetworkPostList::get_docid() const
     return lastdocid;
 }
 
-Xapian::termcount
-NetworkPostList::get_doclength() const
+PerDocumentStats *
+NetworkPostList::get_stats() const
 {
-    return db->get_doclength(lastdocid);
-}
-
-Xapian::termcount
-NetworkPostList::get_nouniqterm() const
-{
-    return db->get_nouniqterm(lastdocid);
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	stats->doclength = db->get_doclength(lastdocid);
+	return stats;
 }
 
 Xapian::termcount

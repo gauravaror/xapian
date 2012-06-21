@@ -92,7 +92,7 @@ show_db_stats(Database &db)
 	} else {
 	    Xapian::PostingIterator d = db.postlist_begin(string());
 	    while (d != db.postlist_end(string())) {
-		if (d.get_doclength() == 0)
+		//if (d.get_stats()->doclength == 0)
 		    ++empty_docs;
 		++d;
 	    }
@@ -375,7 +375,7 @@ main(int argc, char **argv) try {
 	    while (p != pend) {
 		cout << separator << *p;
 		if (verbose) {
-		    cout << ' ' << p.get_wdf() << ' ' << p.get_doclength();
+		    cout << ' ' << p.get_wdf() << ' ';
 		}
 		if (showvalues) show_values(db, *p, ' ');
 		if (showdocdata) show_docdata(db, *p, ' ');

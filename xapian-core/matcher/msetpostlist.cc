@@ -90,16 +90,10 @@ MSetPostList::get_collapse_key() const
     RETURN(&mset_internal->items[cursor].collapse_key);
 }
 
-Xapian::termcount
-MSetPostList::get_doclength() const
+PerDocumentStats *
+MSetPostList::get_stats() const
 {
-    throw Xapian::UnimplementedError("MSetPostList::get_doclength() unimplemented");
-}
-
-Xapian::termcount
-MSetPostList::get_nouniqterm() const
-{
-    throw Xapian::UnimplementedError("MSetPostList::get_doclength() unimplemented");
+    throw Xapian::UnimplementedError("MSetPostList::get_stats() unimplemented");
 }
 
 double

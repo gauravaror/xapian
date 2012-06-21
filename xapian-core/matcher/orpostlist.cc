@@ -384,44 +384,24 @@ OrPostList::get_description() const
     return "(" + l->get_description() + " Or " + r->get_description() + ")";
 }
 
-Xapian::termcount
-OrPostList::get_doclength() const
+PerDocumentStats *
+OrPostList::get_stats() const
 {
-    LOGCALL(MATCH, Xapian::termcount, "OrPostList::get_doclength", NO_ARGS);
-    Xapian::termcount doclength;
+    LOGCALL(MATCH, PerDocumentStats  *, "OrPostList::get_stats", NO_ARGS);
+    PerDocumentStats * stats;
 
     Assert(lhead != 0 && rhead != 0); // check we've started
     if (lhead > rhead) {
-	doclength = r->get_doclength();
-	LOGLINE(MATCH, "OrPostList::get_doclength() [right docid=" << rhead <<
-		       "] = " << doclength);
+	stats = r->get_stats();
+	LOGLINE(MATCH, "OrPostList::get_stats() [right docid=" << rhead <<
+		       "] = " << stats->docid);
     } else {
-	doclength = l->get_doclength();
-	LOGLINE(MATCH, "OrPostList::get_doclength() [left docid=" << lhead <<
-	       	       "] = " << doclength);
+	stats = l->get_stats();
+	LOGLINE(MATCH, "OrPostList::get_stats() [left docid=" << lhead <<
+	       	       "] = " << stats->docid);
     }
 
-    RETURN(doclength);
-}
-
-Xapian::termcount
-OrPostList::get_nouniqterm() const
-{
-    LOGCALL(MATCH, Xapian::termcount, "OrPostList::get_nouniqterm", NO_ARGS);
-    Xapian::termcount nouniqterm;
-
-    Assert(lhead != 0 && rhead != 0); // check we've started
-    if (lhead > rhead) {
-	nouniqterm = r->get_nouniqterm();
-	LOGLINE(MATCH, "OrPostList::get_nouniqterm() [right docid=" << rhead <<
-		       "] = " << nouniqterm);
-    } else {
-	nouniqterm = l->get_nouniqterm();
-	LOGLINE(MATCH, "OrPostList::get_nouniqterm() [left docid=" << lhead <<
-	       	       "] = " << nouniqterm);
-    }
-
-    RETURN(nouniqterm);
+    RETURN(stats);
 }
 
 

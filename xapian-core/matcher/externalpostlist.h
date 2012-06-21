@@ -70,9 +70,8 @@ class ExternalPostList : public PostList {
 
     double get_weight() const;
 
-    Xapian::termcount get_doclength() const;
 	
-	Xapian::termcount get_nouniqterm() const;
+	PerDocumentStats* get_stats() const;
 
     double recalc_maxweight();
 

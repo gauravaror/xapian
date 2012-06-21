@@ -78,6 +78,24 @@ is_doclenchunk_key(const string & key)
     return key.size() > 1 && key[0] == '\0' && key[1] == '\xe0';
 }
 
+static inline bool
+is_nouniqtermchunk_key(const string & key)
+{
+    return key.size() > 1 && key[0] == '\0' && key[1] == '\xe8';
+}
+
+static inline bool
+is_bigramdoclenchunk_key(const string & key)
+{
+    return key.size() > 1 && key[0] == '\0' && key[1] == '\xf0';
+}
+
+static inline bool
+is_nouniqbigramchunk_key(const string & key)
+{
+    return key.size() > 1 && key[0] == '\0' && key[1] == '\xf8';
+}
+	
 class PostlistCursor : private BrassCursor {
     Xapian::docid offset;
 
@@ -132,7 +150,7 @@ class PostlistCursor : private BrassCursor {
 	// plus optionally: pack_uint_preserving_sort(key, did)
 	const char * d = key.data();
 	const char * e = d + key.size();
-	if (is_doclenchunk_key(key)) {
+	if (is_doclenchunk_key(key)||is_nouniqtermchunk_key(key)||is_bigramdoclenchunk_key(key)||is_nouniqbigramchunk_key(key)) {
 	    d += 2;
 	} else {
 	    string tname;
@@ -156,7 +174,7 @@ class PostlistCursor : private BrassCursor {
 	    size_t tmp = d - key.data();
 	    if (!unpack_uint_preserving_sort(&d, e, &firstdid) || d != e)
 		throw Xapian::DatabaseCorruptError("Bad postlist key");
-	    if (is_doclenchunk_key(key)) {
+		if (is_doclenchunk_key(key)||is_nouniqtermchunk_key(key)||is_bigramdoclenchunk_key(key)||is_nouniqbigramchunk_key(key)) {
 		key.erase(tmp);
 	    } else {
 		key.erase(tmp - 1);
@@ -421,7 +439,8 @@ merge_postlists(Xapian::Compactor & compactor,
 		out->add(last_key, first_tag);
 
 		string term;
-		if (!is_doclenchunk_key(last_key)) {
+	
+		if (!is_doclenchunk_key(last_key)&&!is_nouniqtermchunk_key(last_key) && !is_bigramdoclenchunk_key(last_key) && !is_nouniqbigramchunk_key(last_key)) {
 		    const char * p = last_key.data();
 		    const char * end = p + last_key.size();
 		    if (!unpack_string_preserving_sort(&p, end, term) || p != end)

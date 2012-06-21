@@ -21,7 +21,7 @@
 #include <config.h>
 
 #include <string>
-
+#include <stdlib.h>
 #include "contiguousalldocspostlist.h"
 
 #include "omassert.h"
@@ -43,20 +43,13 @@ ContiguousAllDocsPostList::get_docid() const
     return did;
 }
 
-Xapian::termcount
-ContiguousAllDocsPostList::get_doclength() const
+PerDocumentStats *
+ContiguousAllDocsPostList::get_stats() const
 {
     Assert(did != 0);
     Assert(!at_end());
-    return db->get_doclength(did);
-}
-
-Xapian::termcount
-ContiguousAllDocsPostList::get_nouniqterm() const
-{
-    Assert(did != 0);
-    Assert(!at_end());
-    return db->get_nouniqterm(did);
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	return stats;
 }
 
 Xapian::termcount

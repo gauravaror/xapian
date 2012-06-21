@@ -80,13 +80,10 @@ class MergePostList : public PostList {
 
 	string get_description() const;
 
-	/** Return the document length of the document the current term
+	/** Return the Per Document Stats of the document the current term
 	 *  comes from.
 	 */
-	virtual Xapian::termcount get_doclength() const;
-	
-	/** Return the no of uniqterm in the document */
-	virtual Xapian::termcount get_nouniqterm() const;
+	virtual PerDocumentStats* get_stats() const;
 
 	Xapian::termcount count_matching_subqs() const;
 

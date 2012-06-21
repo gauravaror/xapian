@@ -68,7 +68,7 @@ BrassPostListTable::get_doclength(Xapian::docid did,
 	doclen_pl.reset(new BrassPostList(db, string(), false));
     }
     if (!doclen_pl->jump_to(did))
-	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found in DocumentLength");
     return doclen_pl->get_wdf();
 }
 
@@ -81,7 +81,7 @@ BrassPostListTable::get_nouniqterms(Xapian::docid did,
 	nouniqterms_pl.reset(new BrassPostList(db, string("nouniqterms"), false));
     }
     if (!nouniqterms_pl->jump_to(did))
-	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found in Number of Unique Terms");
     return nouniqterms_pl->get_wdf();
 }
 
@@ -94,7 +94,7 @@ BrassPostListTable::get_bigramdoclength(Xapian::docid did,
 	bigramdoclen_pl.reset(new BrassPostList(db, string("bigramdoclen"), false));
     }
     if (!bigramdoclen_pl->jump_to(did))
-	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found in Bigram Document Length");
     return bigramdoclen_pl->get_wdf();
 }
 
@@ -107,7 +107,7 @@ BrassPostListTable::get_nouniqbigrams(Xapian::docid did,
 	nouniqbigrams_pl.reset(new BrassPostList(db, string("nouniqbigrams"), false));
     }
     if (!nouniqbigrams_pl->jump_to(did))
-	throw Xapian::DocNotFoundError("Document " + str(did) + " not found");
+	throw Xapian::DocNotFoundError("Document " + str(did) + " not found in Bigram unique Terms");
     return nouniqbigrams_pl->get_wdf();
 }
 
@@ -753,22 +753,19 @@ BrassPostList::~BrassPostList()
     LOGCALL_DTOR(DB, "BrassPostList");
 }
 
-Xapian::termcount
-BrassPostList::get_doclength() const
+PerDocumentStats*
+BrassPostList::get_stats() const
 {
-    LOGCALL(DB, Xapian::termcount, "BrassPostList::get_doclength", NO_ARGS);
+    LOGCALL(DB, PerDocumentStats *, "BrassPostList::get_stats", NO_ARGS);
     Assert(have_started);
     Assert(this_db.get());
-    RETURN(this_db->get_doclength(did));
-}
-
-Xapian::termcount
-BrassPostList::get_nouniqterm() const
-{
-    LOGCALL(DB, Xapian::termcount, "BrassPostList::get_nouniqterm", NO_ARGS);
-    Assert(have_started);
-    Assert(this_db.get());
-    RETURN(this_db->get_nouniqterm(did));
+	PerDocumentStats * stats = (PerDocumentStats *)malloc(sizeof(PerDocumentStats));
+	stats->nouniqterms = this_db->get_nouniqterm(did);
+	stats->doclength = this_db->get_doclength(did);
+	stats->nouniqbigrams = this_db->get_nouniqbigram(did);
+	stats->bigramdoclength = this_db->get_bigramdoclength(did);
+//	stats->did = did;
+    RETURN(stats);
 }
 
 bool

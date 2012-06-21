@@ -70,10 +70,7 @@ class MSetPostList : public PostList {
 
     const string * get_collapse_key() const;
 
-    /// Not implemented for MSetPostList.
-    Xapian::termcount get_doclength() const;
-	
-	Xapian::termcount get_nouniqterm() const;
+	PerDocumentStats * get_stats() const;
 
     double recalc_maxweight();
 
