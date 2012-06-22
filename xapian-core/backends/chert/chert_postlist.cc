@@ -68,7 +68,7 @@ ChertPostListTable::get_doclength(Xapian::docid did,
 	doclen_pl.reset(new ChertPostList(db, string(), false));
     }
     if (!doclen_pl->jump_to(did))
-	throw Xapian::DocNotFoundError("Document " + str(did) + " not found in Chert Post List Table");
+	throw Xapian::DocNotFoundError("This docid is not available in database"+str(did));
     return doclen_pl->get_wdf();
 }
 

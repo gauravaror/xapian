@@ -35,7 +35,7 @@
 #include "autoptr.h"
 #include <map>
 #include <string>
-
+#include "str.h"
 using namespace std;
 
 class ChertCursor;
@@ -252,7 +252,12 @@ class ChertPostList : public LeafPostList {
 	/** Returns the Within Document Frequency of the term in the current
 	 *  document.
 	 */
-	Xapian::termcount get_wdf() const { Assert(have_started); return wdf; }
+	Xapian::termcount get_wdf() const { 
+
+Assert(have_started); 
+
+return wdf; 
+	}
 
 	/** Get the list of positions of the term in the current document.
 	 */

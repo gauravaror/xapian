@@ -70,12 +70,15 @@ ChertAllDocsModifiedPostList::get_stats() const
     LOGCALL(DB, PerDocumentStats *, "ChertAllDocsModifiedPostList::get_stats", NO_ARGS);
     // Override with value from doclens_it (which cannot be -1, because that
     // would have been skipped past).
-/*
+
     if (doclens_it != doclens.end() &&
 	(ChertAllDocsPostList::at_end() ||
 	 doclens_it->first <= ChertAllDocsPostList::get_docid()))
-	RETURN(doclens_it->second);*/
-
+	{
+	PerDocumentStats * stats = (PerDocumentStats *) malloc (sizeof(PerDocumentStats));
+	stats->doclength = doclens_it->second;
+	RETURN(stats);
+	}
     RETURN(ChertAllDocsPostList::get_stats());
 }
 

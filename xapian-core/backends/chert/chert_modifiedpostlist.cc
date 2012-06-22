@@ -64,6 +64,11 @@ PerDocumentStats *
 ChertModifiedPostList::get_stats() const
 {
     LOGCALL(DB, PerDocumentStats *, "ChertModifiedPostList::get_stats", NO_ARGS);
+    if (it != mods.end() && (ChertPostList::at_end() || it->first <= ChertPostList::get_docid()))  {
+		PerDocumentStats * stats = (PerDocumentStats *) malloc(sizeof(PerDocumentStats));
+		stats->doclength = this_db->get_doclength(it->first);
+		RETURN(stats);
+	}
     RETURN(ChertPostList::get_stats());
 }
 
