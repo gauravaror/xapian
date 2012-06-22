@@ -1241,7 +1241,7 @@ BrassWritableDatabase::add_document_(Xapian::docid did,
 
 	// Set the termlist.
 	if (termlist_table.is_open()) {
-	    termlist_table.set_termlist(did, document, new_doclen);
+	    termlist_table.set_termlist(did, document, (new_doclen+new_bigramdoclen));
 	}
 
 	// Set the new document length
@@ -1394,6 +1394,10 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 	    brass_doclen_t old_doclen = termlist.get_doclength();
 	    stats.delete_document(old_doclen);
 	    brass_doclen_t new_doclen = old_doclen;
+		brass_doclen_t new_unigramdoclen = 0;
+	    brass_doclen_t new_bigramdoclen = 0;
+	    brass_doclen_t new_nouniqterm = 0;
+	    brass_doclen_t new_nouniqbigram = 0;
 
 	    string old_tname, new_tname;
 
@@ -1426,6 +1430,17 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 		    termcount new_wdf = term.get_wdf();
 		    new_doclen += new_wdf;
 		    stats.check_wdf(new_wdf);
+			if(new_tname.find(" ") == string::npos)
+			{
+				new_unigramdoclen += new_wdf;
+				new_nouniqterm++;
+			}
+			else
+			{
+				new_bigramdoclen += new_wdf;
+				new_nouniqbigram++;
+			}
+
 		    if (new_tname.size() > MAX_SAFE_TERM_LENGTH)
 			throw Xapian::InvalidArgumentError("Term too long (> "STRINGIZE(MAX_SAFE_TERM_LENGTH)"): " + new_tname);
 		    inverter.add_posting(did, new_tname, new_wdf);
@@ -1443,6 +1458,16 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 		    termcount old_wdf = termlist.get_wdf();
 		    termcount new_wdf = term.get_wdf();
 
+			if(new_tname.find(" ") == string::npos)
+			{
+				new_unigramdoclen += new_wdf;
+				new_nouniqterm++;
+			}
+			else
+			{
+				new_bigramdoclen += new_wdf;
+				new_nouniqbigram++;
+			}
 		    // Check the stats even if wdf hasn't changed, because if
 		    // this is the only document, the stats will have been
 		    // zeroed.
@@ -1475,13 +1500,14 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 	    if (termlist_table.is_open())
 		termlist_table.set_termlist(did, document, new_doclen);
 
-	    // Set the new document length
-	    if (new_doclen != old_doclen)
-		inverter.set_doclength(did, new_doclen, false);
-		inverter.set_nouniqterms(did, new_doclen, false);
-		inverter.set_bigramdoclength(did, new_doclen, false);
-		inverter.set_nouniqbigrams(did, new_doclen, false);
+	    // Set the per document statistics for the term.
+	    if (new_doclen != old_doclen) {
+		inverter.set_doclength(did, new_unigramdoclen, false);
+		inverter.set_nouniqterms(did, new_nouniqterm, false);
+		inverter.set_bigramdoclength(did, new_bigramdoclen, false);
+		inverter.set_nouniqbigrams(did, new_nouniqbigram, false);
 	    stats.add_document(new_doclen);
+	    }
 	}
 
 	if (!modifying || document.internal->data_modified()) {
