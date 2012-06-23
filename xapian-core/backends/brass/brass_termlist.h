@@ -88,7 +88,10 @@ class BrassTermList : public TermList {
 		  Xapian::docid did_);
 
     /** Return the length of this document.
-     *
+ 	 *	Length Returned by the TermList Document Length
+     * is sum of wdf for unigram and bigrams.(Since Bigrams are treated 
+	 * as just another terms.
+	 * 
      *  This is a non-virtual method, used by BrassDatabase.
      */
     brass_doclen_t get_doclength() const;

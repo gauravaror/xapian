@@ -1239,17 +1239,22 @@ BrassWritableDatabase::add_document_(Xapian::docid did,
 	}
 	LOGLINE(DB, "Calculated doclen for new document " << did << " as " << new_doclen);
 
-	// Set the termlist.
+	// Set the termlist.Document Length stored in TermList table is sum of wdf of both unigrams and bigrams.
 	if (termlist_table.is_open()) {
 	    termlist_table.set_termlist(did, document, (new_doclen+new_bigramdoclen));
 	}
 
-	// Set the new document length
+	// Set the Per Document Statistics.
+	//Setting Uni-gram Document Length in the Posting list inverter object.
 	inverter.set_doclength(did, new_doclen, true);
+	// Number of Unique Uni-grams is added in Posting list.
 	inverter.set_nouniqterms(did, new_nouniqterms, true);
+	//Setting Bi-gram Document Length in the Posting List inverter object.
 	inverter.set_bigramdoclength(did, new_bigramdoclen, true);
+	// Number of Unique Bi-gram is added in the Posting List.
 	inverter.set_nouniqbigrams(did, new_nouniqbigrams, true);
-	stats.add_document(new_doclen);
+	// Addding total document length Unigram+Bigram(which is stored in Termlist to the stats object.
+	stats.add_document(new_doclen+new_bigramdoclen);
     } catch (...) {
 	// If an error occurs while adding a document, or doing any other
 	// transaction, the modifications so far must be cleared before
@@ -1430,13 +1435,15 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 		    termcount new_wdf = term.get_wdf();
 		    new_doclen += new_wdf;
 		    stats.check_wdf(new_wdf);
-			if(new_tname.find(" ") == string::npos)
+			if(new_tname.find(" ") == string::npos) //Check for Term is Bi-gram or Uni-gram.
 			{
+				//Term is a Uni-gram.
 				new_unigramdoclen += new_wdf;
 				new_nouniqterm++;
 			}
 			else
 			{
+				//Term is Bigram.
 				new_bigramdoclen += new_wdf;
 				new_nouniqbigram++;
 			}
@@ -1458,13 +1465,15 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 		    termcount old_wdf = termlist.get_wdf();
 		    termcount new_wdf = term.get_wdf();
 
-			if(new_tname.find(" ") == string::npos)
+			if(new_tname.find(" ") == string::npos) //Check for whether Term is Unigram or Bigram.
 			{
+				//Term is Unigram.
 				new_unigramdoclen += new_wdf;
 				new_nouniqterm++;
 			}
 			else
 			{
+				//Term is Bi-gram.
 				new_bigramdoclen += new_wdf;
 				new_nouniqbigram++;
 			}
@@ -1494,20 +1503,18 @@ BrassWritableDatabase::replace_document(Xapian::docid did,
 		    termlist.next();
 		}
 	    }
-	    LOGLINE(DB, "Calculated doclen for replacement document " << did << " as " << new_doclen);
+	    LOGLINE(DB, "Calculated doclen for replacement document(Unigram+Bigram Length) " << did << " as " << new_doclen);
 
-	    // Set the termlist.
+	    // Set the termlist.Document Length Set is Unigram +Bigram Document Length.
 	    if (termlist_table.is_open())
 		termlist_table.set_termlist(did, document, new_doclen);
 
 	    // Set the per document statistics for the term.
-	    if (new_doclen != old_doclen) {
 		inverter.set_doclength(did, new_unigramdoclen, false);
 		inverter.set_nouniqterms(did, new_nouniqterm, false);
 		inverter.set_bigramdoclength(did, new_bigramdoclen, false);
 		inverter.set_nouniqbigrams(did, new_nouniqbigram, false);
 	    stats.add_document(new_doclen);
-	    }
 	}
 
 	if (!modifying || document.internal->data_modified()) {
