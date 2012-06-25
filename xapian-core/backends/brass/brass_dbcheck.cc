@@ -140,8 +140,8 @@ check_brass_table(const char * tablename, string filename, int opts,
 		++errors;
 	    }
 
-	    if (key.size() >= 2 && key[0] == '\0' && key[1] == '\xe0') {
-		// doclen chunk
+	    if (key.size() >= 2 && key[0] == '\0' && ( (key[1] == '\xe0') || (key[1] == '\xe8') || (key[1] == '\xf0') || (key[1] == '\xf8') )) {
+		// one of per document stats chunk to be checked.
 		const char * pos, * end;
 		Xapian::docid did = 1;
 		if (key.size() > 2) {
@@ -175,7 +175,7 @@ check_brass_table(const char * tablename, string filename, int opts,
 		    ++did;
 		    if (did <= lastdid) {
 			out << "First did in this chunk is <= last in "
-			    "prev chunk" << endl;
+			    "prev chunk" << did << "lastdid: "<<lastdid << endl;
 			++errors;
 		    }
 		}
@@ -213,17 +213,22 @@ check_brass_table(const char * tablename, string filename, int opts,
 		    if (!doclens.empty()) {
 			// In brass, a document without terms doesn't get a
 			// termlist entry.
-			Xapian::termcount termlist_doclen = 0;
+			/*Xapian::termcount termlist_doclen = 0;
 			if (did < doclens.size())
-			    termlist_doclen = doclens[did];
-
+			    termlist_doclen = doclens[did];*/
+			/**  FIXME: Since as of we are using storing now diffrent length in both term
+			  *   termlist and postlist table.Currently sum of wdf of both bigram and unigram 
+			  *   are stored in termlist table whereas unigram and bigram length stored
+			  *   seprately in postlist table as statistics so this test seems redundant.
+				*/
+			/*
 			if (doclen != termlist_doclen) {
 			    out << "document id " << did << ": length "
 				 << doclen << " doesn't match "
 				 << termlist_doclen << " in the termlist table"
 				 << endl;
 			    ++errors;
-			}
+			}*/
 		    }
 
 		    if (pos == end) break;
@@ -253,7 +258,7 @@ check_brass_table(const char * tablename, string filename, int opts,
 			++errors;
 		    }
 		}
-
+		lastdid = 0;
 		continue;
 	    }
 

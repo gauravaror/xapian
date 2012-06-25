@@ -179,7 +179,9 @@ class PostlistCursor : private BrassCursor {
 	    } else {
 		key.erase(tmp - 1);
 	    }
+		
 	}
+	
 	firstdid += offset;
 	return true;
     }
@@ -446,7 +448,17 @@ merge_postlists(Xapian::Compactor & compactor,
 		    if (!unpack_string_preserving_sort(&p, end, term) || p != end)
 			throw Xapian::DatabaseCorruptError("Bad postlist chunk key");
 		}
-
+			
+		if(is_nouniqtermchunk_key(last_key)) {
+			term = "nouniqterms";
+		}
+		else if(is_bigramdoclenchunk_key(last_key)) {
+			term = "bigramdoclen";
+		}
+		else if(is_nouniqbigramchunk_key(last_key)) {
+			term = "nouniqbigrams";
+		}
+		
 		vector<pair<Xapian::docid, string> >::const_iterator i;
 		i = tags.begin();
 		while (++i != tags.end()) {

@@ -1349,8 +1349,9 @@ DEFINE_TESTCASE(postlist6, backend) {
     Xapian::PostingIterator i = db.postlist_begin("this");
     TEST(i != db.postlist_end("this"));
     while (i != db.postlist_end("this")) {
-	TEST_EQUAL(i.get_doclength(), db.get_doclength(*i));
-	TEST_REL(i.get_wdf(),<=,i.get_doclength());
+	PerDocumentStats * stats = i.get_stats();
+	TEST_EQUAL(stats->doclength, db.get_doclength(*i));
+	TEST_REL(i.get_wdf(),<=,stats->doclength);
 	++i;
     }
     return true;
