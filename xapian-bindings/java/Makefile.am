@@ -49,6 +49,7 @@ XAPIAN_SWIG_JAVA_SRCS=\
 	org/xapian/MSetIterator.java\
 	org/xapian/MultiValueKeyMaker.java\
 	org/xapian/NumberValueRangeProcessor.java\
+	org/xapian/PerDocumentStats.java\
 	org/xapian/PositionIterator.java\
 	org/xapian/PostingIterator.java\
 	org/xapian/PostingSource.java\
@@ -56,6 +57,7 @@ XAPIAN_SWIG_JAVA_SRCS=\
 	org/xapian/QueryParser.java\
 	org/xapian/Registry.java\
 	org/xapian/Remote.java\
+	org/xapian/SWIGTYPE_p_Xapian__BigramIterator.java\
 	org/xapian/RSet.java\
 	org/xapian/SimpleStopper.java\
 	org/xapian/Stem.java\
@@ -66,6 +68,7 @@ XAPIAN_SWIG_JAVA_SRCS=\
 	org/xapian/TermGenerator.java\
 	org/xapian/TermIterator.java\
 	org/xapian/TradWeight.java\
+	org/xapian/UnigramLMWeight.java\
 	org/xapian/ValueCountMatchSpy.java\
 	org/xapian/ValueIterator.java\
 	org/xapian/ValueMapPostingSource.java\

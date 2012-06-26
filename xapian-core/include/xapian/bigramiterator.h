@@ -35,7 +35,7 @@ namespace Xapian {
 /// Class for iterating over a list of bigrams.
 class XAPIAN_VISIBILITY_DEFAULT BigramIterator {
   public:
-    /// Class representing the Bigramterator internals.
+    /// Class representing the Bigramterator internal.
     class Internal;
     /// @private @internal Reference counted internals.
     Internal * internal;

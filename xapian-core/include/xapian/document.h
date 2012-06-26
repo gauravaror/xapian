@@ -228,7 +228,7 @@ class XAPIAN_VISIBILITY_DEFAULT Document {
 	TermIterator termlist_begin() const;
 	
 	/// Iterator for the bigrams in this document.
-	BigramIterator bigramlist_begin() const;
+	Xapian::BigramIterator bigramlist_begin() const;
 
 	/// Equivalent end iterator for termlist_begin().
 	TermIterator XAPIAN_NOTHROW(termlist_end() const) {
@@ -236,8 +236,8 @@ class XAPIAN_VISIBILITY_DEFAULT Document {
 	}
 	
 	/// Equivalent end iterator for bigramlist_begin().
-	BigramIterator XAPIAN_NOTHROW(bigramlist_end() const) {
-	    return BigramIterator();
+	Xapian::BigramIterator XAPIAN_NOTHROW(bigramlist_end() const) {
+	    return Xapian::BigramIterator();
 	}
 
 	/// Count the values in this document.

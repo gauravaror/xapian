@@ -256,6 +256,28 @@ Database::bigramlist_begin(Xapian::docid did) const
     RETURN(BigramIterator(tl));
 }
 
+BigramIterator
+Database::allbigrams_begin() const
+{
+    return allbigrams_begin(string());
+}
+
+BigramIterator
+Database::allbigrams_begin(const std::string & prefix) const
+{
+    LOGCALL(API, BigramIterator, "Database::allbigrams_begin", NO_ARGS);
+    BigramList * tl;
+    if (rare(internal.size() == 0)) {
+	tl = NULL;
+    } else if (internal.size() == 1) {
+	tl = internal[0]->open_allbigrams(prefix);
+    } else {
+	//tl = new MultiAllTermList(internal, prefix);
+	tl = internal[0]->open_allbigrams(prefix);
+    }
+    RETURN(BigramIterator(tl));
+}
+
 TermIterator
 Database::allterms_begin() const
 {

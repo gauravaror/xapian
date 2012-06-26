@@ -230,7 +230,7 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	 *
 	 *  @param did	The document id of the document to iterate bigrams for.
 	 */
-	BigramIterator bigramlist_begin(Xapian::docid did) const;
+	Xapian::BigramIterator bigramlist_begin(Xapian::docid did) const;
 
 	/** Corresponding end iterator to termlist_begin().
 	 */
@@ -240,7 +240,7 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	
 	/** Corresponding end iterator to bigramlist_begin().
 	 */
-	BigramIterator XAPIAN_NOTHROW(bigramlist_end(Xapian::docid) const) {
+	Xapian::BigramIterator XAPIAN_NOTHROW(bigramlist_end(Xapian::docid) const) {
 	    return BigramIterator();
 	}
 
@@ -265,7 +265,7 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	
 	/** An iterator which runs across all bigrams in the database.
 	 */
-	TermIterator allbigrams_begin() const;
+	Xapian::BigramIterator allbigrams_begin() const;
 
 	/** Corresponding end iterator to allterms_begin().
 	 */
@@ -275,8 +275,8 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	
 	/** Corresponding end iterator to allbigrams_begin().
 	 */
-	TermIterator XAPIAN_NOTHROW(allbigrams_end() const) {
-	    return TermIterator();
+	Xapian::BigramIterator XAPIAN_NOTHROW(allbigrams_end() const) {
+	    return Xapian::BigramIterator();
 	}
 
 	/** An iterator which runs across all terms with a given prefix.
@@ -303,7 +303,7 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	 *
 	 *  @param prefix The prefix to restrict the returned bigrams to.
 	 */
-	TermIterator allbigrams_begin(const std::string & prefix) const;
+	Xapian::BigramIterator allbigrams_begin(const std::string & prefix) const;
 
 	/** Corresponding end iterator to allterms_begin(prefix).
 	 */
@@ -313,8 +313,8 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 
 	/** Corresponding end iterator to allbigrams_begin(prefix).
 	 */
-	TermIterator XAPIAN_NOTHROW(allbigrams_end(const std::string &) const) {
-	    return TermIterator();
+	Xapian::BigramIterator XAPIAN_NOTHROW(allbigrams_end(const std::string &) const) {
+	    return Xapian::BigramIterator();
 	}
 
 	/// Get the number of documents in the database.

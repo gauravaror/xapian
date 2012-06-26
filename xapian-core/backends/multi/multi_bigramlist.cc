@@ -1,6 +1,6 @@
 /* multi_termlist.cc: C++ class definition for multiple database access
  *
-
+ *
  * Copyright 2012 Gaurav Arora
  *
  * This program is free software; you can redistribute it and/or

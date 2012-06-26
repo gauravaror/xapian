@@ -183,11 +183,11 @@ Document::termlist_begin() const
     RETURN(TermIterator(internal->open_term_list()));
 }
 
-BigramIterator
+Xapian::BigramIterator
 Document::bigramlist_begin() const
 {
     LOGCALL(API, BigramIterator, "Document::bigramlist_begin", NO_ARGS);
-    RETURN(BigramIterator(internal->open_bigram_list()));
+    RETURN(Xapian::BigramIterator(internal->open_bigram_list()));
 }
 
 Xapian::termcount
