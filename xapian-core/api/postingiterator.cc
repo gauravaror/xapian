@@ -115,6 +115,17 @@ PostingIterator::get_wdf() const
     RETURN(internal->get_wdf());
 }
 
+Xapian::termcount
+PostingIterator::get_doclength() const
+{
+	LOGCALL(API,Xapian::termcount,"PostingIterator::get_doclength",NO_ARGS);
+	Assert(internal);
+	PerDocumentStats * stat = internal->get_stats();
+	Xapian::termcount doclen = stat->doclength;
+	free(stat);
+	RETURN(doclen);
+}
+
 PerDocumentStats*
 PostingIterator::get_stats() const
 {

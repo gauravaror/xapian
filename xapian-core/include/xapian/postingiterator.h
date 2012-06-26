@@ -84,6 +84,8 @@ class XAPIAN_VISIBILITY_DEFAULT PostingIterator {
     /// Return the wdf for the document at the current position.
     Xapian::termcount get_wdf() const;
 
+	/// Return the Document Length of the current document.
+	Xapian::termcount XAPIAN_DEPRECATED(get_doclength() const);
 
 	/// Return the Per document stats of the current document.
 	PerDocumentStats* get_stats() const;
