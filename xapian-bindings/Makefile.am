@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-# `make QUIET=' overrides `./configure --enable-quiet'.
-# `make QUIET=y' overrides `./configure' without `--enable-quiet'.
+# 'make QUIET=' overrides './configure --enable-quiet'.
+# 'make QUIET=y' overrides './configure' without '--enable-quiet'.
 LIBTOOL = @LIBTOOL@ $(QUIET:y=--quiet)
 
 if MAINTAINER_MODE
@@ -12,7 +12,7 @@ endif
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = xapian.i xapian-head.i xapian-headers.i generic/except.i \
+EXTRA_DIST = fake_dbfactory.i xapian-head.i xapian-headers.i generic/except.i \
     generic/generate-generic-exceptions \
     xapian-bindings.spec skiptest \
     HACKING

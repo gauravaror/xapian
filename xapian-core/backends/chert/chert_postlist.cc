@@ -753,7 +753,7 @@ ChertPostList::next_chunk()
     cursor->next();
     if (cursor->after_end()) {
 	is_at_end = true;
-	throw Xapian::DatabaseCorruptError("Unexpected end of posting list for `" +
+	throw Xapian::DatabaseCorruptError("Unexpected end of posting list for '" +
 				     term + "'");
     }
     const char * keypos = cursor->current_key.data();
@@ -761,7 +761,7 @@ ChertPostList::next_chunk()
     // Check we're still in same postlist
     if (!check_tname_in_key_lite(&keypos, keyend, term)) {
 	is_at_end = true;
-	throw Xapian::DatabaseCorruptError("Unexpected end of posting list for `" +
+	throw Xapian::DatabaseCorruptError("Unexpected end of posting list for '" +
 				     term + "'");
     }
 
