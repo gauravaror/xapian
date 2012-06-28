@@ -1417,7 +1417,12 @@ TermGroup::as_group(State *state) const
 reprocess:
     Query::op default_op = state->default_op();
     vector<Query> subqs;
-    subqs.reserve(terms.size());
+	vector<Term> bigrams;
+	vector<Term*>::const_iterator ii;
+	Term * prev = (Term *) malloc(sizeof(Term));
+	Term * now = (Term *) malloc(sizeof(Term));
+	int termbegin =0;
+    subqs.reserve(2*terms.size());
     if (state->flags & QueryParser::FLAG_AUTO_MULTIWORD_SYNONYMS) {
 	// Check for multi-word synonyms.
 	Database db = state->get_database();
@@ -1502,6 +1507,7 @@ reprocess:
 	}
     } else {
 	vector<Term*>::const_iterator i;
+	vector<Term>::const_iterator b;
 	for (i = terms.begin(); i != terms.end(); ++i) {
 	    if (stopper && (*stopper)((*i)->name)) {
 		state->add_to_stoplist(*i);
@@ -1510,6 +1516,19 @@ reprocess:
 		    (*i)->need_positions();
 		subqs.push_back((*i)->get_query_with_auto_synonyms());
 	    }
+	}
+	for (ii = terms.begin(); ii != terms.end(); ++ii) {
+		now = (*ii);
+		if(termbegin != 0) {
+			Term bigramterm = Term(prev->name+" "+ now->name,now->prefix_info);	
+			if (default_op_is_positional)
+		    	(bigramterm).need_positions();
+			subqs.push_back(bigramterm.get_query_with_auto_synonyms());
+		}
+		else {
+		termbegin = 1;
+		}
+		prev = (*ii);
 	}
     }
 
