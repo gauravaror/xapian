@@ -1538,8 +1538,8 @@ reprocess:
 	    begin = i;
 	}
     } else {
+
 	vector<Term*>::const_iterator i;
-	vector<Term>::const_iterator b;
 
 	for (i = terms.begin(); i != terms.end(); ++i) {
 	    if (stopper && (*stopper)((*i)->name)) {
@@ -1548,6 +1548,25 @@ reprocess:
 		if (default_op_is_positional)
 		    (*i)->need_positions();
 		subqs.push_back((*i)->get_query_with_auto_synonyms());
+	    }
+	    }
+    }
+
+    if (!empty_ok && stopper && subqs.empty() &&
+	stoplist_size < state->stoplist_size()) {
+	// This group is all stopwords, so roll-back, disable stopper
+	// temporarily, and reprocess this group.
+	state->stoplist_resize(stoplist_size);
+	stopper = NULL;
+	goto reprocess;
+    }
+
+   // Adding Bigrams to the Query of Group type common for all cases.
+	vector<Term*>::const_iterator i;
+
+	for (i = terms.begin(); i != terms.end(); ++i) {
+	    if (stopper && (*stopper)((*i)->name)) {
+	    } else {
 		if(addbigram) {
 		now = (*i);
 		if(termbegin != 0) {
@@ -1563,16 +1582,6 @@ reprocess:
 	    }
 	    }
 	}
-    }
-
-    if (!empty_ok && stopper && subqs.empty() &&
-	stoplist_size < state->stoplist_size()) {
-	// This group is all stopwords, so roll-back, disable stopper
-	// temporarily, and reprocess this group.
-	state->stoplist_resize(stoplist_size);
-	stopper = NULL;
-	goto reprocess;
-    }
 
     Query * q = NULL;
     if (!subqs.empty()) {
