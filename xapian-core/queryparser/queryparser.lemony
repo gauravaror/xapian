@@ -275,6 +275,10 @@ class State {
     const Stopper * get_stopper() const {
 	return qpi->stopper;
     }
+	
+	bool bigram_enabled() {
+	return qpi->bigramenabled;
+	}	
 
     size_t stoplist_size() const {
 	return qpi->stoplist.size();
@@ -1439,6 +1443,7 @@ Query *
 TermGroup::as_group(State *state) const
 {
     const Xapian::Stopper * stopper = state->get_stopper();
+	bool addbigram = state->bigram_enabled();
     size_t stoplist_size = state->stoplist_size();
     bool default_op_is_positional = is_positional(state->default_op());
 reprocess:
@@ -1535,6 +1540,7 @@ reprocess:
     } else {
 	vector<Term*>::const_iterator i;
 	vector<Term>::const_iterator b;
+
 	for (i = terms.begin(); i != terms.end(); ++i) {
 	    if (stopper && (*stopper)((*i)->name)) {
 		state->add_to_stoplist(*i);
@@ -1542,17 +1548,19 @@ reprocess:
 		if (default_op_is_positional)
 		    (*i)->need_positions();
 		subqs.push_back((*i)->get_query_with_auto_synonyms());
+		if(addbigram) {
 		now = (*i);
 		if(termbegin != 0) {
-			Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
-			if (default_op_is_positional)
-		    	(bigramterm).need_positions();
-			subqs.push_back(bigramterm.get_query_with_auto_synonyms());
+		Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
+		if (default_op_is_positional)
+		   	(bigramterm).need_positions();
+		subqs.push_back(bigramterm.get_query_with_auto_synonyms());
 		}
 		else {
 		termbegin = 1;
 		}
 		prev = (*i);
+	    }
 	    }
 	}
     }

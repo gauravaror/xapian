@@ -62,6 +62,7 @@ class QueryParser::Internal : public Xapian::Internal::intrusive_base {
     friend class ::State;
     Stem stemmer;
     stem_strategy stem_action;
+	bool bigramenabled;
     const Stopper * stopper;
     Query::op default_op;
     const char * errmsg;
@@ -87,7 +88,7 @@ class QueryParser::Internal : public Xapian::Internal::intrusive_base {
 			   bool &was_acronym);
 
   public:
-    Internal() : stem_action(STEM_SOME), stopper(NULL),
+    Internal() : stem_action(STEM_SOME),bigramenabled(false),stopper(NULL),
 	default_op(Query::OP_OR), errmsg(NULL), max_wildcard_expansion(0) { }
 
     Query parse_query(const string & query_string, unsigned int flags, const string & default_prefix);

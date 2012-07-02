@@ -71,6 +71,12 @@ QueryParser::QueryParser() : internal(new QueryParser::Internal) { }
 
 QueryParser::~QueryParser() { }
 
+void 
+QueryParser::set_bigram(bool enablebigram = false)
+{
+	internal->bigramenabled = enablebigram;
+}
+
 void
 QueryParser::set_stemmer(const Xapian::Stem & stemmer)
 {

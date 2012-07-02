@@ -424,7 +424,12 @@ class XAPIAN_VISIBILITY_DEFAULT QueryParser {
 
     /// Destructor.
     ~QueryParser();
-
+	/** Set this true for bigrams.
+	 *  This is used to set bigrams generation in query.
+	 *  If this is set true then only bigrams will be enabled.
+	 */
+	void set_bigram(bool);
+	
     /** Set the stemmer.
      *
      *  This sets the stemming algorithm which will be used by the query
