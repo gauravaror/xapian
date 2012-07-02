@@ -310,7 +310,10 @@ Term::make_term(const string & prefix) const
     	} else {
 			term += bigramterms;
     	}
-		term += " ";
+		if(isbigram == true) {
+			term += " ";
+			isbigram = false;
+		}
 	}
 	}
 	else {
@@ -1539,10 +1542,7 @@ reprocess:
 		if (default_op_is_positional)
 		    (*i)->need_positions();
 		subqs.push_back((*i)->get_query_with_auto_synonyms());
-	    }
-	}
-	for (ii = terms.begin(); ii != terms.end(); ++ii) {
-		now = (*ii);
+		now = (*i);
 		if(termbegin != 0) {
 			Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
 			if (default_op_is_positional)
@@ -1552,7 +1552,8 @@ reprocess:
 		else {
 		termbegin = 1;
 		}
-		prev = (*ii);
+		prev = (*i);
+	    }
 	}
     }
 
