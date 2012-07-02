@@ -41,6 +41,8 @@
 #include <limits>
 #include <list>
 #include <string>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -291,6 +293,27 @@ string
 Term::make_term(const string & prefix) const
 {
     string term;
+	bool isbigram = (name.find(" ") != string::npos);
+	istringstream bigram(name);
+	if (isbigram) {
+		string bigramterms;
+		while(bigram.good()) {
+		bigram >> bigramterms;
+    if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
+		term +=  'Z';
+    	if (!prefix.empty()) {
+			term += prefix;
+			if (prefix_needs_colon(prefix, bigramterms[0])) term += ':';
+    	}
+    	if (stem != QueryParser::STEM_NONE) {
+			term += state->stem_term(bigramterms);
+    	} else {
+			term += bigramterms;
+    	}
+		term += " ";
+	}
+	}
+	else {
     if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
 	term += 'Z';
     if (!prefix.empty()) {
@@ -302,6 +325,7 @@ Term::make_term(const string & prefix) const
     } else {
 	term += name;
     }
+	}
 
     if (!unstemmed.empty())
 	state->add_to_unstem(term, unstemmed);
@@ -1520,7 +1544,7 @@ reprocess:
 	for (ii = terms.begin(); ii != terms.end(); ++ii) {
 		now = (*ii);
 		if(termbegin != 0) {
-			Term bigramterm = Term(prev->name+" "+ now->name,now->prefix_info);	
+			Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
 			if (default_op_is_positional)
 		    	(bigramterm).need_positions();
 			subqs.push_back(bigramterm.get_query_with_auto_synonyms());
