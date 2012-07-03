@@ -186,7 +186,10 @@ class Term {
 	: name(a), unstemmed(b), pos(slot) { }
 
     string make_term(const string & prefix) const;
-
+	
+	State * get_state() {
+	return state;
+	}
     void need_positions() {
 	if (stem == QueryParser::STEM_SOME) stem = QueryParser::STEM_NONE;
     }
@@ -1450,7 +1453,6 @@ reprocess:
     Query::op default_op = state->default_op();
     vector<Query> subqs;
 	vector<Term> bigrams;
-	vector<Term*>::const_iterator ii;
 	Term * prev = (Term *) malloc(sizeof(Term));
 	Term * now = (Term *) malloc(sizeof(Term));
 	int termbegin =0;
@@ -1620,6 +1622,7 @@ class Terms {
     /// Convert to a query using the given operator and window size.
     Query * as_opwindow_query(Query::op op, Xapian::termcount w_delta) const {
 	Query * q = NULL;
+	Term * storeterm = (Term *) malloc(sizeof(Term));
 	size_t n_terms = terms.size();
 	Xapian::termcount w = w_delta + terms.size();
 	if (uniform_prefixes) {
@@ -1631,6 +1634,7 @@ class Terms {
 		    vector<Term *>::const_iterator titer;
 		    for (titer = terms.begin(); titer != terms.end(); ++titer) {
 			Term * t = *titer;
+			storeterm = *titer;
 			subqs.push_back(Query(t->make_term(*piter), 1, t->pos));
 		    }
 		    add_to_query(q, Query::OP_OR,
@@ -1642,11 +1646,44 @@ class Terms {
 	    subqs.reserve(n_terms);
 	    vector<Term *>::const_iterator titer;
 	    for (titer = terms.begin(); titer != terms.end(); ++titer) {
+		storeterm = *titer;
 		subqs.push_back((*titer)->get_query());
 	    }
 	    q = new Query(op, subqs.begin(), subqs.end(), w);
 	}
-
+	
+    vector<Query> bisubqs;
+    bisubqs.reserve(n_terms);
+    State * state = storeterm->get_state();
+    const Xapian::Stopper * stopper = state->get_stopper();
+    bool addbigram = state->bigram_enabled();
+    bool default_op_is_positional = is_positional(state->default_op());
+	vector<Term *>::const_iterator i;
+	Term * prev = (Term *) malloc(sizeof(Term));
+	Term * now = (Term *) malloc(sizeof(Term));
+    int termbegin = 0;
+	for (i = terms.begin(); i != terms.end(); ++i) {
+	    if (stopper && (*stopper)((*i)->name)) {
+	    } else {
+		if(addbigram) {
+		now = (*i);
+		if(termbegin != 0) {
+		Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
+		if (default_op_is_positional)
+		   	(bigramterm).need_positions();
+		bisubqs.push_back(bigramterm.get_query_with_auto_synonyms());
+		}
+		else {
+		termbegin = 1;
+		}
+		prev = (*i);
+	    }
+	    }
+	}
+	if(addbigram) {
+	  add_to_query(q, Query::OP_OR,
+				 Query(Query::OP_OR, bisubqs.begin(), bisubqs.end()));
+	}
 	delete this;
 	return q;
     }
