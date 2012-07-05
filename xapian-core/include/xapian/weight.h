@@ -501,6 +501,159 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
     TradWeight * unserialise(const std::string & s) const;
 
     double get_sumpart(Xapian::termcount wdf,
+		       Xapian::termcount doclen,Xapian::termcount uniqterm) const;
+    double get_sumpart(Xapian::termcount wdf,
+    Xapian::termcount doclen) const;
+    double get_maxpart() const;
+
+    double get_sumextra(Xapian::termcount doclen) const;
+    double get_maxextra() const;
+};
+
+/** Xapian::Weight subclass implementing the Language Model formula.
+ *
+ * This class implements the "Language Model "  Weighting scheme, as
+ * described by the early papers on LM by bruce croft generally
+ * gives better results.
+ *
+ * LM have no parameter as it doenot assume hueristic and work on comparing query with Language
+ * model of the document.
+ */
+class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
+    /// Variable to be used to store collection frequency of the term to be used for 
+    //  calculating the smoothning factor in case the withing document frequency of term is zero.
+    Xapian::termcount collection_freq;
+     
+
+    // variable approximating the approximate number of terms in the collection to be used
+    //  while smoothing for the term in document.
+    Xapian::termcount total_collection_term;
+
+    /*  parameter for selecting type out of following:
+      * Two Stage Smoothing - 1
+      * Dirichlets Smoothing - 2
+      * Absolute Discounting Smoothing - 3
+      * Jelinek Mercer Smoothing -4 */
+    type_smoothing select_smoothing;
+
+    // Parameter for handelling negative value of log,smoothing.
+    double param_log,param_smoothing1,param_smoothing2;
+   
+    LMWeight * clone() const;
+	
+
+    void init(double factor);
+
+  public:
+    /** Construct a LMWeight.
+     *
+     *  @param_log  A non-negative parameter controlling how much to clamp
+     *		   negetive value returned due to log. log is calculated by 
+     *		   multiplying actual weight with parameter .
+	 *         param_log_ = 0.0 means param_log will be
+	 * 		    set document length upper bound (default document length upper bound)
+     *
+     *  @select_smoothing  A parameter of type enum type_smoothing.This 
+	 *		   parameter controls which smoothing type to select and user could select 
+	 *		   smoothing from TWO_STAGE_SMOOTHING,DIRICHLET_SMOOTHING,ABSOLUTE_DISCOUNT_SMOOTHING,
+	 * 		   JELINEK_MERCER_SMOOTHING.(default TWO_STAGE_SMOOTHING)
+     *
+     *  @param_smoothing1  A non-negative parameter for smoothing based on type of smoothing
+	 * 		   selected by user. param_smoothing1 plays diffrent role with diffrent smoothing type.
+	 *		   In JELINEK_MERCER_SMOOTHING plays role of estimation and in DIRICHLET_SMOOTHING 
+	 *         role of query modelling.  (default JELINEK_MERER,ABSOLUTE,TWOSTAGE(0.7),DIRCHLET(2000))
+     *
+     *  @param_smoothing2   A non-negative parameter which is used only when user select 
+	 *			TWO_STAGE_SMOOTHING as parameter for DIRICHLET_SMOOTHING.(default 2000).
+	 */
+   //  LM constructor to select smoothing type and select parameter for log handelling automatically
+
+    LMWeight(type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
+	: select_smoothing(select_smoothing_),param_log(0.0), param_smoothing1(param_smoothing1_), 
+	  param_smoothing2(param_smoothing2_)
+	{
+	
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
+    }
+
+// LM Constructor to specifically mention all parameters for handelling negative log value and smoothing.
+
+    LMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
+	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_), 
+	  param_smoothing2(param_smoothing2_)
+	{
+	
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
+    }
+
+	//LM Constructor to specifically mention parameter for handelling negetive log value 
+	//and select default value for smoothing.
+    LMWeight(double param_log_)
+	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7), 
+	  param_smoothing2(2000.0)
+	{
+	
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
+    }
+     
+	//LM Constructure to use default value for smoothing.
+    LMWeight() 
+	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
+	  param_smoothing2(2000.0)
+	{
+	need_stat(AVERAGE_LENGTH);
+        need_stat(DOC_LENGTH);
+	need_stat(COLLECTION_SIZE);
+	need_stat(RSET_SIZE);
+	need_stat(TERMFREQ);
+	need_stat(RELTERMFREQ);
+	need_stat(DOC_LENGTH_MIN);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
+    }
+
+    std::string name() const;
+
+    std::string serialise() const;
+    LMWeight * unserialise(const std::string & s) const;
+
+    double get_sumpart(Xapian::termcount wdf,
 		       Xapian::termcount doclen) const;
     double get_maxpart() const;
 

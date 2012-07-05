@@ -10,4 +10,5 @@ lib_src +=\
 	weight/boolweight.cc\
 	weight/tradweight.cc\
 	weight/weight.cc\
-	weight/weightinternal.cc
+	weight/weightinternal.cc\
+	weight/lmweight.cc
