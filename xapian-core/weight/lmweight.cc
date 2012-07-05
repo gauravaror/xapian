@@ -1,5 +1,5 @@
-/** @file unigramlmweight.cc
- * @brief Xapian::UnigramLMWeight class - the Unigram Language Modelling formula.
+/** @file lmweight.cc
+ * @brief Xapian::LMWeight class - the Language Modelling formula.
  */
 /* Copyright (C) 2012 Gaurav Arora
  *
@@ -34,12 +34,12 @@ using namespace std;
 
 namespace Xapian {
 
-UnigramLMWeight *
-UnigramLMWeight::clone() const  {
-	return new UnigramLMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2);
+LMWeight *
+LMWeight::clone() const  {
+	return new LMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2);
 }
 void
-UnigramLMWeight::init(double )
+LMWeight::init(double )
 {
     //Storing collection frequency of current term in collection_freq to be accessed while smoothing of weights for the term,for term not present in the document.
     collection_freq = get_collectionfreq();
@@ -59,7 +59,14 @@ UnigramLMWeight::init(double )
 	    * intializing param_log to upperbound of document_length.*/
 
 	if(param_log == 0.0) {
-	param_log = get_doclength_upper_bound();
+		param_log = get_doclength_upper_bound();
+		if(select_smoothing == TWO_STAGE_SMOOTHING) {
+			/* Since we are combining result of two sommothing with factor.
+			 * We multiply with factor < 1.Hence our doc_length_upper_bound.
+			 * will not work in some case so multiplying by 10.
+			 */
+			param_log = param_log*10.0;
+		}
 	}
 
 	/*  *  since the optimal parameter for  Jelinek  mercer smoothing 
@@ -84,13 +91,13 @@ UnigramLMWeight::init(double )
 	}
 }
 string
-UnigramLMWeight::name() const
+LMWeight::name() const
 {
-    return "Xapian::UnigramLMWeight";
+    return "Xapian::LMWeight";
 }
 
 string
-UnigramLMWeight::serialise() const
+LMWeight::serialise() const
 {
     
     string result = serialise_double(param_log);
@@ -101,8 +108,8 @@ UnigramLMWeight::serialise() const
     return result;
 }
 
-UnigramLMWeight *
-UnigramLMWeight::unserialise(const string & s) const
+LMWeight *
+LMWeight::unserialise(const string & s) const
 {
 	const char *ptr =  s.data();
 	const char *end = ptr + s.size();
@@ -111,25 +118,25 @@ UnigramLMWeight::unserialise(const string & s) const
 	double param_smoothing1_ = unserialise_double(&ptr,end);
 	double param_smoothing2_ = unserialise_double(&ptr,end);
 	if(rare(ptr != end))
-	throw Xapian::SerialisationError("Extra data in UnigramLMWeight::unserialise()");
-	return new UnigramLMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
+	throw Xapian::SerialisationError("Extra data in LMWeight::unserialise()");
+	return new LMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
 }
 
 double
-UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
+LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
 {
 	return	get_sumpart(wdf,len,Xapian::termcount(1));
 }
 
 double
-UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount uniqterm) const
+LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount uniqterm) const
 {
     //Withing Document Frequency of the term in document being considered.
     double wdf_double(wdf);
     //Length of the Document in terms of number of terms.
     double len_double(len);
 	double nouniqterm_double(uniqterm);
-    // varioable to store weight contribution of term in the document socring for unigram LM.
+    // varioable to store weight contribution of term in the document socring for LM.
     double weight_collection,weight_document,weight_sum;
 	/* In case the within document frequency of term is zero smoothining
 	*  will be required and should be return instead of returning zero,
@@ -154,7 +161,7 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian
 	}
 
 
-    /* Since unigram LM score is calculated with multiplication,
+    /* Since LM score is calculated with multiplication,
 	* instead of changing the current implementation log trick have been used
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
@@ -165,7 +172,7 @@ UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian
 }
 
 double
-UnigramLMWeight::get_maxpart() const
+LMWeight::get_maxpart() const
 {
  // Sufficiently large bound is being returned ,to optimize the matching process this needs to be fixed and changed to good max bound
 // Need to be fixed 
@@ -174,13 +181,13 @@ UnigramLMWeight::get_maxpart() const
 }
 
 double
-UnigramLMWeight::get_sumextra(Xapian::termcount) const
+LMWeight::get_sumextra(Xapian::termcount) const
 {
     return 0;
 }
 
 double
-UnigramLMWeight::get_maxextra() const
+LMWeight::get_maxextra() const
 {
     return 0;
 }

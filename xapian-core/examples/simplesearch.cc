@@ -50,7 +50,7 @@ try {
     }
 
     // Open the database for searching.
-    Xapian::Database db(Xapian::Chert::open(argv[1]));
+    Xapian::Database db(Xapian::Brass::open(argv[1]));
 
     // Start an enquire session.
     Xapian::Enquire enquire(db);
@@ -69,6 +69,7 @@ try {
     Xapian::QueryParser qp;
     Xapian::Stem stemmer("english");
     qp.set_stemmer(stemmer);
+//	qp.set_bigram(true);
     qp.set_database(db);
     qp.set_stemming_strategy(Xapian::QueryParser::STEM_SOME);
     Xapian::Query query = qp.parse_query(query_string);
@@ -76,7 +77,7 @@ try {
 
     // Find the top 10 results for the query.
     enquire.set_query(query);
-    enquire.set_weighting_scheme(Xapian::UnigramLMWeight(Xapian::Weight::DIRICHLET_SMOOTHING,0,0));
+    enquire.set_weighting_scheme(Xapian::LMWeight());
     Xapian::MSet matches = enquire.get_mset(0, 10);
 
     // Display the results.

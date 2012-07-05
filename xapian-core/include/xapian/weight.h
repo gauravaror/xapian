@@ -544,16 +544,16 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
     double get_maxextra() const;
 };
 
-/** Xapian::Weight subclass implementing the unigram Language Model formula.
+/** Xapian::Weight subclass implementing the Language Model formula.
  *
- * This class implements the "unigram Language Model "  Weighting scheme, as
+ * This class implements the "Language Model "  Weighting scheme, as
  * described by the early papers on LM by bruce croft generally
  * gives better results.
  *
  * LM have no parameter as it doenot assume hueristic and work on comparing query with Language
  * model of the document.
  */
-class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
+class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
     /// Variable to be used to store collection frequency of the term to be used for 
     //  calculating the smoothning factor in case the withing document frequency of term is zero.
     Xapian::termcount collection_freq;
@@ -573,13 +573,13 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
     // Parameter for handelling negative value of log,smoothing.
     double param_log,param_smoothing1,param_smoothing2;
    
-    UnigramLMWeight * clone() const;
+    LMWeight * clone() const;
 	
 
     void init(double factor);
 
   public:
-    /** Construct a UnigramLMWeight.
+    /** Construct a LMWeight.
      *
      *  @param_log  A non-negative parameter controlling how much to clamp
      *		   negetive value returned due to log. log is calculated by 
@@ -600,9 +600,9 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
      *  @param_smoothing2   A non-negative parameter which is used only when user select 
 	 *			TWO_STAGE_SMOOTHING as parameter for DIRICHLET_SMOOTHING.(default 2000).
 	 */
-   // Unigram LM constructor to select smoothing type and select parameter for log handelling automatically
+   //  LM constructor to select smoothing type and select parameter for log handelling automatically
 
-    UnigramLMWeight(type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
+    LMWeight(type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
 	: select_smoothing(select_smoothing_),param_log(0.0), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_)
 	{
@@ -621,9 +621,9 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
 
-// Unigram LM Constructor to specifically mention all parameters for handelling negative log value and smoothing.
+// LM Constructor to specifically mention all parameters for handelling negative log value and smoothing.
 
-    UnigramLMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
+    LMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
 	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_)
 	{
@@ -639,11 +639,12 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
 	need_stat(WDF_MAX);
 	need_stat(WDF);
 	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
     }
 
-	//Unigram LM Constructor to specifically mention parameter for handelling negetive log value 
+	//LM Constructor to specifically mention parameter for handelling negetive log value 
 	//and select default value for smoothing.
-    UnigramLMWeight(double param_log_)
+    LMWeight(double param_log_)
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7), 
 	  param_smoothing2(2000.0)
 	{
@@ -659,10 +660,11 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
 	need_stat(WDF_MAX);
 	need_stat(WDF);
 	need_stat(COLLECTION_FREQ);
+	need_stat(DOC_LENGTH_MAX);
     }
      
-	//Unigram LM Constructure to use default value for smoothing.
-    UnigramLMWeight() 
+	//LM Constructure to use default value for smoothing.
+    LMWeight() 
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
 	  param_smoothing2(2000.0)
 	{
@@ -683,7 +685,7 @@ class XAPIAN_VISIBILITY_DEFAULT UnigramLMWeight : public Weight {
     std::string name() const;
 
     std::string serialise() const;
-    UnigramLMWeight * unserialise(const std::string & s) const;
+    LMWeight * unserialise(const std::string & s) const;
 
     double get_sumpart(Xapian::termcount wdf,
 		       Xapian::termcount doclen) const;
