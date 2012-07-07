@@ -124,6 +124,9 @@ public:
     /// An upper bound on the wdf of this term.
     Xapian::termcount wdf_upper_bound_;
 
+	/// A Boolean for a Term is Bigram or not.
+	bool bigram_;
+
   public:
     class Internal;
 
@@ -349,6 +352,11 @@ public:
     Xapian::termcount get_wdf_upper_bound() const {
 	return wdf_upper_bound_;
     }
+
+	/// Return whether Term is a bigram or not.
+	bool is_bigram() {
+	return bigram_;
+	} 
 };
 
 /** Class implementing a "boolean" weighting scheme.
@@ -562,6 +570,9 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
     // variable approximating the approximate number of terms in the collection to be used
     //  while smoothing for the term in document.
     Xapian::termcount total_collection_term;
+
+	/// Term is bigram or not.
+	bool isbigram;
 
     /*  parameter for selecting type out of following:
       * Two Stage Smoothing - 1

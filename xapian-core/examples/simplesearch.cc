@@ -69,7 +69,7 @@ try {
     Xapian::QueryParser qp;
     Xapian::Stem stemmer("english");
     qp.set_stemmer(stemmer);
-//	qp.set_bigram(true);
+	qp.set_bigram(true);
     qp.set_database(db);
     qp.set_stemming_strategy(Xapian::QueryParser::STEM_SOME);
     Xapian::Query query = qp.parse_query(query_string);
@@ -77,7 +77,7 @@ try {
 
     // Find the top 10 results for the query.
     enquire.set_query(query);
-    enquire.set_weighting_scheme(Xapian::LMWeight());
+    enquire.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING,0,0));
     Xapian::MSet matches = enquire.get_mset(0, 10);
 
     // Display the results.

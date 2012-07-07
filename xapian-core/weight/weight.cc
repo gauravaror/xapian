@@ -51,6 +51,7 @@ Weight::init_(const Internal & stats, Xapian::termcount query_length)
     reltermfreq_ = 0;
     query_length_ = query_length;
     wqf_ = 1;
+	bigram_ = false;
     init(0.0);
 }
 
@@ -77,6 +78,7 @@ Weight::init_(const Internal & stats, Xapian::termcount query_length,
 	collectionfreq_ = stats.get_collectionfreq(term);
     query_length_ = query_length;
     wqf_ = wqf;
+	bigram_ = (term.find(" ") != string::npos);
     init(factor);
 }
 
@@ -110,6 +112,7 @@ Weight::init_(const Internal & stats, Xapian::termcount query_length,
     query_length_ = query_length;
     collectionfreq_ = 1;
     wqf_ = 1;
+	bigram_ = false;
     init(factor);
 }
 

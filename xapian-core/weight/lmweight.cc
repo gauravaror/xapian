@@ -53,6 +53,8 @@ LMWeight::init(double )
     LOGVALUE(WTCALC, total_collection_terms);
     // There can't be more relevant term in collection than total number of term
     AssertRel(collection_freq,<=,total_collection_terms);
+	
+	isbigram = is_bigram();
 
 	/*  * Setting default values of the param_log to handel negetive value of log.
 		* It is considered to be upperbound of document length.
@@ -168,7 +170,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 	* product wont make large diffrence hence log(product) will be used for ranking */
 	//weight_sum = weight_sum +1;
 	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	//return weight_sum;
+	//return a;
 }
 
 double
