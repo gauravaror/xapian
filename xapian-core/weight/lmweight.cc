@@ -36,7 +36,7 @@ namespace Xapian {
 
 LMWeight *
 LMWeight::clone() const  {
-	return new LMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2);
+	return new LMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2,param_mixture);
 }
 void
 LMWeight::init(double )
@@ -68,6 +68,14 @@ LMWeight::init(double )
 			 * will not work in some case so multiplying by 10.
 			 */
 			param_log = param_log*10.0;
+		}
+		
+		if( param_mixture != 0 && param_mixture != 1) {
+			/* Since we are combining result of two sommothing with factor.
+			 * We multiply with factor < 1.Hence our doc_length_upper_bound.
+			 * will not work in some case so multiplying by 10.
+			 */
+			param_log = param_log*10;
 		}
 	}
 
@@ -162,6 +170,21 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 		weight_sum = (((1-param_smoothing1)*(wdf_double + (param_smoothing2*weight_collection))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
 	}
 
+	if(isbigram && (param_mixture != 1.0)) {
+    AssertRel(param_mixture,>=,0);
+    AssertRel(param_mixture,<=,1);
+	weight_sum = (1 - param_mixture);
+	}
+	else if(!isbigram && (param_mixture != 0.0)){
+    AssertRel(param_mixture,>=,0);
+    AssertRel(param_mixture,<=,1);
+	weight_sum = (param_mixture);
+	}
+	else {
+    AssertRel(param_mixture,>=,0);
+    AssertRel(param_mixture,<=,1);
+	weight_sum = 1/total_collection_term;
+	}
 
     /* Since LM score is calculated with multiplication,
 	* instead of changing the current implementation log trick have been used
@@ -170,7 +193,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 	* product wont make large diffrence hence log(product) will be used for ranking */
 	//weight_sum = weight_sum +1;
 	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	//return a;
+	//return param_mixture;
 }
 
 double
