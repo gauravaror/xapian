@@ -173,17 +173,17 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 	if(isbigram && (param_mixture != 1.0)) {
     AssertRel(param_mixture,>=,0);
     AssertRel(param_mixture,<=,1);
-	weight_sum = (1 - param_mixture);
+	weight_sum *= (1 - param_mixture);
 	}
 	else if(!isbigram && (param_mixture != 0.0)){
     AssertRel(param_mixture,>=,0);
     AssertRel(param_mixture,<=,1);
-	weight_sum = (param_mixture);
+	weight_sum *= (param_mixture);
 	}
 	else {
     AssertRel(param_mixture,>=,0);
     AssertRel(param_mixture,<=,1);
-	weight_sum = 1/total_collection_term;
+	weight_sum *= 1/total_collection_term;
 	}
 
     /* Since LM score is calculated with multiplication,
@@ -191,6 +191,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
 	* product wont make large diffrence hence log(product) will be used for ranking */
+
 	//weight_sum = weight_sum +1;
 	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
 	//return param_mixture;
@@ -199,8 +200,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 double
 LMWeight::get_maxpart() const
 {
- // Sufficiently large bound is being returned ,to optimize the matching process this needs to be fixed and changed to good max bound
-// Need to be fixed 
+ // Sufficiently large bound is being returned ,to optimize the matching process this needs to be fixed and changed to good max bound Need to be fixed 
    double wdf_max(max(get_wdf_upper_bound(), Xapian::termcount(1)));
     return  (wdf_max);
 }
