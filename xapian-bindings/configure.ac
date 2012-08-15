@@ -27,11 +27,14 @@ dnl MACOSX_DEPLOYMENT_TARGET.
 AC_CANONICAL_HOST
 OVERRIDE_MACOSX_DEPLOYMENT_TARGET=
 NEED_JNILIB_EXT=no
+NEED_INTREE_DYLD=no
+
 case $host in
 *86*-darwin8*|*-darwin[[91]]*)
   dnl On 10.5 or later, and 10.4 on x86, the deployment target defaults to the
   dnl OS version, so we don't need to override on these.
   NEED_JNILIB_EXT=yes
+  NEED_INTREE_DYLD=yes
   ;;
 *-darwin*)
   case $MACOSX_DEPLOYMENT_TARGET in
@@ -42,6 +45,7 @@ case $host in
     OVERRIDE_MACOSX_DEPLOYMENT_TARGET=10.3 ;;
   esac
   NEED_JNILIB_EXT=yes
+  NEED_INTREE_DYLD=yes
   ;;
 esac
 AM_CONDITIONAL(OVERRIDE_MACOSX_DEPLOYMENT_TARGET, test -n "$OVERRIDE_MACOSX_DEPLOYMENT_TARGET")
@@ -50,6 +54,7 @@ if test -n "$OVERRIDE_MACOSX_DEPLOYMENT_TARGET" ; then
   MACOSX_DEPLOYMENT_TARGET=$OVERRIDE_MACOSX_DEPLOYMENT_TARGET
 fi
 AM_CONDITIONAL(NEED_JNILIB_EXT, test yes = "$NEED_JNILIB_EXT")
+AM_CONDITIONAL(NEED_INTREE_DYLD, test yes = "$NEED_INTREE_DYLD")
 
 dnl Use libtool to manage our libraries, but don't build static libraries as
 dnl the bindings only have a use for dynamic ones.
@@ -531,9 +536,37 @@ if test no != "$with_csharp" ; then
     AC_PATH_PROGS(CSC, ["$CSC"], [])
   fi
   if test -z "$CSC" ; then
-    dnl gmcs is the newer name for the Mono CSharp compiler.
-    dnl cscc is the Portable.NET CSharp compiler.
-    AC_PATH_PROGS(CSC, [gmcs cscc], [])
+    dnl First we try cli-csc and mono-csc, which are used by Debian and Ubuntu
+    dnl as "alternatives" which can be mapped to the CSharp compiler the admin
+    dnl favours.
+    AC_PATH_PROGS(CSC, [cli-csc mono-csc], [])
+    if test -z "$CSC" ; then
+      dnl mcs is the Mono CSharp compiler, which is a unified compiler
+      dnl available from Mono 2.11 (and also the compiler in Mono 1.0, but
+      dnl that's no longer relevant).
+      AC_PATH_PROGS(CSC, [mcs], [])
+      if test -n "$CSC" ; then
+	dnl There are other tools called mcs (such as /usr/bin/mcs on Tru64),
+	dnl so we check that the mcs we found understands --version which is
+	dnl sufficient to distinguish mono's mcs from the Tru64 one.
+	AC_MSG_CHECKING([whether $CSC is from GNU Mono])
+	if (exec >&5 2>&5;$CSC --version </dev/null;exit $?) ; then
+	  AC_MSG_RESULT(yes)
+	else
+	  AC_MSG_RESULT(no)
+	  CSC=
+	  csc_note="$csc_note (found different mcs program)"
+	fi
+      fi
+    fi
+    if test -z "$CSC" ; then
+      dnl gmcs, smcs, and dmcs are versions of the Mono CSharp compiler
+      dnl targetting various runtime versions, deprecated in favour of mcs
+      dnl (checked for above) as of Mono 2.11.
+      dnl
+      dnl cscc is the Portable.NET CSharp compiler.
+      AC_PATH_PROGS(CSC, [dmcs smcs gmcs cscc], [])
+    fi
     if test -z "$CSC" ; then
       dnl csc is the Microsoft CSharp compiler.
       AC_PATH_PROGS(CSC, [csc], [])
@@ -552,34 +585,24 @@ if test no != "$with_csharp" ; then
 	fi
       fi
     fi
-    if test -z "$CSC" ; then
-      dnl mcs is the Mono CSharp compiler.
-      AC_PATH_PROGS(CSC, [mcs], [])
-      if test -n "$CSC" ; then
-	dnl There are other tools called mcs (such as /usr/bin/mcs on Tru64),
-	dnl so we check that the mcs we found understands --version which is
-	dnl sufficient to distinguish mono's mcs from the Tru64 one.
-	AC_MSG_CHECKING([whether $CSC is from GNU Mono])
-	if (exec >&5 2>&5;$CSC --version </dev/null;exit $?) ; then
-	  AC_MSG_RESULT(yes)
-	else
-	  AC_MSG_RESULT(no)
-	  CSC=
-	  csc_note="$csc_note (found different mcs program)"
-	fi
-      fi
-    fi
   fi
 
   if test -n "$CSC" ; then
-    AC_PATH_PROGS(GACUTIL, ["${GACUTIL-gacutil}"], [])
+    AC_ARG_VAR(GACUTIL, [gacutil utility to use for CSharp bindings])
+    if test -n "$GACUTIL" ; then
+      AC_PATH_PROGS(GACUTIL, ["$GACUTIL"], [])
+    fi
     if test -z "$GACUTIL" ; then
-      AC_PATH_PROGS(GACUTIL, [ilgac], [])
+      AC_PATH_PROGS(GACUTIL, [cli-gacutil gacutil ilgac], [])
     fi
 
-    AC_PATH_PROGS(SN, ["${SN-sn}"], [])
-    AC_ARG_VAR(GACUTIL, [gacutil utility to use for CSharp bindings])
     AC_ARG_VAR(SN, [sn utility to use for CSharp bindings])
+    if test -n "$SN" ; then
+      AC_PATH_PROGS(SN, ["$SN"], [])
+    fi
+    if test -z "$SN" ; then
+      AC_PATH_PROGS(SN, [cli-sn sn], [])
+    fi
     if test -z "$SN" ; then
       case $GACUTIL in
       dnl Portable.net doesn't support strong naming yet and ilgac doesn't

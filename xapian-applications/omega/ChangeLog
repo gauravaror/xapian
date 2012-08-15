@@ -1,3 +1,18 @@
+Thu Aug 09 20:07:59 GMT 2012  Dan Colish <dcolish@gmail.com>
+
+	* Makefile.am,configure.ac: Allow users to configure with
+          MAGIC_PREFIX for non-standard installs of libmagic
+
+Wed Jul 18 10:51:39 GMT 2012  Olly Betts <olly@survex.com>
+
+	* urldecode.h: Fix to decode escaped character at the end of the
+	  string.
+	* urlenctest.cc: Add regression testcase.
+
+Sun Jul 01 10:53:35 GMT 2012  Olly Betts <olly@survex.com>
+
+	* NEWS: Update from ChangeLog and 1.2 branch.
+
 Tue Jun 26 11:59:17 GMT 2012  Olly Betts <olly@survex.com>
 
 	* configure.ac: Set link_all_deplibs_CXX=no on solaris, like we
@@ -5732,6 +5747,3 @@ Mon Nov  5 12:42:26 GMT 2001  Richard Boulton <richard@tartarus.org>
 
 	* Omega moved to new home, from om-examples/omega.
 	  Standalone build system added.
-
-
-
