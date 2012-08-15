@@ -50,7 +50,7 @@ try {
     // Open the database for update, creating a new database if necessary.
     Xapian::WritableDatabase db(Xapian::Brass::open(argv[1], Xapian::DB_CREATE_OR_OPEN));
 
-    Xapian::Database db1(Xapian::Brass::open("../../gsoc", Xapian::DB_CREATE_OR_OPEN));
+    Xapian::Database db1(Xapian::Brass::open("/home/gaurav/Work/xapiantrec/index_termgenindexingbigram/", Xapian::DB_CREATE_OR_OPEN));
     Xapian::TermGenerator indexer;
     Xapian::Stem stemmer("english");
     indexer.set_stemmer(stemmer);

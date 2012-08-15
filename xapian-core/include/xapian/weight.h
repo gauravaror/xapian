@@ -73,9 +73,9 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
      */
     virtual void init(double factor) = 0;
    
+public:
  /** Type of smoothing available for selection with Langauge Model Weighting scheme
    *  Default smoothing is TWO_STAGE_SMOOTHING */
-public:
     typedef enum {
 	TWO_STAGE_SMOOTHING = 1,
 	DIRICHLET_SMOOTHING = 2,
@@ -562,16 +562,18 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
  * model of the document.
  */
 class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
-    /// Variable to be used to store collection frequency of the term to be used for 
-    //  calculating the smoothning factor in case the withing document frequency of term is zero.
+    /* Variable to be used to store collection frequency of the term to be used for 
+      calculating the smoothning factor in case the withing document frequency of term is zero.*/
+
     Xapian::termcount collection_freq;
      
 
-    // variable approximating the approximate number of terms in the collection to be used
-    //  while smoothing for the term in document.
+    /* variable approximating the approximate number of terms in the collection to be used  
+     *  while smoothing for the term in document.*/
+
     Xapian::termcount total_collection_term;
 
-	/// Term is bigram or not.
+	/// Term is bigram or not
 	bool isbigram;
 
     /*  Parameter for selecting type out of following:
@@ -614,9 +616,11 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	 *  @param_mixture    A non-negetive parameter between 0 and 1  while considering mixture model when user select MIXTURE.
 	 *         This parameter controls the weight to give unigram and bigram.param_mixture is contribution of Unigram.
 	 *          (1 - param_mixture) is contribution to bigrams.(default 1.0)
+	 *
 	 */
 
-   ///  LM constructor to select smoothing type and select parameter for log handelling automatically
+    //  LM constructor to select smoothing type and select parameter for log handelling automatically
+
     LMWeight(type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
 	: select_smoothing(select_smoothing_),param_log(0.0), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_), param_mixture(1.0)
@@ -636,7 +640,8 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
    
-	///  LM constructor to select smoothing type,gram model to follow and select parameter for log handelling automatically
+	//  LM constructor to select smoothing type,gram model to follow and select parameter for log handelling automatically
+
     LMWeight(type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_,double param_mixture_)
 	: select_smoothing(select_smoothing_),param_log(0.0), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_),param_mixture(param_mixture_)
@@ -656,8 +661,9 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
 
-	/* LM Constructor to specifically mention all parameters for handelling negative log value and smoothing
-	 * supplying param_log_ 0 will supply the default value of param_log_*/
+	// LM Constructor to specifically mention all parameters for handelling negative log value and smoothing
+	 // supplying param_log_ 0 will supply the default value of param_log_*/
+
     LMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
 	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_),param_mixture(1.0) 
@@ -677,8 +683,9 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
 	
-	/* LM Constructor to specifically mention all parameters for handelling negative log value and smoothing,gram model to follow
-	 * supplying param_log_ 0 will supply the default value of param_log_*/
+	// LM Constructor to specifically mention all parameters for handelling negative log value and smoothing,gram model to follow
+	 // supplying param_log_ 0 will supply the default value of param_log_*/
+
     LMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_,double param_mixture_)
 	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_), param_mixture(param_mixture_)
@@ -698,8 +705,9 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
 
-	/* LM Constructor to specifically mention parameter for handelling negetive log value 
-	 * and select default value for smoothing.*/
+	// LM Constructor to specifically mention parameter for handelling negetive log value 
+	 // and select default value for smoothing.
+
     LMWeight(double param_log_)
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7), 
 	  param_smoothing2(2000.0), param_mixture(1.0)
@@ -719,8 +727,9 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
      
-	/* LM Constructor to specifically mention parameter for handelling negetive log value and contribution to gram
-	 * and select default value for smoothing.*/
+	// LM Constructor to specifically mention parameter for handelling negetive log value and contribution to gram
+	 // and select default value for smoothing.
+
     LMWeight(double param_log_,double param_mixture_)
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7), 
 	  param_smoothing2(2000.0), param_mixture(param_mixture_)
@@ -739,7 +748,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(DOC_LENGTH_MAX);
     }
 
-	///LM Constructure to use default value for smoothing.
+	//LM Constructure to use default value for smoothing.
     LMWeight() 
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
 	  param_smoothing2(2000.0),param_mixture(1.0)

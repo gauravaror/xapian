@@ -77,7 +77,7 @@ try {
 
     // Find the top 10 results for the query.
     enquire.set_query(query);
-    enquire.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING,0,0));
+    enquire.set_weighting_scheme(Xapian::LMWeight(10000,0.5));
     Xapian::MSet matches = enquire.get_mset(0, 10);
 
     // Display the results.

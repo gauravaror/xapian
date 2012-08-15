@@ -75,7 +75,7 @@ LMWeight::init(double )
 			 * We multiply with factor < 1.Hence our doc_length_upper_bound.
 			 * will not work in some case so multiplying by 10.
 			 */
-			param_log = param_log*10;
+			param_log = param_log*10.0;
 		}
 	}
 
@@ -114,6 +114,7 @@ LMWeight::serialise() const
 	result += static_cast<unsigned char>(select_smoothing);
 	result += serialise_double(param_smoothing1);
 	result += serialise_double(param_smoothing2);
+	result += serialise_double(param_mixture);
 
     return result;
 }
@@ -127,9 +128,10 @@ LMWeight::unserialise(const string & s) const
 	type_smoothing select_smoothing_ = static_cast<type_smoothing>(*(ptr)++);
 	double param_smoothing1_ = unserialise_double(&ptr,end);
 	double param_smoothing2_ = unserialise_double(&ptr,end);
+	double param_mixture_ = unserialise_double(&ptr,end);
 	if(rare(ptr != end))
 	throw Xapian::SerialisationError("Extra data in LMWeight::unserialise()");
-	return new LMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
+	return new LMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_,param_mixture_);
 }
 
 double
@@ -167,23 +169,24 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 		weight_sum = ((((wdf_double - param_smoothing1) > 0) ? (wdf_double - param_smoothing1) : 0) / len_double) + ((param_smoothing1 *weight_collection*(nouniqterm_double))/len_double);
 	}
 	else {
-		weight_sum = (((1-param_smoothing1)*(wdf_double + (param_smoothing2*weight_collection))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
+		weight_sum = (((1-param_smoothing1)*(wdf_double + ((param_smoothing2*1000)/total_collection_term))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
 	}
-
+	
+	double mixture_multiplication;
 	if(isbigram && (param_mixture != 1.0)) {
     AssertRel(param_mixture,>=,0);
     AssertRel(param_mixture,<=,1);
-	weight_sum *= (1 - param_mixture);
+	mixture_multiplication = (1 - param_mixture);
 	}
 	else if(!isbigram && (param_mixture != 0.0)){
     AssertRel(param_mixture,>=,0);
     AssertRel(param_mixture,<=,1);
-	weight_sum *= (param_mixture);
+	mixture_multiplication = (param_mixture);
 	}
 	else {
     AssertRel(param_mixture,>=,0);
     AssertRel(param_mixture,<=,1);
-	weight_sum *= 1/total_collection_term;
+	mixture_multiplication = 1/total_collection_term;
 	}
 
     /* Since LM score is calculated with multiplication,
@@ -191,10 +194,15 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
 	* product wont make large diffrence hence log(product) will be used for ranking */
-
-	//weight_sum = weight_sum +1;
-	return (log((weight_sum)*param_log) > 0) ? log((weight_sum)*param_log) : 0;
-	//return param_mixture;
+	if(wdf_double != 0.0) {
+//	weight_sum = weight_sum +1;
+	return (log((weight_sum)*param_log) > 0) ? mixture_multiplication*log((weight_sum)*param_log) : 0;
+	//return 1;
+	}
+	else {
+	return log(param_log);
+	
+	}
 }
 
 double
