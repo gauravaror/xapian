@@ -1607,7 +1607,7 @@ reprocess:
 		if(addbigram) {
 		now = (*i);
 		if(termbegin != 0) {
-		Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
+		Term bigramterm = Term(state,prev->name+" "+ now->name,now->field_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
 		if (default_op_is_positional)
 		   	(bigramterm).need_positions();
 		subqs.push_back(bigramterm.get_query_with_auto_synonyms());
@@ -1703,7 +1703,7 @@ class Terms {
 		if(addbigram) {
 		now = (*i);
 		if(termbegin != 0) {
-		Term bigramterm = Term(state,prev->name+" "+ now->name,now->prefix_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
+		Term bigramterm = Term(state,prev->name+" "+ now->name,now->field_info,prev->unstemmed+" "+now->unstemmed,now->stem);	
 		if (default_op_is_positional)
 		   	(bigramterm).need_positions();
 		bisubqs.push_back(bigramterm.get_query_with_auto_synonyms());

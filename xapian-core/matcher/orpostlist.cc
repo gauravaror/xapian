@@ -343,9 +343,9 @@ OrPostList::get_weight() const
 {
     LOGCALL(MATCH, double, "OrPostList::get_weight", NO_ARGS);
     Assert(lhead != 0 && rhead != 0); // check we've started
-    if (lhead < rhead) RETURN(l->get_weight());
+    if (lhead < rhead) RETURN(l->get_weight() );
     if (lhead > rhead) RETURN(r->get_weight());
-    RETURN(l->get_weight() + r->get_weight());
+    RETURN(l->get_weight() + r->get_weight() );
 }
 
 // only called if we are doing a probabilistic operation

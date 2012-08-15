@@ -60,7 +60,7 @@
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
 
-/* Define to 1 if you have the `sigsetjmp' function */
+/* Define to 1 if you have the 'sigsetjmp' function */
 #undef HAVE_SIGSETJMP
 
 /* Define to 1 if you have the 'socketpair' function. */
@@ -167,9 +167,6 @@
 /* Define to the name of a function implementing snprintf with ISO C99
    semantics (if one exists) */
 #undef SNPRINTF_ISO
-
-/* type to use for 5th parameter to getsockopt */
-#undef SOCKLEN_T
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
