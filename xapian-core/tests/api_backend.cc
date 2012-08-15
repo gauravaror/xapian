@@ -732,7 +732,7 @@ DEFINE_TESTCASE(unigramlmweight2,backend) {
 	Xapian::Database db(get_database("etext"));
 	Xapian::Enquire enquire(db);
 	enquire.set_query(Xapian::Query("the"));
-	enquire.set_weighting_scheme(Xapian::UnigramLMWeight());
+	enquire.set_weighting_scheme(Xapian::LMWeight());
 	Xapian::MSet mset = enquire.get_mset(0,100);
 	TEST_REL(mset.size(),>=,2);
 	return true;
