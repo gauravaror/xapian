@@ -312,7 +312,7 @@ Term::make_term(const string & prefix) const
 		bigram >> bigramterms;
     if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
 		term +=  'Z';
-    	if (!prefix.empty()) {
+    	if (!prefix.empty() && isbigram) {
 			term += prefix;
 			if (prefix_needs_colon(prefix, bigramterms[0])) term += ':';
     	}
