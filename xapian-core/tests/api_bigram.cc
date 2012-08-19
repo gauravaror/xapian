@@ -114,3 +114,35 @@ DEFINE_TESTCASE(bigramtest2, backend) {
 	}
 	return false;
 }
+
+DEFINE_TESTCASE(bigramtest3, backend) {
+	//To identify bug(in unit testing) if stemmer is not set then bigrams were not added. 
+	SKIP_TEST_FOR_BACKEND("chert");
+	SKIP_TEST_FOR_BACKEND("inmemory");
+    mkdir(".brass", 0755);
+    string dbdir = ".brass/bigramtest2";
+    Xapian::WritableDatabase db(Xapian::Brass::open(dbdir, Xapian::DB_CREATE_OR_OVERWRITE));
+    Xapian::TermGenerator indexer;
+    Xapian::Document doc;
+    filebuf fb;
+	fb.open ("testdata/apitest_simpledata.txt",ios::in);
+    istream bigramfile(&fb);
+	string text =  get_paragraph(bigramfile);
+	doc.set_data(text);
+	indexer.set_bigrams(true);
+    indexer.set_document(doc);	
+	indexer.set_database(db);
+	indexer.index_text(text);
+	Xapian::docid docid1 = db.add_document(doc);
+	Xapian::TermIterator bi = db.termlist_begin(docid1);
+	tout<<"jdk"<<docid1;
+	while(bi != db.termlist_end(docid1)) {
+	string bigramterm = *bi;
+	tout<<bigramterm<<endl;
+	if( bigramterm.compare("mention banana") == 0) {
+		return true;
+	}
+	bi++;
+	}
+	return false;
+}

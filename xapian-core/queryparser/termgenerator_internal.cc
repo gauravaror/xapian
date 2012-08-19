@@ -294,6 +294,7 @@ endofterm:
 	       }
 		}
 	}	
+	prevterm = term;
 	if ((flags & FLAG_SPELLING) && prefix.empty()) db.add_spelling(term);
 
 	if (strategy == TermGenerator::STEM_NONE ||
@@ -330,7 +331,6 @@ endofterm:
 		}
 	    doc.add_term(stem, wdf_inc);
 	}
-	prevterm = term;
 	prevstem = stem;
     }
 }

@@ -56,8 +56,8 @@ try {
     indexer.set_stemmer(stemmer);
 	Xapian::SimpleStopper stopper;
 
-	Xapian::BigramIterator bi  = db1.bigramlist_begin(Xapian::docid(1));
-	while(bi != db1.bigramlist_end(1))
+	Xapian::TermIterator bi  = db1.termlist_begin(Xapian::docid(1));
+	while(bi != db1.termlist_end(1))
 	{
 	cout<<"Bigram"<<*bi<<"\n";
 	bi++;
