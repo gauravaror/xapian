@@ -1,8 +1,7 @@
 /** @file api_weight.cc
- * @brief tests of Xapian::Weight subclasses
+ * @brief tests of Bigram Implementation in through Xapian::TermGenerator class
  */
-/* Copyright (C) 2012 Olly Betts
- * Copyright (C) 2012 Gaurav Arora
+ /* Copyright (C) 2012 Gaurav Arora
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,27 @@
 #include "safesysstat.h"
 using namespace std;
 
-/// Read a paragraph from stream @a input.
+/// Read whole text of file from stream @a input.
+static string
+get_text(istream &input)
+{
+    string para, line;
+    while (true) {
+	getline(input, line);
+	if (!input.good())
+	    return para;
+	para += line;
+	para += '\n';
+    }
+}
+/// Read whole text of file from stream @a input.
 static string
 get_paragraph(istream &input)
 {
     string para, line;
     while (true) {
 	getline(input, line);
-	if (!input.good())
+	if (find_if(line.begin(),line.end(),C_isnotspace) == line.end())
 	    return para;
 	para += line;
 	para += '\n';
@@ -59,7 +71,7 @@ DEFINE_TESTCASE(bigramtest1, backend) {
     filebuf fb;
 	fb.open ("testdata/apitest_simpledata.txt",ios::in);
     istream bigramfile(&fb);
-	string text =  get_paragraph(bigramfile);
+	string text =  get_text(bigramfile);
 	doc.set_data(text);
 	indexer.index_text(text);
 	db.add_document(doc);
@@ -97,7 +109,7 @@ DEFINE_TESTCASE(bigramtest2, backend) {
     filebuf fb;
 	fb.open ("testdata/apitest_simpledata.txt",ios::in);
     istream bigramfile(&fb);
-	string text =  get_paragraph(bigramfile);
+	string text =  get_text(bigramfile);
 	doc.set_data(text);
 	Xapian::Stem stemmer("english");
 	indexer.set_stemmer(stemmer);
@@ -124,14 +136,14 @@ DEFINE_TESTCASE(bigramtest3, backend) {
 	SKIP_TEST_FOR_BACKEND("chert");
 	SKIP_TEST_FOR_BACKEND("inmemory");
     mkdir(".brass", 0755);
-    string dbdir = ".brass/bigramtest2";
+    string dbdir = ".brass/bigramtest3";
     Xapian::WritableDatabase db(Xapian::Brass::open(dbdir, Xapian::DB_CREATE_OR_OVERWRITE));
     Xapian::TermGenerator indexer;
     Xapian::Document doc;
     filebuf fb;
 	fb.open ("testdata/apitest_simpledata.txt",ios::in);
     istream bigramfile(&fb);
-	string text =  get_paragraph(bigramfile);
+	string text =  get_text(bigramfile);
 	doc.set_data(text);
 	indexer.set_bigrams(true);
     indexer.set_document(doc);	
@@ -139,14 +151,45 @@ DEFINE_TESTCASE(bigramtest3, backend) {
 	indexer.index_text(text);
 	Xapian::docid docid1 = db.add_document(doc);
 	Xapian::TermIterator bi = db.termlist_begin(docid1);
-	tout<<"jdk"<<docid1;
 	while(bi != db.termlist_end(docid1)) {
 	string bigramterm = *bi;
-	tout<<bigramterm<<endl;
 	if( bigramterm.compare("mention banana") == 0) {
 		return true;
 	}
 	bi++;
+	}
+	return false;
+}
+
+DEFINE_TESTCASE(bigramtest4, backend) {
+	//To check the posting list of the term.
+	SKIP_TEST_FOR_BACKEND("chert");
+	SKIP_TEST_FOR_BACKEND("inmemory");
+    mkdir(".brass", 0755);
+    string dbdir = ".brass/bigramtest3";
+    Xapian::WritableDatabase db(Xapian::Brass::open(dbdir, Xapian::DB_CREATE_OR_OVERWRITE));
+    filebuf fb;
+	fb.open ("testdata/apitest_simpledata.txt",ios::in);
+    istream bigramfile(&fb);
+	string text = " ";
+	while ( text.compare("") != 0) {
+		text =  get_paragraph(bigramfile);
+    	Xapian::TermGenerator indexer;
+		indexer.set_bigrams(true);
+    	Xapian::Document doc;
+		doc.set_data(text);
+    	indexer.set_document(doc);	
+		indexer.set_database(db);
+		indexer.index_text(text);
+		db.add_document(doc);
+	}
+	Xapian::PostingIterator plist = db.postlist_begin("mention banana");
+	while(plist != db.postlist_end("mention banana")) {
+	Xapian::docid postlist = *plist;
+	if( postlist == 6) {
+		return true;
+	}
+	plist++;
 	}
 	return false;
 }
