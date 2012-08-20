@@ -45,6 +45,7 @@ get_paragraph(istream &input)
 }
 
 DEFINE_TESTCASE(bigramtest1, backend) {
+	//Test for equvivalence of cases like param_mixture considers unigram only, bigram enabled vs. bigram disabled.
     mkdir(".brass", 0755);
     string dbdir = ".brass/bigramtest";
     Xapian::WritableDatabase db(Xapian::Brass::open(dbdir, Xapian::DB_CREATE_OR_OVERWRITE));
@@ -79,6 +80,9 @@ DEFINE_TESTCASE(bigramtest1, backend) {
 	enquire1.set_weighting_scheme(Xapian::LMWeight(0.0,Xapian::Weight::TWO_STAGE_SMOOTHING,0.8,2000,1.0));
 	Xapian::MSet matches1 =	enquire1.get_mset(0,10);
 	TEST_EQUAL(matches.size(),matches1.size());
+	TEST_EQUAL(matches.size(),1);
+	TEST_EQUAL(matches[0].get_weight(),matches1[0].get_weight());
+	
 	return true;
 }
 
