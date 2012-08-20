@@ -309,36 +309,36 @@ Term::make_term(const string & prefix) const
 	if (isbigram) {
 		string bigramterms;
 		while(bigram.good()) {
-		bigram >> bigramterms;
-    if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
-		term +=  'Z';
-    	if (!prefix.empty() && isbigram) {
-			term += prefix;
-			if (prefix_needs_colon(prefix, bigramterms[0])) term += ':';
-    	}
-    	if (stem != QueryParser::STEM_NONE) {
-			term += state->stem_term(bigramterms);
-    	} else {
-			term += bigramterms;
-    	}
-		if(isbigram == true) {
-			term += " ";
-			isbigram = false;
+			bigram >> bigramterms;
+		    if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
+				term +=  'Z';
+	    	if (!prefix.empty() && isbigram) {
+				term += prefix;
+				if (prefix_needs_colon(prefix, bigramterms[0])) term += ':';
+    		}
+	    	if (stem != QueryParser::STEM_NONE) {
+				term += state->stem_term(bigramterms);
+    		} else {
+				term += bigramterms;
+    		}
+			if(isbigram == true) {
+				term += " ";
+				isbigram = false;
+			}
 		}
 	}
-	}
 	else {
-    if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
-	term += 'Z';
-    if (!prefix.empty()) {
-	term += prefix;
-	if (prefix_needs_colon(prefix, name[0])) term += ':';
-    }
-    if (stem != QueryParser::STEM_NONE) {
-	term += state->stem_term(name);
-    } else {
-	term += name;
-    }
+	    if (stem == QueryParser::STEM_SOME || stem == QueryParser::STEM_ALL_Z)
+			term += 'Z';
+	    if (!prefix.empty()) {
+			term += prefix;
+			if (prefix_needs_colon(prefix, name[0])) term += ':';
+    	}
+	    if (stem != QueryParser::STEM_NONE) {
+			term += state->stem_term(name);
+	    } else {
+			term += name;
+    	}
 	}
 
     if (!unstemmed.empty())
