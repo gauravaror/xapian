@@ -1067,13 +1067,18 @@ just_had_operator_needing_term:
 			string name;
 			if (it != end && is_double_quote(*it)) {
 			    // Quoted boolean term (can contain any character).
+			    bool fancy = (*it != '"');
 			    ++it;
 			    while (it != end) {
 				if (*it == '"') {
 				    // Interpret "" as an escaped ".
 				    if (++it == end || *it != '"')
 					break;
-				} else if (is_double_quote(*it)) {
+				} else if (fancy && is_double_quote(*it)) {
+				    // If the opening quote was ASCII, then the
+				    // closing one must be too - otherwise
+				    // the user can't protect non-ASCII double
+				    // quote characters by quoting or escaping.
 				    ++it;
 				    break;
 				}
@@ -1376,9 +1381,15 @@ phrased_term:
     }
 done:
     if (!state.error) {
-	// Implicitly close any unclosed quotes...
+	// Implicitly close any unclosed quotes.
 	if (mode == IN_QUOTES || mode == IN_PREFIXED_QUOTES)
 	    Parse(pParser, QUOTE, NULL, &state);
+
+	// Implicitly close all unclosed brackets.
+	while (prefix_stack.size() > 1) {
+	    Parse(pParser, KET, NULL, &state);
+	    prefix_stack.pop_back();
+	}
 	Parse(pParser, 0, NULL, &state);
     }
 

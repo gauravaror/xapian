@@ -14,8 +14,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = . docs
 
-INCLUDES = -I$(top_srcdir)/common
-
 BUILT_SOURCES = extra/omegascript.vim
 
 EXTRA_DIST =\
@@ -70,6 +68,7 @@ EXTRA_DIST =\
 	xapian-omega.spec
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir)/common \
 	-DCONFIGFILE_SYSTEM=\"$(sysconfdir)/omega.conf\" \
 	-DPKGLIBBINDIR=\"$(pkglibbindir)\"
 AM_CXXFLAGS += $(XAPIAN_CXXFLAGS)
@@ -103,6 +102,7 @@ noinst_HEADERS = omega.h query.h cgiparam.h\
 
 # headers maintained in xapian-core
 noinst_HEADERS +=\
+	common/append_filename_arg.h\
 	common/gnu_getopt.h\
 	common/msvc_dirent.h\
 	common/noreturn.h\
@@ -133,7 +133,7 @@ libtransform_la_LIBADD = $(PCRE_LIBS)
 
 omega_SOURCES = omega.cc query.cc cgiparam.cc utils.cc configfile.cc date.cc\
  cdb_init.cc cdb_find.cc cdb_hash.cc cdb_unpack.cc loadfile.cc utf8convert.cc\
- datematchdecider.cc weight.cc common/str.cc unixperm.cc urlencode.cc
+ datematchdecider.cc weight.cc common/str.cc sample.cc unixperm.cc urlencode.cc
 omega_LDADD =  $(MAGIC_LIBS) $(XAPIAN_LIBS) libtransform.la
 
 omindex_SOURCES = omindex.cc myhtmlparse.cc htmlparse.cc\

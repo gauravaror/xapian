@@ -137,12 +137,10 @@ TermGenerator::set_termpos(Xapian::termcount termpos)
 string
 TermGenerator::get_description() const
 {
-    string s("Xapian::TermGenerator(");
-    if (internal.get()) {
-	s += "stem=";
-	s += internal->stemmer.get_description();
-	if (internal->stopper) {
-	    s += ", stopper set";
+    string s("Xapian::TermGenerator(stem=");
+    s += internal->stemmer.get_description();
+    if (internal->stopper) {
+	s += ", stopper set";
 	}
 	s += "bigramidexing=";
 	s += internal->index_bigram;
@@ -150,7 +148,6 @@ TermGenerator::get_description() const
 	s += internal->doc.get_description();
 	s += ", termpos=";
 	s += str(internal->termpos);
-    }
     s += ")";
     return s;
 }

@@ -1,4 +1,5 @@
 noinst_HEADERS +=\
+	common/append_filename_arg.h\
 	common/autoptr.h\
 	common/bitstream.h\
 	common/closefrom.h\
@@ -11,12 +12,12 @@ noinst_HEADERS +=\
 	common/internaltypes.h\
 	common/io_utils.h\
 	common/msvc_dirent.h\
-	common/msvc_posix_wrapper.h\
 	common/noreturn.h\
 	common/omassert.h\
 	common/output.h\
 	common/output-internal.h\
 	common/pack.h\
+	common/posixy_wrapper.h\
 	common/pretty.h\
 	common/realtime.h\
 	common/registryinternal.h\
@@ -27,6 +28,7 @@ noinst_HEADERS +=\
 	common/safeerrno.h\
 	common/safefcntl.h\
 	common/safesysselect.h\
+	common/safesyssocket.h\
 	common/safesysstat.h\
 	common/safesyswait.h\
 	common/safeunistd.h\
@@ -49,13 +51,12 @@ EXTRA_DIST +=\
 lib_src +=\
 	common/bitstream.cc\
 	common/closefrom.cc\
-	common/compression_stream.cc\
 	common/debuglog.cc\
 	common/fileutils.cc\
 	common/io_utils.cc\
 	common/msvc_dirent.cc\
-	common/msvc_posix_wrapper.cc\
 	common/omassert.cc\
+	common/posixy_wrapper.cc\
 	common/replicate_utils.cc\
 	common/safe.cc\
 	common/serialise-double.cc\
@@ -63,6 +64,11 @@ lib_src +=\
 	common/str.cc\
 	common/stringutils.cc
 
+# echo hello
+if BUILD_BACKEND_BRASS_OR_CHERT
+lib_src +=\
+	common/compression_stream.cc
+endif
 
 if USE_WIN32_UUID_API
 lib_src +=\

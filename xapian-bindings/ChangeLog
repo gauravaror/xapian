@@ -1,3 +1,40 @@
+Mon Dec 24 05:15:56 GMT 2012  Olly Betts <olly@survex.com>
+
+	* perl/Search/Xapian/Stem.pm: Fix documentation typo.
+
+Mon Dec 24 05:15:12 GMT 2012  Olly Betts <olly@survex.com>
+
+	* perl/util.i.in: Update list of unwrapped things.
+
+Mon Dec 24 04:42:42 GMT 2012  Olly Betts <olly@survex.com>
+
+	* perl/Makefile.am,perl/t/stem.t: Add test that we can create all the
+	  stemmers returned by Stem::get_available_languages().
+
+Mon Dec 17 02:13:16 GMT 2012  Olly Betts <olly@survex.com>
+
+	* README,php/docs/index.html: Bump minimum supported PHP version to
+	  5.3 - 5.2 was officially EOLed 2011-01-06, and the only distros
+	  which seem to still have PHP 5.2 are Ubuntu hardy (which will reach
+	  EOL in April 2013) and older probably RHEL (which are aimed at the
+	  ultra-conservative types who would likely be happy to stick with
+	  Xapian 1.2 anyway.
+
+Sat Oct 13 04:28:16 GMT 2012  Olly Betts <olly@survex.com>
+
+	* perl/t/databasemodified.t,perl/t/index.t,perl/t/parser.t: Using
+	  UNIVERSAL::isa() as a function is deprecated.
+
+Sat Oct 13 02:57:22 GMT 2012  Olly Betts <olly@survex.com>
+
+	* perl/t/parser.t: Forward port tests of StringValueRangeProcessor
+	  with a prefix or suffix from 1.2's XS Search::Xapian.  (ticket#607)
+
+Tue Aug 28 04:33:21 GMT 2012  Dan Colish <dcolish@gmail.com>
+
+	* java/SmokeTest.java,java/java.i: Implement and test MSetIterator,
+	  ESetIterator. Fix PostingIterator, ValueIterator, and TermIterator.
+
 Sun Aug 12 05:45:32 GMT 2012  Dan Colish <dcolish@gmail.com>
 
 	* java/Makefile.am,java/run-java-test: Remove jdb target from
