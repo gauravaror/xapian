@@ -50,19 +50,24 @@ try {
     // Open the database for update, creating a new database if necessary.
     Xapian::WritableDatabase db(Xapian::Brass::open(argv[1], Xapian::DB_CREATE_OR_OPEN));
 
-    Xapian::Database db1(Xapian::Brass::open("/home/gaurav/Work/xapiantrec/index_termgenindexingbigram/", Xapian::DB_CREATE_OR_OPEN));
+    Xapian::Database db1(Xapian::Brass::open("/home/gaurav/Work/xapiantrec/index_withstopword", Xapian::DB_CREATE_OR_OPEN));
     Xapian::TermGenerator indexer;
     Xapian::Stem stemmer("english");
     indexer.set_stemmer(stemmer);
 	Xapian::SimpleStopper stopper;
-
-	Xapian::TermIterator bi  = db1.termlist_begin(Xapian::docid(1));
-	while(bi != db1.termlist_end(1))
+	int count = 0;
+	Xapian::TermIterator bi  = db1.allterms_begin();
+	while(bi != db1.allterms_end())
 	{
-	cout<<"Bigram"<<*bi<<"\n";
+	string bigr = *bi;
+	if(bigr.find(" ") == string::npos) 
+	count++;
+	if((count % 100000) == 0 ) {
+	cout<<"Bigram  "<<*bi<<"  Count  "<<count<<"\n";
+	}
 	bi++;
 	} 
-
+	cout<<"Total Unique Words    "<<count;
 	stopper.add("a");
 	stopper.add("the");
 	stopper.add("of");

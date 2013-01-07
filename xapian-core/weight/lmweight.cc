@@ -157,7 +157,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
     weight_collection = collection_freq / total_collection_term;
 	/*Maximum likelihood of current term ,weight contribution of term incase query term is present in the document.*/
     weight_document = wdf_double / len_double;
-	
+
 	// Calculating weiights considering diffrent smoothing option available to user.
 	if(select_smoothing == JELINEK_MERCER_SMOOTHING) {
 		weight_sum = ((param_smoothing1*weight_collection) +  ((1-param_smoothing1)*weight_document));
@@ -169,7 +169,10 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 		weight_sum = ((((wdf_double - param_smoothing1) > 0) ? (wdf_double - param_smoothing1) : 0) / len_double) + ((param_smoothing1 *weight_collection*(nouniqterm_double))/len_double);
 	}
 	else {
-		weight_sum = (((1-param_smoothing1)*(wdf_double + ((param_smoothing2*1000)/total_collection_term))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
+		weight_sum = (((1-param_smoothing1)*(wdf_double + (param_smoothing2/44811335))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
+		if (isbigram)  {		
+//			weight_sum = (((1-param_smoothing1)*(wdf_double + ((param_smoothing2*weight_collection)/total_collection_term))/(len_double + param_smoothing2)) + (param_smoothing1*weight_collection));
+		}
 	}
 	
 	double mixture_multiplication;
