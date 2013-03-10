@@ -14,8 +14,9 @@ CLEANFILES = SmokeTest.class MyMatchDecider.class MyExpandDecider.class\
 
 SmokeTest: SmokeTest.class
 
+# To get debug symbols, use: make JAVACFLAGS=-g
 .java.class:
-	$(JAVAC) -classpath $(srcdir)$(JAVA_PATHSEP). -d . $<
+	$(JAVAC) $(JAVACFLAGS) -classpath $(srcdir)$(JAVA_PATHSEP). -d . $<
 
 XAPIAN_SWIG_JAVA_SRCS=\
 	org/xapian/Auto.java\
@@ -33,6 +34,7 @@ XAPIAN_SWIG_JAVA_SRCS=\
 	org/xapian/ESetIterator.java\
 	org/xapian/ExpandDecider.java\
 	org/xapian/ExpandDeciderAnd.java\
+	org/xapian/FieldProcessor.java\
 	org/xapian/FixedWeightPostingSource.java\
 	org/xapian/GreatCircleMetric.java\
 	org/xapian/InMemory.java\
@@ -139,7 +141,7 @@ BUILT_SOURCES = xapian_wrap.cc xapian_wrap.h $(XAPIAN_SWIG_JAVA_SRCS)
 EXTRA_DIST = run-java-test SmokeTest.java $(BUILT_SOURCES)
 
 if MAINTAINER_MODE
-RUN_SWIG := $(PERL) '$(top_srcdir)'/swig-depcomp $(SWIG)
+RUN_SWIG = $(PERL) '$(top_srcdir)'/swig-depcomp $(SWIG)
 
 xapian_wrap.cc xapian_wrap.h $(XAPIAN_SWIG_JAVA_SRCS): xapian_wrap.stamp
 	@stamp=xapian_wrap.stamp; $(make_many_locked)						       

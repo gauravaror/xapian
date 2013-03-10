@@ -25,6 +25,7 @@ XAPIAN_SWIG_CS_SRCS=\
 	generated-csharp/Enquire.cs \
 	generated-csharp/ExpandDecider.cs \
 	generated-csharp/ExpandDeciderAnd.cs \
+	generated-csharp/FieldProcessor.cs \
 	generated-csharp/FixedWeightPostingSource.cs \
 	generated-csharp/GreatCircleMetric.cs \
 	generated-csharp/InMemory.cs \
@@ -119,7 +120,7 @@ all-am: $(ASSEMBLY).dll
 CLEANFILES = XapianSharp.snk $(ASSEMBLY).dll SmokeTest.exe
 
 if MAINTAINER_MODE
-RUN_SWIG := $(PERL) '$(top_srcdir)'/swig-depcomp $(SWIG)
+RUN_SWIG = $(PERL) '$(top_srcdir)'/swig-depcomp $(SWIG)
 
 xapian_wrap.cc xapian_wrap.h $(XAPIAN_SWIG_CS_SRCS): xapian_wrap.stamp
 	@stamp=xapian_wrap.stamp; $(make_many_locked)

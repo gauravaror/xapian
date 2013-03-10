@@ -24,6 +24,7 @@ TESTS = \
 	t/parser.t \
 	t/search.t \
 	t/sorter.t \
+	t/stem.t \
 	t/symbol-test.t \
 	t/termgenerator.t \
 	t/thread.t \
@@ -146,7 +147,7 @@ docs/index.html: Search/Xapian.pm
 	pod2html Search/Xapian.pm > docs/index.html
 	rm -f pod2htm?.tmp
 
-RUN_SWIG := $(PERL) '$(top_srcdir)'/swig-depcomp $(SWIG)
+RUN_SWIG = $(PERL) '$(top_srcdir)'/swig-depcomp $(SWIG)
 
 xapian_wrap.cc Search/Xapian.pm: xapian_wrap.stamp
 	@stamp=xapian_wrap.stamp; $(make_many_locked)

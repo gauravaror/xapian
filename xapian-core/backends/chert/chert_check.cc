@@ -248,7 +248,7 @@ ChertTableCheck::check(const char * tablename, const string & path, int opts,
 
 	// Fake up a base file with no bitmap first, then fill it in when we
 	// scan the tree below.
-	int fd = ::open((path + "DB").c_str(), O_RDONLY | O_BINARY);
+	int fd = ::open((path + "DB").c_str(), O_RDONLY | O_BINARY | O_CLOEXEC);
 	if (fd < 0) throw;
 	unsigned char buf[65536];
 	uint4 blocksize = 8192; // Default.
@@ -375,7 +375,8 @@ ChertTableCheck::check(const char * tablename, const string & path, int opts,
 	    B.base.write_to_file(base_name, B.base_letter, string(), -1, NULL);
 	} else {
 	    /* the bit map should now be entirely clear: */
-	    if (!B.base.is_empty()) {
+	    B.base.calculate_last_block();
+	    if (B.base.get_bit_map_size() != 0) {
 		B.failure("Unused block(s) marked used in bitmap");
 	    }
 
