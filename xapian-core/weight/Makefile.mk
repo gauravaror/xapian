@@ -19,4 +19,4 @@ lib_src +=\
 	weight/tfidfweight.cc\
 	weight/weight.cc\
 	weight/weightinternal.cc\
-    weight/unigramlmweight.cc
+    weight/lmweight.cc
