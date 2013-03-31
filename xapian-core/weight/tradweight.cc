@@ -143,7 +143,7 @@ TradWeight::unserialise(const string & s) const
 double
 TradWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount) const
 {
-	get_sumpart(wdf,len);
+	return get_sumpart(wdf,len);
 }
 
 double
