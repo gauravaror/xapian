@@ -32,18 +32,18 @@ using namespace std;
 DEFINE_TESTCASE(tradweight3, !backend) {
     Xapian::TradWeight wt(42);
     try {
-	Xapian::TradWeight t;
-	Xapian::TradWeight * t2 = t.unserialise(wt.serialise() + "X");
-	// Make sure we actually use the weight.
-	bool empty = t2->name().empty();
-	delete t2;
-	if (empty)
-	    FAIL_TEST("Serialised TradWeight with junk appended unserialised to empty name!");
-	FAIL_TEST("Serialised TradWeight with junk appended unserialised OK");
+        Xapian::TradWeight t;
+        Xapian::TradWeight * t2 = t.unserialise(wt.serialise() + "X");
+        // Make sure we actually use the weight.
+        bool empty = t2->name().empty();
+        delete t2;
+        if (empty)
+            FAIL_TEST("Serialised TradWeight with junk appended unserialised to empty name!");
+        FAIL_TEST("Serialised TradWeight with junk appended unserialised OK");
     } catch (const Xapian::SerialisationError &e) {
-	// Regression test for error in exception message fixed in 1.2.11 and
-	// 1.3.1.
-	TEST(e.get_msg().find("BM25") == string::npos);
+        // Regression test for error in exception message fixed in 1.2.11 and
+        // 1.3.1.
+        TEST(e.get_msg().find("BM25") == string::npos);
     }
     return true;
 }
@@ -52,14 +52,14 @@ DEFINE_TESTCASE(tradweight3, !backend) {
 DEFINE_TESTCASE(unigramlmweight3, !backend) {
     Xapian::LMWeight wt(79898.0,Xapian::Weight::JELINEK_MERCER_SMOOTHING,0.5,1.0);
     try {
-	Xapian::LMWeight t;
-	Xapian::LMWeight * t2 = t.unserialise(wt.serialise() + "X");
-	// Make sure we actually use the weight.
-	bool empty = t2->name().empty();
-	delete t2;
-	if (empty)
-	    FAIL_TEST("Serialised LMWeight with junk appended unserialised to empty name!");
-	FAIL_TEST("Serialised LMWeight with junk appended unserialised OK");
+        Xapian::LMWeight t;
+        Xapian::LMWeight * t2 = t.unserialise(wt.serialise() + "X");
+        // Make sure we actually use the weight.
+        bool empty = t2->name().empty();
+        delete t2;
+        if (empty)
+            FAIL_TEST("Serialised LMWeight with junk appended unserialised to empty name!");
+        FAIL_TEST("Serialised LMWeight with junk appended unserialised OK");
     } catch (const Xapian::SerialisationError &e) {
 	//GOOD!
     }
@@ -69,14 +69,14 @@ DEFINE_TESTCASE(unigramlmweight3, !backend) {
 DEFINE_TESTCASE(bm25weight3, !backend) {
     Xapian::BM25Weight wt(2.0, 0.5, 1.3, 0.6, 0.01);
     try {
-	Xapian::BM25Weight b;
-	Xapian::BM25Weight * b2 = b.unserialise(wt.serialise() + "X");
-	// Make sure we actually use the weight.
-	bool empty = b2->name().empty();
-	delete b2;
-	if (empty)
-	    FAIL_TEST("Serialised BM25Weight with junk appended unserialised to empty name!");
-	FAIL_TEST("Serialised BM25Weight with junk appended unserialised OK");
+        Xapian::BM25Weight b;
+        Xapian::BM25Weight * b2 = b.unserialise(wt.serialise() + "X");
+        // Make sure we actually use the weight.
+        bool empty = b2->name().empty();
+        delete b2;
+        if (empty)
+            FAIL_TEST("Serialised BM25Weight with junk appended unserialised to empty name!");
+        FAIL_TEST("Serialised BM25Weight with junk appended unserialised OK");
     } catch (const Xapian::SerialisationError &) {
 	// Good!
     }
@@ -109,62 +109,62 @@ DEFINE_TESTCASE(bm25weight4, backend) {
 }
 //Two stage should perform same as Jelinek mercer if smoothing parameter for mercer is kept 1 in both.
 DEFINE_TESTCASE(unigramlmweight4,backend) {
-	Xapian::Database db = get_database("apitest_simpledata");
-	Xapian::Enquire enquire1(db);
-	Xapian::Enquire enquire2(db);
-	enquire1.set_query(Xapian::Query("paragraph"));
-	Xapian::MSet mset1;
-	enquire2.set_query(Xapian::Query("paragraph"));
-	Xapian::MSet mset2;
-	//5 documents avaialble with term paragraph so mset size should be 5
-	enquire1.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING,1,0));
-	enquire2.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::JELINEK_MERCER_SMOOTHING,1,0));
-	mset1 = enquire1.get_mset(0,10);
-	mset2 = enquire2.get_mset(0,10);
+    Xapian::Database db = get_database("apitest_simpledata");
+    Xapian::Enquire enquire1(db);
+    Xapian::Enquire enquire2(db);
+    enquire1.set_query(Xapian::Query("paragraph"));
+    Xapian::MSet mset1;
+    enquire2.set_query(Xapian::Query("paragraph"));
+    Xapian::MSet mset2;
+    //5 documents avaialble with term paragraph so mset size should be 5
+    enquire1.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING,1,0));
+    enquire2.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::JELINEK_MERCER_SMOOTHING,1,0));
+    mset1 = enquire1.get_mset(0,10);
+    mset2 = enquire2.get_mset(0,10);
 
-	TEST_EQUAL(mset1.size(), 5);	
-	TEST_EQUAL_DOUBLE(mset1[1].get_weight(),mset2[1].get_weight());
-	return true;
+    TEST_EQUAL(mset1.size(), 5);	
+    TEST_EQUAL_DOUBLE(mset1[1].get_weight(),mset2[1].get_weight());
+    return true;
 }
 
 /*Test for checking if we dont use smoothing all
 * of them should give same result i.e wdf_double/len_double */
 DEFINE_TESTCASE(unigramlmweight5,backend) {
-	Xapian::Database db = get_database("apitest_simpledata");
-	Xapian::Enquire enquire1(db);
-	Xapian::Enquire enquire2(db);
-	Xapian::Enquire enquire3(db);
-	Xapian::Enquire enquire4(db);
-	enquire1.set_query(Xapian::Query("paragraph"));
-	Xapian::MSet mset1;
-	enquire2.set_query(Xapian::Query("paragraph"));
-	Xapian::MSet mset2;
-	enquire3.set_query(Xapian::Query("paragraph"));
-	Xapian::MSet mset3;
-	enquire4.set_query(Xapian::Query("paragraph"));
-	Xapian::MSet mset4;
-	//5 documents avaialble with term paragraph so mset size should be 5
-	enquire1.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::TWO_STAGE_SMOOTHING,0,0));
-	enquire2.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::JELINEK_MERCER_SMOOTHING,0,0));
-	enquire3.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::ABSOLUTE_DISCOUNT_SMOOTHING,0,0));
-	enquire4.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::DIRICHLET_SMOOTHING,0,0));
+    Xapian::Database db = get_database("apitest_simpledata");
+    Xapian::Enquire enquire1(db);
+    Xapian::Enquire enquire2(db);
+    Xapian::Enquire enquire3(db);
+    Xapian::Enquire enquire4(db);
+    enquire1.set_query(Xapian::Query("paragraph"));
+    Xapian::MSet mset1;
+    enquire2.set_query(Xapian::Query("paragraph"));
+    Xapian::MSet mset2;
+    enquire3.set_query(Xapian::Query("paragraph"));
+    Xapian::MSet mset3;
+    enquire4.set_query(Xapian::Query("paragraph"));
+    Xapian::MSet mset4;
+    //5 documents avaialble with term paragraph so mset size should be 5
+    enquire1.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::TWO_STAGE_SMOOTHING,0,0));
+    enquire2.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::JELINEK_MERCER_SMOOTHING,0,0));
+    enquire3.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::ABSOLUTE_DISCOUNT_SMOOTHING,0,0));
+    enquire4.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::DIRICHLET_SMOOTHING,0,0));
 
-	mset1 = enquire1.get_mset(0,10);
-	mset2 = enquire2.get_mset(0,10);
-	mset3 = enquire3.get_mset(0,10);
-	mset4 = enquire4.get_mset(0,10);
+    mset1 = enquire1.get_mset(0,10);
+    mset2 = enquire2.get_mset(0,10);
+    mset3 = enquire3.get_mset(0,10);
+    mset4 = enquire4.get_mset(0,10);
 
-	TEST_EQUAL(mset1.size(), 5);	
-	TEST_EQUAL(mset2.size(), 5);	
-	TEST_EQUAL(mset3.size(), 5);	
-	TEST_EQUAL(mset4.size(), 5);	
-	for(size_t i = 1;i < 5;i++) {
-	TEST_EQUAL_DOUBLE(mset3[i].get_weight(),mset4[i].get_weight());
-	TEST_EQUAL_DOUBLE(mset2[i].get_weight(),mset4[i].get_weight());
-	TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset2[i].get_weight());
-	TEST_EQUAL_DOUBLE(mset3[i].get_weight(),mset2[i].get_weight());
-	TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset4[i].get_weight());
-	TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset3[i].get_weight());
-}
-	return true;
+    TEST_EQUAL(mset1.size(), 5);	
+    TEST_EQUAL(mset2.size(), 5);	
+    TEST_EQUAL(mset3.size(), 5);	
+    TEST_EQUAL(mset4.size(), 5);	
+    for(size_t i = 1;i < 5;i++) {
+        TEST_EQUAL_DOUBLE(mset3[i].get_weight(),mset4[i].get_weight());
+        TEST_EQUAL_DOUBLE(mset2[i].get_weight(),mset4[i].get_weight());
+        TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset2[i].get_weight());
+        TEST_EQUAL_DOUBLE(mset3[i].get_weight(),mset2[i].get_weight());
+        TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset4[i].get_weight());
+        TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset3[i].get_weight());
+    }
+    return true;
 }

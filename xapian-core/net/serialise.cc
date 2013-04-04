@@ -108,8 +108,7 @@ serialise_stats(const Xapian::Weight::Internal &stats)
 	result += encode_length(i->second.termfreq);
 	if (stats.rset_size != 0)
 	    result += encode_length(i->second.reltermfreq);
-	    
-	result += encode_length(i->second.termcollectionfreq);
+        result += encode_length(i->second.termcollectionfreq);
     }
 
     return result;
