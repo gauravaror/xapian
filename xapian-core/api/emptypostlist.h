@@ -42,7 +42,7 @@ class EmptyPostList : public PostList {
     double get_maxweight() const;
     Xapian::docid get_docid() const;
     Xapian::termcount get_doclength() const;
-	Xapian::termcount get_nouniqterm() const;
+    Xapian::termcount get_nouniqterm() const;
     double get_weight() const;
     bool at_end() const;
     double recalc_maxweight();

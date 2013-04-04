@@ -95,7 +95,7 @@ class MultiXorPostList : public PostList {
 
     Xapian::termcount get_doclength() const;
 	
-	Xapian::termcount get_nouniqterm() const;
+    Xapian::termcount get_nouniqterm() const;
 
     double get_weight() const;
 
