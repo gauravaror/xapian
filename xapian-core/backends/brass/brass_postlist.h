@@ -115,7 +115,7 @@ class BrassPostListTable : public BrassTable {
 
 	/** Returns the length of document @a did. */
 	Xapian::termcount get_doclength(Xapian::docid did,
-					Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
+        Xapian::Internal::intrusive_ptr<const BrassDatabase> db) const;
 	
 
 	/** Check if document @a did exists. */
