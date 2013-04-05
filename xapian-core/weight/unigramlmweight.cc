@@ -1,5 +1,5 @@
-/** @file lmweight.cc
- * @brief Xapian::LMWeight class - the Unigram Language Modelling formula.
+/** @file unigramlmweight.cc
+ * @brief Xapian::UnigramLMWeight class - the Unigram Language Modelling formula.
  */
 /* Copyright (C) 2012 Gaurav Arora
  *
@@ -34,12 +34,12 @@ using namespace std;
 
 namespace Xapian {
 
-LMWeight *
-LMWeight::clone() const  {
-	return new LMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2);
+UnigramLMWeight *
+UnigramLMWeight::clone() const  {
+	return new UnigramLMWeight(param_log,select_smoothing, param_smoothing1, param_smoothing2);
 }
 void
-LMWeight::init(double )
+UnigramLMWeight::init(double )
 {
     //Storing collection frequency of current term in collection_freq to be accessed while smoothing of weights for the term,for term not present in the document.
     collection_freq = get_collectionfreq();
@@ -84,13 +84,13 @@ LMWeight::init(double )
 	}
 }
 string
-LMWeight::name() const
+UnigramLMWeight::name() const
 {
-    return "Xapian::LMWeight";
+    return "Xapian::UnigramLMWeight";
 }
 
 string
-LMWeight::serialise() const
+UnigramLMWeight::serialise() const
 {
     
     string result = serialise_double(param_log);
@@ -101,8 +101,8 @@ LMWeight::serialise() const
     return result;
 }
 
-LMWeight *
-LMWeight::unserialise(const string & s) const
+UnigramLMWeight *
+UnigramLMWeight::unserialise(const string & s) const
 {
 	const char *ptr =  s.data();
 	const char *end = ptr + s.size();
@@ -111,25 +111,25 @@ LMWeight::unserialise(const string & s) const
 	double param_smoothing1_ = unserialise_double(&ptr,end);
 	double param_smoothing2_ = unserialise_double(&ptr,end);
 	if(rare(ptr != end))
-	throw Xapian::SerialisationError("Extra data in LMWeight::unserialise()");
-	return new LMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
+	throw Xapian::SerialisationError("Extra data in UnigramLMWeight::unserialise()");
+	return new UnigramLMWeight(param_log_,select_smoothing_,param_smoothing1_,param_smoothing2_);
 }
 
 double
-LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
+UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
 {
 	return	get_sumpart(wdf,len,Xapian::termcount(1));
 }
 
 double
-LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount uniqterm) const
+UnigramLMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termcount uniqterm) const
 {
     //Withing Document Frequency of the term in document being considered.
     double wdf_double(wdf);
     //Length of the Document in terms of number of terms.
     double len_double(len);
 	double nouniqterm_double(uniqterm);
-    // varioable to store weight contribution of term in the document socring for LM.
+    // varioable to store weight contribution of term in the document socring for unigram LM.
     double weight_collection,weight_document,weight_sum;
 	/* In case the within document frequency of term is zero smoothining
 	*  will be required and should be return instead of returning zero,
@@ -154,7 +154,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 	}
 
 
-    /* Since  LM score is calculated with multiplication,
+    /* Since unigram LM score is calculated with multiplication,
 	* instead of changing the current implementation log trick have been used
 	* to calculate the product since (sum of log is log of product and 
 	* since aim is ranking ranking document by product or log of 
@@ -165,7 +165,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,Xapian::termc
 }
 
 double
-LMWeight::get_maxpart() const
+UnigramLMWeight::get_maxpart() const
 {
  // Sufficiently large bound is being returned ,to optimize the matching process this needs to be fixed and changed to good max bound 
    double wdf_max(max(get_wdf_upper_bound(), Xapian::termcount(1)));
@@ -173,13 +173,13 @@ LMWeight::get_maxpart() const
 }
 
 double
-LMWeight::get_sumextra(Xapian::termcount) const
+UnigramLMWeight::get_sumextra(Xapian::termcount) const
 {
     return 0;
 }
 
 double
-LMWeight::get_maxextra() const
+UnigramLMWeight::get_maxextra() const
 {
     return 0;
 }

@@ -196,7 +196,7 @@ Registry::Internal::add_defaults()
     wtschemes[weighting_scheme->name()] = weighting_scheme;
     weighting_scheme = new Xapian::TradWeight;
     wtschemes[weighting_scheme->name()] = weighting_scheme;
-    weighting_scheme = new Xapian::LMWeight;
+    weighting_scheme = new Xapian::UnigramLMWeight;
     wtschemes[weighting_scheme->name()] = weighting_scheme;
 
     Xapian::PostingSource * source;
