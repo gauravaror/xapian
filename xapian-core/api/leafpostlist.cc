@@ -72,11 +72,11 @@ LeafPostList::get_weight() const
 {
     if (!weight) return 0;
     Xapian::termcount doclen = 0;
-    Xapian::termcount uniqterm = 0;
+	Xapian::termcount uniqterm = 0;
     // Fetching the document length is work we can avoid if the weighting
     // scheme doesn't use it.
     if (need_doclength) doclen = get_doclength();
-    uniqterm = get_nouniqterm();
+	uniqterm = get_nouniqterm();
     return weight->get_sumpart(get_wdf(), doclen,uniqterm);
 }
 
@@ -92,7 +92,7 @@ LeafPostList::get_termfreq_est_using_stats(
 {
     LOGCALL(MATCH, TermFreqs, "LeafPostList::get_termfreq_est_using_stats", stats);
     if (term.empty()) {
-        RETURN(TermFreqs(stats.collection_size, stats.rset_size,stats.total_term_count));
+	RETURN(TermFreqs(stats.collection_size, stats.rset_size,stats.total_term_count));
     }
     map<string, TermFreqs>::const_iterator i = stats.termfreqs.find(term);
     Assert(i != stats.termfreqs.end());

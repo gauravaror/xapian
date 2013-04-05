@@ -125,9 +125,9 @@ PostingIterator::get_doclength() const
 Xapian::termcount
 PostingIterator::get_nouniqterm() const
 {
-    LOGCALL(API,Xapian::termcount,"PostingIterator::get_nouniqterm",NO_ARGS);
-    Assert(internal);
-    RETURN(internal->get_nouniqterm());
+	LOGCALL(API,Xapian::termcount,"PostingIterator::get_nouniqterm",NO_ARGS);
+	Assert(internal);
+	RETURN(internal->get_nouniqterm());
 }
 
 #if 0 // FIXME: TermIterator supports this, so PostingIterator really ought to.

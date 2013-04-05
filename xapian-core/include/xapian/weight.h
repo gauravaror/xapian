@@ -53,10 +53,10 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
    *  Default smoothing is TWO_STAGE_SMOOTHING */
 public:
     typedef enum {
-        TWO_STAGE_SMOOTHING = 1,
-        DIRICHLET_SMOOTHING = 2,
-        ABSOLUTE_DISCOUNT_SMOOTHING = 3,
-        JELINEK_MERCER_SMOOTHING = 4
+	TWO_STAGE_SMOOTHING = 1,
+	DIRICHLET_SMOOTHING = 2,
+	ABSOLUTE_DISCOUNT_SMOOTHING = 3,
+	JELINEK_MERCER_SMOOTHING = 4
     } type_smoothing;
 
     /** Tell Xapian that your subclass will want a particular statistic.
@@ -623,7 +623,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
     LMWeight(double param_log_,type_smoothing select_smoothing_,double param_smoothing1_,double param_smoothing2_)
 	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_), 
 	  param_smoothing2(param_smoothing2_)
-    {
+	{
 	
 	need_stat(AVERAGE_LENGTH);
         need_stat(DOC_LENGTH);
@@ -632,8 +632,8 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(TERMFREQ);
 	need_stat(RELTERMFREQ);
 	need_stat(DOC_LENGTH_MIN);
-        need_stat(WDF);
-        need_stat(WDF_MAX);
+	need_stat(WDF);
+	need_stat(WDF_MAX);
 	need_stat(WDF);
 	need_stat(COLLECTION_FREQ);
     }

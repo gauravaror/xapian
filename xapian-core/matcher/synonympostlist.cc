@@ -76,12 +76,12 @@ SynonymPostList::get_weight() const
     // that this is true.  Note that this requires the doclength to be
     // calculated even if the weight object doesn't want it.
 
-    Xapian::termcount uniqterm = get_nouniqterm();
+	Xapian::termcount uniqterm = get_nouniqterm();
     if (want_wdf) {
-        Xapian::termcount wdf = get_wdf();
-        Xapian::termcount doclen = get_doclength();
-        if (wdf > doclen) wdf = doclen;
-        RETURN(wt->get_sumpart(wdf, doclen,uniqterm));
+	Xapian::termcount wdf = get_wdf();
+	Xapian::termcount doclen = get_doclength();
+	if (wdf > doclen) wdf = doclen;
+	RETURN(wt->get_sumpart(wdf, doclen,uniqterm));
     }
     RETURN(wt->get_sumpart(0, want_doclength ? get_doclength() : 0,uniqterm));
 }

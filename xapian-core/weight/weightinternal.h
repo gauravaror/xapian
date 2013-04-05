@@ -43,9 +43,9 @@ struct TermFreqs {
 	    : termfreq(termfreq_), reltermfreq(reltermfreq_), termcollectionfreq(collectionfreq_) {}
 
     void operator +=(const TermFreqs & other) {
-        termfreq += other.termfreq;
-        reltermfreq += other.reltermfreq;
-        termcollectionfreq += other.termcollectionfreq;
+	termfreq += other.termfreq;
+	reltermfreq += other.reltermfreq;
+	termcollectionfreq += other.termcollectionfreq;
     }
 
     /// Return a std::string describing this object.
