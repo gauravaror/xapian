@@ -101,8 +101,8 @@ ValueRangePostList::get_doclength() const
 Xapian::termcount
 ValueRangePostList::get_nouniqterm() const
 {
-	Assert(db);
-	return 0;
+    Assert(db);
+    return 0;
 }
 
 double

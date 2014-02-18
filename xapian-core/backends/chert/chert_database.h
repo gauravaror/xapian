@@ -428,7 +428,6 @@ class ChertWritableDatabase : public ChertDatabase {
 	/** Virtual methods of Database::Internal. */
 	//@{
 	Xapian::termcount get_doclength(Xapian::docid did) const;
-	Xapian::termcount get_nouniqterm(Xapian::docid did) const;
 	Xapian::doccount get_termfreq(const string & tname) const;
 	Xapian::termcount get_collection_freq(const string & tname) const;
 	Xapian::doccount get_value_freq(Xapian::valueno slot) const;

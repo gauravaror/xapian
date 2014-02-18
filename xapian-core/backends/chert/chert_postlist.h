@@ -115,9 +115,9 @@ class ChertPostListTable : public ChertTable {
 	/** Returns the length of document @a did. */
 	Xapian::termcount get_doclength(Xapian::docid did,
 					Xapian::Internal::intrusive_ptr<const ChertDatabase> db) const;
-	
+
 	Xapian::termcount get_nouniqterm(Xapian::docid did,
-					Xapian::Internal::intrusive_ptr<const ChertDatabase> db) const;
+					 Xapian::Internal::intrusive_ptr<const ChertDatabase> db) const;
 
 	/** Check if document @a did exists. */
 	bool document_exists(Xapian::docid did,
@@ -248,7 +248,7 @@ class ChertPostList : public LeafPostList {
 
 	/// Returns the length of current document.
 	Xapian::termcount get_doclength() const;
-	
+
 	Xapian::termcount get_nouniqterm() const;
 
 	/** Returns the Within Document Frequency of the term in the current

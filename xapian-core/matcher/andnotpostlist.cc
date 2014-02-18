@@ -217,7 +217,7 @@ AndNotPostList::get_doclength() const
 Xapian::termcount
 AndNotPostList::get_nouniqterm() const
 {    
-	LOGCALL(MATCH, Xapian::termcount, "AndNotPostList::get_nouniqterm", NO_ARGS);
+    LOGCALL(MATCH, Xapian::termcount, "AndNotPostList::get_nouniqterm", NO_ARGS);
     RETURN(l->get_nouniqterm());
 }
 

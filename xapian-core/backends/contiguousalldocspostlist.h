@@ -63,7 +63,7 @@ class ContiguousAllDocsPostList : public LeafPostList {
 
     /// Return the length of current document.
     Xapian::termcount get_doclength() const;
-    
+
     /// Return the number of unique terms.
     Xapian::termcount get_nouniqterm() const;
 

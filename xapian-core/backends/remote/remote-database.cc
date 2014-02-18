@@ -508,6 +508,7 @@ RemoteDatabase::get_doclength(Xapian::docid did) const
     }
     return doclen;
 }
+
 Xapian::termcount
 RemoteDatabase::get_nouniqterm(Xapian::docid did) const
 {
@@ -523,6 +524,7 @@ RemoteDatabase::get_nouniqterm(Xapian::docid did) const
     }
     return doclen;
 }
+
 reply_type
 RemoteDatabase::get_message(string &result, reply_type required_type) const
 {

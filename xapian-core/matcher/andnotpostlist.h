@@ -63,7 +63,7 @@ class AndNotPostList : public BranchPostList {
 	 *  comes from.
 	 */
 	virtual Xapian::termcount get_doclength() const;
-	
+
 	virtual Xapian::termcount get_nouniqterm() const;
 
         AndNotPostList(PostList *left,

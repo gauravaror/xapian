@@ -74,7 +74,7 @@ ConstDatabaseWrapper::get_doclength(Xapian::docid did) const
 Xapian::termcount
 ConstDatabaseWrapper::get_nouniqterm(Xapian::docid did) const
 {
-	return realdb->get_nouniqterm(did);
+    return realdb->get_nouniqterm(did);
 }
 
 Xapian::doccount

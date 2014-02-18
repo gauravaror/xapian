@@ -425,7 +425,6 @@ OrPostList::get_nouniqterm() const
     RETURN(nouniqterm);
 }
 
-
 Xapian::termcount
 OrPostList::get_wdf() const
 {

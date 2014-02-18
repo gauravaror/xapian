@@ -164,12 +164,12 @@ MultiAndPostList::get_doclength() const
 Xapian::termcount
 MultiAndPostList::get_nouniqterm() const
 {
-	Assert(did);
-	Xapian::termcount nouniqterm = plist[0]->get_nouniqterm();
-	for(size_t i = 1;i < n_kids; ++i) {
-	AssertEq(nouniqterm,plist[i]->get_nouniqterm());
-	}
-	return nouniqterm;
+    Assert(did);
+    Xapian::termcount nouniqterm = plist[0]->get_nouniqterm();
+    for (size_t i = 1; i < n_kids; ++i) {
+	AssertEq(nouniqterm, plist[i]->get_nouniqterm());
+    }
+    return nouniqterm;
 }
 
 double

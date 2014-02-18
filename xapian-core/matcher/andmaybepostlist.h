@@ -82,7 +82,7 @@ class AndMaybePostList : public BranchPostList {
 	 *  comes from.
 	 */
 	virtual Xapian::termcount get_doclength() const;
-	
+
 	virtual Xapian::termcount get_nouniqterm() const;
 
         AndMaybePostList(PostList *left_,

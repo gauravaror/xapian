@@ -138,13 +138,11 @@ class Database::Internal : public Xapian::Internal::intrusive_base {
 	 *              being requested.
 	 */
 	virtual Xapian::termcount get_doclength(Xapian::docid did) const = 0;
-	
-	
+
 	/** Get the number of unique term in document.
 	 *
-	 
 	 *  @param did  The document id of the document whose number of terms is
-	 *              being requested.
+	 *		being requested.
 	 */
 	virtual	Xapian::termcount get_nouniqterm(Xapian::docid did) const = 0;
 

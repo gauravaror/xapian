@@ -71,7 +71,6 @@ class OrPostList : public BranchPostList {
 	virtual Xapian::termcount get_doclength() const;
 
 	/// Return the no of uniq term of the document
-
 	virtual Xapian::termcount get_nouniqterm() const;
 
         OrPostList(PostList * left_,

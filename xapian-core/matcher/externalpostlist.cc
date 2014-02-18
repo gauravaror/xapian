@@ -111,8 +111,8 @@ ExternalPostList::get_doclength() const
 Xapian::termcount
 ExternalPostList::get_nouniqterm() const
 {
-	Assert(false);
-	return 0;
+    Assert(false);
+    return 0;
 }
 
 double

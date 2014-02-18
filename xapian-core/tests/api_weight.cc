@@ -53,7 +53,7 @@ DEFINE_TESTCASE(tradweight3, !backend) {
 
 // Test Exception for junk after serialised weight.
 DEFINE_TESTCASE(unigramlmweight3, !backend) {
-    Xapian::LMWeight wt(79898.0,Xapian::Weight::JELINEK_MERCER_SMOOTHING,0.5,1.0);
+    Xapian::LMWeight wt(79898.0, Xapian::Weight::JELINEK_MERCER_SMOOTHING, 0.5, 1.0);
     try {
 	Xapian::LMWeight t;
 	Xapian::LMWeight * t2 = t.unserialise(wt.serialise() + "X");
@@ -795,13 +795,13 @@ DEFINE_TESTCASE(unigramlmweight4, backend) {
     enquire2.set_query(Xapian::Query("paragraph"));
     Xapian::MSet mset2;
     //5 documents avaialble with term paragraph so mset size should be 5
-    enquire1.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING,1,0));
-    enquire2.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::JELINEK_MERCER_SMOOTHING,1,0));
-    mset1 = enquire1.get_mset(0,10);
-    mset2 = enquire2.get_mset(0,10);
+    enquire1.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING, 1, 0));
+    enquire2.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::JELINEK_MERCER_SMOOTHING, 1, 0));
+    mset1 = enquire1.get_mset(0, 10);
+    mset2 = enquire2.get_mset(0, 10);
 
-    TEST_EQUAL(mset1.size(), 5);	
-    TEST_EQUAL_DOUBLE(mset1[1].get_weight(),mset2[1].get_weight());
+    TEST_EQUAL(mset1.size(), 5);
+    TEST_EQUAL_DOUBLE(mset1[1].get_weight(), mset2[1].get_weight());
     return true;
 }
 
@@ -821,28 +821,28 @@ DEFINE_TESTCASE(unigramlmweight5, backend) {
     Xapian::MSet mset3;
     enquire4.set_query(Xapian::Query("paragraph"));
     Xapian::MSet mset4;
-    //5 documents avaialble with term paragraph so mset size should be 5
-    enquire1.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::TWO_STAGE_SMOOTHING,0,0));
-    enquire2.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::JELINEK_MERCER_SMOOTHING,0,0));
-    enquire3.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::ABSOLUTE_DISCOUNT_SMOOTHING,0,0));
-    enquire4.set_weighting_scheme(Xapian::LMWeight(10000.0,Xapian::Weight::DIRICHLET_SMOOTHING,0,0));
+    // 5 documents avaialble with term paragraph so mset size should be 5
+    enquire1.set_weighting_scheme(Xapian::LMWeight(10000.0, Xapian::Weight::TWO_STAGE_SMOOTHING, 0, 0));
+    enquire2.set_weighting_scheme(Xapian::LMWeight(10000.0, Xapian::Weight::JELINEK_MERCER_SMOOTHING, 0, 0));
+    enquire3.set_weighting_scheme(Xapian::LMWeight(10000.0, Xapian::Weight::ABSOLUTE_DISCOUNT_SMOOTHING, 0, 0));
+    enquire4.set_weighting_scheme(Xapian::LMWeight(10000.0, Xapian::Weight::DIRICHLET_SMOOTHING, 0, 0));
 
-    mset1 = enquire1.get_mset(0,10);
-    mset2 = enquire2.get_mset(0,10);
-    mset3 = enquire3.get_mset(0,10);
-    mset4 = enquire4.get_mset(0,10);
+    mset1 = enquire1.get_mset(0, 10);
+    mset2 = enquire2.get_mset(0, 10);
+    mset3 = enquire3.get_mset(0, 10);
+    mset4 = enquire4.get_mset(0, 10);
 
-    TEST_EQUAL(mset1.size(), 5);	
-    TEST_EQUAL(mset2.size(), 5);	
-    TEST_EQUAL(mset3.size(), 5);	
-    TEST_EQUAL(mset4.size(), 5);	
-    for(size_t i = 1;i < 5;i++) {
-        TEST_EQUAL_DOUBLE(mset3[i].get_weight(),mset4[i].get_weight());
-        TEST_EQUAL_DOUBLE(mset2[i].get_weight(),mset4[i].get_weight());
-        TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset2[i].get_weight());
-        TEST_EQUAL_DOUBLE(mset3[i].get_weight(),mset2[i].get_weight());
-        TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset4[i].get_weight());
-        TEST_EQUAL_DOUBLE(mset1[i].get_weight(),mset3[i].get_weight());
+    TEST_EQUAL(mset1.size(), 5);
+    TEST_EQUAL(mset2.size(), 5);
+    TEST_EQUAL(mset3.size(), 5);
+    TEST_EQUAL(mset4.size(), 5);
+    for (size_t i = 1; i < 5; i++) {
+	TEST_EQUAL_DOUBLE(mset3[i].get_weight(), mset4[i].get_weight());
+	TEST_EQUAL_DOUBLE(mset2[i].get_weight(), mset4[i].get_weight());
+	TEST_EQUAL_DOUBLE(mset1[i].get_weight(), mset2[i].get_weight());
+	TEST_EQUAL_DOUBLE(mset3[i].get_weight(), mset2[i].get_weight());
+	TEST_EQUAL_DOUBLE(mset1[i].get_weight(), mset4[i].get_weight());
+	TEST_EQUAL_DOUBLE(mset1[i].get_weight(), mset3[i].get_weight());
     }
     return true;
 }

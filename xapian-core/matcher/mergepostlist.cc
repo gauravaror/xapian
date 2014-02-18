@@ -225,11 +225,10 @@ MergePostList::get_doclength() const
 Xapian::termcount
 MergePostList::get_nouniqterm() const
 {
-	LOGCALL(MATCH,Xapian::termcount,"MergePostList::get_nouniqterm",NO_ARGS);
-	Assert(current != -1);
-	return plists[current]->get_nouniqterm();
+    LOGCALL(MATCH, Xapian::termcount, "MergePostList::get_nouniqterm", NO_ARGS);
+    Assert(current != -1);
+    return plists[current]->get_nouniqterm();
 }
-
 
 Xapian::termcount
 MergePostList::count_matching_subqs() const

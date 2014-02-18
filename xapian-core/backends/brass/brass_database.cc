@@ -800,7 +800,6 @@ BrassDatabase::get_doclength(Xapian::docid did) const
     Assert(did != 0);
     intrusive_ptr<const BrassDatabase> ptrtothis(this);
     RETURN(postlist_table.get_doclength(did, ptrtothis));
-	
 }
 
 Xapian::termcount

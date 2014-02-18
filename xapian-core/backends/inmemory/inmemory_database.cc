@@ -545,7 +545,7 @@ InMemoryDatabase::get_doclength(Xapian::docid did) const
 Xapian::termcount
 InMemoryDatabase::get_nouniqterm(Xapian::docid did) const
 {
-   return doclengths[did-1];
+   return doclengths[did - 1];
 }
 
 TermList *
