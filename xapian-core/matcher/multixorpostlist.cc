@@ -171,7 +171,7 @@ MultiXorPostList::get_unique_terms() const
     Xapian::termcount unique_terms = 0;
     bool unique_terms_set = false;
     for (size_t i = 0; i < n_kids; ++i) {
-	if (plist[i]->get_unique_terms() == did) {
+	if (plist[i]->get_docid() == did) {
 	    if (unique_terms_set) {
 		AssertEq(unique_terms, plist[i]->get_unique_terms());
 	    } else {
