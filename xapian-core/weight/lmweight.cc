@@ -51,9 +51,9 @@ LMWeight::init(double)
     AssertRel(collection_freq,>=,0);
     LOGVALUE(WTCALC, collection_freq);
     // calculating approximate number of total terms in the collection to be
-    // accessed for smoothining of the document.
+    // accessed for smoothing of the document.
     total_collection_term = get_collection_size()*get_average_length();
-    // Total term should be greater than zero as there would be atleast one
+    // Total term should be greater than zero as there would be at least one
     // document in collection.
     AssertRel(total_collection_terms,>,0);
     LOGVALUE(WTCALC, total_collection_terms);
@@ -61,18 +61,18 @@ LMWeight::init(double)
     // term.
     AssertRel(collection_freq,<=,total_collection_terms);
 
-    /* Setting default values of the param_log to handel negetive value of log.
+    /* Setting default values of the param_log to handle negative value of log.
      * It is considered to be upperbound of document length.
-     * intializing param_log to upperbound of document_length.
+     * initializing param_log to upperbound of document_length.
      */
 
     if (param_log == 0.0) {
 	param_log = get_doclength_upper_bound();
     }
 
-    /* since the optimal parameter for Jelinek mercer smoothing
+    /* Since the optimal parameter for Jelinek mercer smoothing
      * is based on query length, so if query is title query changing
-     * default value of smoothig parameter.
+     * default value of smoothing parameter.
      */
 
     if (select_smoothing == JELINEK_MERCER_SMOOTHING ||
@@ -141,20 +141,20 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len, Xapian::term
     // Length of the Document in terms of number of terms.
     double len_double(len);
     double nouniqterm_double(uniqterm);
-    // varioable to store weight contribution of term in the document socring for LM.
+    // variable to store weight contribution of term in the document scoring for LM.
     double weight_collection, weight_document, weight_sum;
-    /* In case the within document frequency of term is zero smoothining will
+    /* In case the within document frequency of term is zero smoothing will
      * be required and should be return instead of returning zero, as returning
      * LM score are multiplication of contribution of all terms, due to absence
      * of single term whole document is scored zero, hence apply collection
-     * frequency smoothining
+     * frequency smoothing
      */
     weight_collection = collection_freq / total_collection_term;
     /* Maximum likelihood of current term, weight contribution of term in case
      * query term is present in the document.*/
     weight_document = wdf_double / len_double;
 
-    // Calculating weiights considering diffrent smoothing option available to user.
+    // Calculating weights considering different smoothing option available to user.
     if (select_smoothing == JELINEK_MERCER_SMOOTHING) {
 	weight_sum = (param_smoothing1 * weight_collection) +
 		     ((1 - param_smoothing1) * weight_document);
@@ -170,7 +170,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len, Xapian::term
     /* Since LM score is calculated with multiplication, instead of changing
      * the current implementation log trick have been used to calculate the
      * product since (sum of log is log of product and since aim is ranking
-     * ranking document by product or log of product wont make large diffrence
+     * ranking document by product or log of product won't make large difference
      * hence log(product) will be used for ranking
      */
     //weight_sum = weight_sum +1;

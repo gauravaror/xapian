@@ -99,7 +99,7 @@ MSetPostList::get_doclength() const
 Xapian::termcount
 MSetPostList::get_unique_terms() const
 {
-    throw Xapian::UnimplementedError("MSetPostList::get_doclength() unimplemented");
+    throw Xapian::UnimplementedError("MSetPostList::get_unique_terms() unimplemented");
 }
 
 double
