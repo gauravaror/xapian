@@ -113,7 +113,8 @@ PL2Weight::unserialise(const string & s) const
 }
 
 double
-PL2Weight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
+PL2Weight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
+		       Xapian::termcount) const
 {
     if (wdf == 0) return 0.0;
 

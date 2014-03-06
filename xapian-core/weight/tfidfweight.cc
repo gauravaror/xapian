@@ -82,7 +82,8 @@ TfIdfWeight::unserialise(const string & s) const
 }
 
 double
-TfIdfWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount) const
+TfIdfWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount,
+			 Xapian::termcount) const
 {
     Xapian::doccount termfreq = 1;
     if (normalizations[1] != 'n') termfreq = get_termfreq();

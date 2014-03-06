@@ -128,13 +128,8 @@ LMWeight::unserialise(const string & s) const
 }
 
 double
-LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len) const
-{
-    return get_sumpart(wdf, len, Xapian::termcount(1));
-}
-
-double
-LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len, Xapian::termcount uniqterm) const
+LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
+		      Xapian::termcount uniqterm) const
 {
     // Withing Document Frequency of the term in document being considered.
     double wdf_double(wdf);
