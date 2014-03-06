@@ -149,6 +149,12 @@ SynonymPostList::get_doclength() const {
     RETURN(subtree->get_doclength());
 }
 
+Xapian::termcount
+SynonymPostList::get_unique_terms() const {
+    LOGCALL(MATCH, Xapian::termcount, "SynonymPostList::get_unique_terms", NO_ARGS);
+    RETURN(subtree->get_unique_terms());
+}
+
 bool
 SynonymPostList::at_end() const {
     LOGCALL(MATCH, bool, "SynonymPostList::at_end", NO_ARGS);
