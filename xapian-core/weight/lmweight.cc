@@ -52,7 +52,7 @@ LMWeight::init(double)
     LOGVALUE(WTCALC, collection_freq);
     // calculating approximate number of total terms in the collection to be
     // accessed for smoothing of the document.
-    total_collection_term = get_collection_size()*get_average_length();
+    total_collection_term = get_collection_size() * get_average_length();
     // Total term should be greater than zero as there would be at least one
     // document in collection.
     AssertRel(total_collection_terms,>,0);
