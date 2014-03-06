@@ -1490,13 +1490,6 @@ ChertWritableDatabase::get_doclength(Xapian::docid did) const
     RETURN(ChertDatabase::get_doclength(did));
 }
 
-Xapian::termcount
-ChertWritableDatabase::get_unique_terms(Xapian::docid did) const
-{
-    LOGCALL(DB, Xapian::termcount, "ChertWritableDatabase::get_unique_terms", did);
-    RETURN(ChertDatabase::get_doclength(did));
-}
-
 Xapian::doccount
 ChertWritableDatabase::get_termfreq(const string & tname) const
 {

@@ -1412,13 +1412,6 @@ BrassWritableDatabase::get_doclength(Xapian::docid did) const
     RETURN(BrassDatabase::get_doclength(did));
 }
 
-Xapian::termcount
-BrassWritableDatabase::get_unique_terms(Xapian::docid did) const
-{
-    LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_unique_terms",did);
-    RETURN(BrassDatabase::get_unique_terms(did));
-}
-
 Xapian::doccount
 BrassWritableDatabase::get_termfreq(const string & term) const
 {
