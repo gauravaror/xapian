@@ -1135,7 +1135,7 @@ class XAPIAN_VISIBILITY_DEFAULT DPHWeight : public Weight {
  * described by the early papers on LM by Bruce Croft generally
  * gives better results.
  *
- * LM have no parameter as it doenot assume hueristic and work on comparing query with Language
+ * LM have no parameter as it doenot assume heuristic and work on comparing query with Language
  * model of the document.
  */
 class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
@@ -1249,7 +1249,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(COLLECTION_FREQ);
     }
 
-    // Unigram LM Constructor to use default value for smoothing.
+    // Unigram LM Constructure to use default value for smoothing.
     LMWeight()
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
 	  param_smoothing2(2000.0)
