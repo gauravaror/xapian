@@ -803,9 +803,9 @@ BrassDatabase::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-BrassDatabase::get_nouniqterm(Xapian::docid did) const
+BrassDatabase::get_unique_terms(Xapian::docid did) const
 {
-    LOGCALL(DB, Xapian::termcount, "BrassDatabase::get_nouniqterm", did);
+    LOGCALL(DB, Xapian::termcount, "BrassDatabase::get_unique_terms", did);
     Assert(did != 0);
     intrusive_ptr<const BrassDatabase> ptrtothis(this);
     BrassTermList termlist(ptrtothis, did);
@@ -1413,10 +1413,10 @@ BrassWritableDatabase::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-BrassWritableDatabase::get_nouniqterm(Xapian::docid did) const
+BrassWritableDatabase::get_unique_terms(Xapian::docid did) const
 {
-    LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_nouniqterm",did);
-    RETURN(BrassDatabase::get_nouniqterm(did));
+    LOGCALL(DB,Xapian::termcount,"BrassWritableDatabase::get_unique_terms",did);
+    RETURN(BrassDatabase::get_unique_terms(did));
 }
 
 Xapian::doccount

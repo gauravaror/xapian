@@ -21,7 +21,6 @@
  */
 
 #include <xapian.h>
-#include "xapian/weight.h"
 #include <iostream>
 #include <string>
 

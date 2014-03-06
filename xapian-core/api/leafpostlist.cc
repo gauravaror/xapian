@@ -72,12 +72,12 @@ LeafPostList::get_weight() const
 {
     if (!weight) return 0;
     Xapian::termcount doclen = 0;
-    Xapian::termcount uniqterm = 0;
+    Xapian::termcount unique_terms = 0;
     // Fetching the document length is work we can avoid if the weighting
     // scheme doesn't use it.
     if (need_doclength) doclen = get_doclength();
-    uniqterm = get_nouniqterm();
-    return weight->get_sumpart(get_wdf(), doclen,uniqterm);
+    unique_terms = get_unique_terms();
+    return weight->get_sumpart(get_wdf(), doclen, unique_terms);
 }
 
 double

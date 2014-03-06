@@ -510,7 +510,7 @@ RemoteDatabase::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-RemoteDatabase::get_nouniqterm(Xapian::docid did) const
+RemoteDatabase::get_unique_terms(Xapian::docid did) const
 {
     Assert(did != 0);
     send_message(MSG_DOCLENGTH, encode_length(did));

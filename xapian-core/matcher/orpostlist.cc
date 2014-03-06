@@ -406,19 +406,19 @@ OrPostList::get_doclength() const
 }
 
 Xapian::termcount
-OrPostList::get_nouniqterm() const
+OrPostList::get_unique_terms() const
 {
-    LOGCALL(MATCH, Xapian::termcount, "OrPostList::get_nouniqterm", NO_ARGS);
+    LOGCALL(MATCH, Xapian::termcount, "OrPostList::get_unique_terms", NO_ARGS);
     Xapian::termcount nouniqterm;
 
     Assert(lhead != 0 && rhead != 0); // check we've started
     if (lhead > rhead) {
-	nouniqterm = r->get_nouniqterm();
-	LOGLINE(MATCH, "OrPostList::get_nouniqterm() [right docid=" << rhead <<
+	nouniqterm = r->get_unique_terms();
+	LOGLINE(MATCH, "OrPostList::get_unique_terms() [right docid=" << rhead <<
 		       "] = " << nouniqterm);
     } else {
-	nouniqterm = l->get_nouniqterm();
-	LOGLINE(MATCH, "OrPostList::get_nouniqterm() [left docid=" << lhead <<
+	nouniqterm = l->get_unique_terms();
+	LOGLINE(MATCH, "OrPostList::get_unique_terms() [left docid=" << lhead <<
 	       	       "] = " << nouniqterm);
     }
 

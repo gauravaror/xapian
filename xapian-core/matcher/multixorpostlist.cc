@@ -165,17 +165,17 @@ MultiXorPostList::get_doclength() const
 }
 
 Xapian::termcount
-MultiXorPostList::get_nouniqterm() const
+MultiXorPostList::get_unique_terms() const
 {
     Assert(did);
     Xapian::termcount nouniqterm = 0;
     bool nouniqterm_set = false;
     for (size_t i = 0; i < n_kids; ++i) {
-	if (plist[i]->get_nouniqterm() == did) {
+	if (plist[i]->get_unique_terms() == did) {
 	    if (nouniqterm_set) {
-		AssertEq(nouniqterm,plist[i]->get_nouniqterm());
+		AssertEq(nouniqterm,plist[i]->get_unique_terms());
 	    } else {
-		nouniqterm = plist[i]->get_nouniqterm();
+		nouniqterm = plist[i]->get_unique_terms();
 		nouniqterm_set = true;	
 	    }
 	}

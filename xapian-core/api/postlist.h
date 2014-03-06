@@ -84,7 +84,7 @@ class Xapian::PostingIterator::Internal : public Xapian::Internal::intrusive_bas
      */
     
     /// Return the no of uniq term in current document.
-    virtual Xapian::termcount get_nouniqterm() const = 0;	
+    virtual Xapian::termcount get_unique_terms() const = 0;	
 
     /** Return the wdf for the document at the current position.
      *

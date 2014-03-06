@@ -45,7 +45,7 @@ LMWeight::init(double)
     // Storing collection frequency of current term in collection_freq to be
     // accessed while smoothing of weights for the term, for term not present
     // in the document.
-    collection_freq = get_collectionfreq();
+    collection_freq = get_collection_freq();
     // Collection_freq of a term in collection should be always greater than or
     // equal to zero (Non Negative).
     AssertRel(collection_freq,>=,0);

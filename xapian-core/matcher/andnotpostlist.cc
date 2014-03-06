@@ -215,10 +215,10 @@ AndNotPostList::get_doclength() const
 }
 
 Xapian::termcount
-AndNotPostList::get_nouniqterm() const
+AndNotPostList::get_unique_terms() const
 {    
-    LOGCALL(MATCH, Xapian::termcount, "AndNotPostList::get_nouniqterm", NO_ARGS);
-    RETURN(l->get_nouniqterm());
+    LOGCALL(MATCH, Xapian::termcount, "AndNotPostList::get_unique_terms", NO_ARGS);
+    RETURN(l->get_unique_terms());
 }
 
 Xapian::termcount

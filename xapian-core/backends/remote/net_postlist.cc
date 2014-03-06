@@ -47,9 +47,9 @@ NetworkPostList::get_doclength() const
 }
 
 Xapian::termcount
-NetworkPostList::get_nouniqterm() const
+NetworkPostList::get_unique_terms() const
 {
-    return db->get_nouniqterm(lastdocid);
+    return db->get_unique_terms(lastdocid);
 }
 
 Xapian::termcount

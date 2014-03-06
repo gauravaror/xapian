@@ -99,7 +99,7 @@ ValueRangePostList::get_doclength() const
 }
 
 Xapian::termcount
-ValueRangePostList::get_nouniqterm() const
+ValueRangePostList::get_unique_terms() const
 {
     Assert(db);
     return 0;

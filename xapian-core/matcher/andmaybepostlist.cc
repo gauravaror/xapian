@@ -205,12 +205,12 @@ AndMaybePostList::get_doclength() const
 }
 
 Xapian::termcount
-AndMaybePostList::get_nouniqterm() const
+AndMaybePostList::get_unique_terms() const
 {
-    LOGCALL(MATCH, Xapian::termcount, "AndMaybePostList::get_nouniqterm", NO_ARGS);
+    LOGCALL(MATCH, Xapian::termcount, "AndMaybePostList::get_unique_terms", NO_ARGS);
     Assert(lhead != 0); // check we've started
-    if (lhead == rhead) AssertEq(l->get_nouniqterm(), r->get_nouniqterm());
-    RETURN(l->get_nouniqterm());
+    if (lhead == rhead) AssertEq(l->get_unique_terms(), r->get_unique_terms());
+    RETURN(l->get_unique_terms());
 }
 
 Xapian::termcount

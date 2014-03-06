@@ -722,12 +722,12 @@ ChertPostList::get_doclength() const
 }
 
 Xapian::termcount
-ChertPostList::get_nouniqterm() const
+ChertPostList::get_unique_terms() const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertPostList::get_nouniqterm", NO_ARGS);
+    LOGCALL(DB, Xapian::termcount, "ChertPostList::get_unique_terms", NO_ARGS);
     Assert(have_started);
     Assert(this_db.get());
-    RETURN(this_db->get_nouniqterm(did));
+    RETURN(this_db->get_unique_terms(did));
 }
 
 bool

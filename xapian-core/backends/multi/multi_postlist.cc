@@ -111,13 +111,13 @@ MultiPostList::get_doclength() const
 }
 
 Xapian::termcount
-MultiPostList::get_nouniqterm() const
+MultiPostList::get_unique_terms() const
 {
-    LOGCALL(DB, Xapian::termcount, "MultiPostList::get_nouniqterm", NO_ARGS);
+    LOGCALL(DB, Xapian::termcount, "MultiPostList::get_unique_terms", NO_ARGS);
     Assert(!at_end());
     Assert(currdoc != 0);
-    Xapian::termcount result = postlists[(currdoc - 1) % multiplier]->get_nouniqterm();
-    AssertEqParanoid(result, this_db.get_nouniqterm(get_docid()));
+    Xapian::termcount result = postlists[(currdoc - 1) % multiplier]->get_unique_terms();
+    AssertEqParanoid(result, this_db.get_unique_terms(get_docid()));
     RETURN(result);
 }
 

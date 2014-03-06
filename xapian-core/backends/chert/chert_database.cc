@@ -783,9 +783,9 @@ ChertDatabase::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-ChertDatabase::get_nouniqterm(Xapian::docid did) const
+ChertDatabase::get_unique_terms(Xapian::docid did) const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertDatabase::get_nouniqterm", did);
+    LOGCALL(DB, Xapian::termcount, "ChertDatabase::get_unique_terms", did);
     Assert(did != 0);
     intrusive_ptr<const ChertDatabase> ptrtothis(this);
     RETURN(postlist_table.get_doclength(did, ptrtothis));//Pending implementation
@@ -1491,9 +1491,9 @@ ChertWritableDatabase::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-ChertWritableDatabase::get_nouniqterm(Xapian::docid did) const
+ChertWritableDatabase::get_unique_terms(Xapian::docid did) const
 {
-    LOGCALL(DB, Xapian::termcount, "ChertWritableDatabase::get_nouniqterm", did);
+    LOGCALL(DB, Xapian::termcount, "ChertWritableDatabase::get_unique_terms", did);
     RETURN(ChertDatabase::get_doclength(did));
 }
 

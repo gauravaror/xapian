@@ -56,9 +56,9 @@ ChertAllDocsPostList::get_doclength() const
 }
 
 Xapian::termcount
-ChertAllDocsPostList::get_nouniqterm() const
+ChertAllDocsPostList::get_unique_terms() const
 {
-    throw Xapian::UnimplementedError("Function get_nouniqterm is not implemented for chert");
+    throw Xapian::UnimplementedError("Function get_unique_terms is not implemented for chert");
 }
 
 Xapian::termcount

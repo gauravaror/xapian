@@ -64,7 +64,7 @@ EmptyPostList::get_doclength() const
 }
 
 Xapian::termcount
-EmptyPostList::get_nouniqterm() const
+EmptyPostList::get_unique_terms() const
 {
     return Xapian::termcount(EmptyPostList::get_docid());
 }

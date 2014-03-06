@@ -352,7 +352,7 @@ class XAPIAN_VISIBILITY_DEFAULT Database {
 	Xapian::termcount get_doclength(Xapian::docid did) const;
 
 	/// Get the number of unique term in document
-	Xapian::termcount get_nouniqterm(Xapian::docid did) const;
+	Xapian::termcount get_unique_terms(Xapian::docid did) const;
 
 	/** Send a "keep-alive" to remote databases to stop them timing out.
 	 *

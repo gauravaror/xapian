@@ -452,9 +452,9 @@ Database::get_doclength(Xapian::docid did) const
 }
 
 Xapian::termcount
-Database::get_nouniqterm(Xapian::docid did) const
+Database::get_unique_terms(Xapian::docid did) const
 {
-    LOGCALL(API,Xapian::termcount,"Database::get_nouniqterm",did);
+    LOGCALL(API,Xapian::termcount,"Database::get_unique_terms",did);
     if (did == 0)
 	docid_zero_invalid();
     unsigned int multiplier = internal.size();
@@ -462,7 +462,7 @@ Database::get_nouniqterm(Xapian::docid did) const
 	no_subdatabases();
     Xapian::doccount n = (did - 1) % multiplier; // which actual database
     Xapian::docid m = (did - 1) / multiplier + 1; //real docid in database
-    RETURN(internal[n]->get_nouniqterm(m));
+    RETURN(internal[n]->get_unique_terms(m));
 }
 
 

@@ -52,11 +52,11 @@ ContiguousAllDocsPostList::get_doclength() const
 }
 
 Xapian::termcount
-ContiguousAllDocsPostList::get_nouniqterm() const
+ContiguousAllDocsPostList::get_unique_terms() const
 {
     Assert(did != 0);
     Assert(!at_end());
-    return db->get_nouniqterm(did);
+    return db->get_unique_terms(did);
 }
 
 Xapian::termcount
