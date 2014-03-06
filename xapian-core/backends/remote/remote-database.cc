@@ -513,14 +513,14 @@ Xapian::termcount
 RemoteDatabase::get_unique_terms(Xapian::docid did) const
 {
     Assert(did != 0);
-    send_message(MSG_DOCLENGTH, encode_length(did));
+    send_message(MSG_UNIQUETERMS, encode_length(did));
     string message;
-    get_message(message, REPLY_DOCLENGTH);
+    get_message(message, REPLY_UNIQUETERMS);
     const char * p = message.c_str();
     const char * p_end = p + message.size();
     Xapian::termcount doclen = decode_length(&p, p_end, false);
     if (p != p_end) {
-	throw Xapian::NetworkError("Bad REPLY_DOCLENGTH message received", context);
+	throw Xapian::NetworkError("Bad REPLY_UNIQUETERMS message received", context);
     }
     return doclen;
 }
