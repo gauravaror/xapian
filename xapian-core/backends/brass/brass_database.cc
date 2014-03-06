@@ -809,6 +809,7 @@ BrassDatabase::get_unique_terms(Xapian::docid did) const
     Assert(did != 0);
     intrusive_ptr<const BrassDatabase> ptrtothis(this);
     BrassTermList termlist(ptrtothis, did);
+    // The "approximate" size should be exact in this case.
     RETURN(termlist.get_approx_size());
 }
 
