@@ -48,7 +48,7 @@ try {
     }
 
     // Open the database for update, creating a new database if necessary.
-    Xapian::WritableDatabase db(Xapian::Brass::open(argv[1], Xapian::DB_CREATE_OR_OPEN));
+    Xapian::WritableDatabase db(argv[1], Xapian::DB_CREATE_OR_OPEN);
 
     Xapian::TermGenerator indexer;
     Xapian::Stem stemmer("english");
