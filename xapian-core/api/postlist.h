@@ -82,9 +82,9 @@ class Xapian::PostingIterator::Internal : public Xapian::Internal::intrusive_bas
     /* FIXME: Once flint has been retired, we should probably strip out
      * PostList::get_doclength() and just fetch it from the DB directly.
      */
-    
+
     /// Return the number of unique terms in the current document.
-    virtual Xapian::termcount get_unique_terms() const = 0;	
+    virtual Xapian::termcount get_unique_terms() const = 0;
 
     /** Return the wdf for the document at the current position.
      *

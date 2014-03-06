@@ -465,7 +465,6 @@ Database::get_unique_terms(Xapian::docid did) const
     RETURN(internal[n]->get_unique_terms(m));
 }
 
-
 Document
 Database::get_document(Xapian::docid did) const
 {
