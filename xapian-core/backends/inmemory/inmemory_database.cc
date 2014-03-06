@@ -2,7 +2,7 @@
  *
  * Copyright 1999,2000,2001 BrightStation PLC
  * Copyright 2002 Ananova Ltd
- * Copyright 2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012 Olly Betts
+ * Copyright 2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2014 Olly Betts
  * Copyright 2006,2009 Lemur Consulting Ltd
  *
  * This program is free software; you can redistribute it and/or
@@ -160,7 +160,6 @@ InMemoryPostList::get_doclength() const
 Xapian::termcount
 InMemoryPostList::get_unique_terms() const
 {
-    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
     return db->get_unique_terms(get_docid());
 }
 
@@ -332,7 +331,6 @@ InMemoryAllDocsPostList::get_doclength() const
 Xapian::termcount
 InMemoryAllDocsPostList::get_unique_terms() const
 {
-    if (db->is_closed()) InMemoryDatabase::throw_database_closed();
     return db->get_unique_terms(did);
 }
 
@@ -545,7 +543,11 @@ InMemoryDatabase::get_doclength(Xapian::docid did) const
 Xapian::termcount
 InMemoryDatabase::get_unique_terms(Xapian::docid did) const
 {
-   return doclengths[did - 1];
+    if (closed) InMemoryDatabase::throw_database_closed();
+    if (did == 0 || did > termlists.size() || !termlists[did - 1].is_valid)
+	throw Xapian::DocNotFoundError(string("Docid ") + str(did) +
+				 string(" not found"));
+    return termlists[did - 1].terms.size();
 }
 
 TermList *
