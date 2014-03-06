@@ -1,3 +1,96 @@
+Tue Mar 04 04:25:11 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/queryinternal.cc,api/queryinternal.h: Only simplify OP_SYNONYM
+	  with a single subquery if that subquery is a term or MatchAll.
+
+Tue Mar 04 04:12:58 GMT 2014  Olly Betts <olly@survex.com>
+
+	* tests/api_none.cc: Test OPs with a single MatchAll subquery.
+
+Mon Mar 03 22:59:55 GMT 2014  Mayank Chaudhary <mayankchaudhary.iitr@gmail.com>
+
+	* docs/Makefile.am,docs/bm25.rst,docs/intro_ir.rst: Convert equations
+	  in rst docs to use LaTeX via the math role and directive.
+
+Fri Feb 28 06:12:36 GMT 2014  Olly Betts <olly@survex.com>
+
+	* backends/brass/brass_positionlist.h,
+	  backends/chert/chert_positionlist.h: Remove next_internal() methods
+	  which were declared but not defined or used (left-overs from flint).
+	  Reported by "Hurricane Tong".
+
+Wed Feb 26 01:33:50 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/query.cc,api/queryinternal.cc,api/queryinternal.h,
+	  examples/quest.cc,include/xapian/query.h,matcher/Makefile.mk,
+	  matcher/maxpostlist.cc,matcher/maxpostlist.h,
+	  queryparser/queryparser.cc,tests/api_none.cc,tests/api_opsynonym.cc:
+	  Implement new OP_MAX query operator, which returns the maximum
+	  weight of any of its subqueries.  (see #360)
+
+Wed Feb 26 00:48:23 GMT 2014  Olly Betts <olly@survex.com>
+
+	* matcher/localsubmatch.cc,matcher/synonympostlist.cc,
+	  matcher/synonympostlist.h: In SynonymPostList, avoid fetching the
+	  doclength if the weighting scheme doesn't need it and the calculated
+	  wdf for the synonym in <= doclength_lower_bound for the current
+	  subdatabase.  (fixes #360)
+
+Wed Feb 26 00:12:22 GMT 2014  Olly Betts <olly@survex.com>
+
+	* backends/brass/brass_changes.cc: Fix compilation without
+	  --enable-assertions.
+
+Tue Feb 25 02:33:14 GMT 2014  Olly Betts <olly@survex.com>
+
+	* examples/quest.cc: Add --default-op option.
+
+Tue Feb 25 01:56:34 GMT 2014  Olly Betts <olly@survex.com>
+
+	* examples/quest.cc: Whitespace tweak.
+
+Mon Feb 24 06:33:37 GMT 2014  Olly Betts <olly@survex.com>
+
+	* tests/api_opsynonym.cc: Refactor symonym1 so that the test data is
+	  specified by an array, rather than built up by code, so that the
+	  actual testcases can be more easily seen.
+
+Sun Feb 23 01:22:56 GMT 2014  Olly Betts <olly@survex.com>
+
+	* common/bitstream.cc,common/bitstream.h: Add comments to better
+	  document BitReader and BitWriter. (fixes#252)
+
+Sun Feb 23 00:35:17 GMT 2014  Olly Betts <olly@survex.com>
+
+	* HACKING: Stop trying to explicitly list compilers which support
+	  __builtin_expect (LLVM does too, others may as well).
+
+Fri Feb 21 01:34:59 GMT 2014  Olly Betts <olly@survex.com>
+
+	* backends/brass/,backends/dbcheck.cc,common/,
+	  docs/replication_protocol.rst,tests/api_backend.cc,
+	  tests/api_replicate.cc: Keep track of unused blocks in the Btrees
+	  using freelists rather than bitmaps.
+
+Fri Feb 21 01:21:45 GMT 2014  Olly Betts <olly@survex.com>
+
+	* tests/api_wrdb.cc: Expand crashrecovery1 to check that the expected
+	  base files exist and ones which shouldn't exist don't.
+
+Thu Feb 20 00:34:47 GMT 2014  Olly Betts <olly@survex.com>
+
+	* HACKING: makeindex is now in Debian package texlive-binaries.
+
+Wed Feb 19 06:50:58 GMT 2014  Olly Betts <olly@survex.com>
+
+	* docs/sorting.rst: Fix incorrect parameter types in Xapian::Weight
+	  subclass example.
+
+Tue Feb 18 23:34:19 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/replication.cc: Fix conditional for enabling replication code
+	  - if chert is disabled but brass isn't, we should still enable it.
+
 Tue Feb 18 01:33:28 GMT 2014  Olly Betts <olly@survex.com>
 
 	* tests/api_replicate.cc: Move comment to in front of the function it

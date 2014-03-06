@@ -966,7 +966,7 @@ if test no != "$with_ruby" ; then
     dnl RUBY_VERSION works with 1.6.  Once we've checked we have at least 1.8
     dnl we can safely use RbConfig below (RbConfig requires Ruby 1.8; Config
     dnl gives a deprecation warning with Ruby 1.9.3).
-    [version=`$RUBY -e 'print RUBY_VERSION' 2>/dev/null`]
+    version=`$RUBY -e 'print RUBY_VERSION' 2>/dev/null`
     case $version in
     [1.[89]*]) ;; # Ruby 1.8, 1.9
     [1.[1-9][0-9]*]) ;; # Ruby 1.10+
@@ -1045,9 +1045,10 @@ if test no != "$with_ruby" ; then
 	AC_SUBST(RUBY_LIB_ARCH)
 
 	RUBY_LIBS=
-	case $host_os in
-	cygwin*) RUBY_LIBS=-lruby ;;
-	esac
+	if test unsupported = "$allow_undefined_flag" ; then
+	  dnl For Microsoft Windows and a few other platforms.
+	  [RUBY_LIBS=`$RUBY -rrbconfig -e 'print RbConfig::CONFIG["LIBRUBYARG"]'`]
+	fi
 	AC_SUBST(RUBY_LIBS)
 
 	if test yes = "$enable_documentation" ; then
