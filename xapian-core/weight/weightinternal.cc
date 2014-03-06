@@ -144,6 +144,8 @@ Weight::Internal::get_description() const
     desc += str(collection_size);
     desc += ", rset_size=";
     desc += str(rset_size);
+    desc += ", total_term_count=";
+    desc += str(total_term_count);
     desc += ')';
     return desc;
 }
