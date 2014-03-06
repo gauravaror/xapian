@@ -1195,7 +1195,8 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(WDF_MAX);
 	need_stat(COLLECTION_FREQ);
 	need_stat(DOC_LENGTH_MAX);
-	need_stat(UNIQUE_TERMS);
+	if (select_smoothing == ABSOLUTE_DISCOUNT_SMOOTHING)
+	    need_stat(UNIQUE_TERMS);
     }
 
     // Unigram LM Constructor to specifically mention all parameters for handling negative log value and smoothing.
@@ -1213,7 +1214,8 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(WDF);
 	need_stat(WDF_MAX);
 	need_stat(COLLECTION_FREQ);
-	need_stat(UNIQUE_TERMS);
+	if (select_smoothing == ABSOLUTE_DISCOUNT_SMOOTHING)
+	    need_stat(UNIQUE_TERMS);
     }
 
     // Unigram LM Constructor to specifically mention parameter for handling negative log value
@@ -1232,7 +1234,6 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(WDF);
 	need_stat(WDF_MAX);
 	need_stat(COLLECTION_FREQ);
-	need_stat(UNIQUE_TERMS);
     }
 
     // Unigram LM Constructure to use default value for smoothing.
@@ -1251,7 +1252,6 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(WDF_MAX);
 	need_stat(COLLECTION_FREQ);
 	need_stat(DOC_LENGTH_MAX);
-	need_stat(UNIQUE_TERMS);
     }
 
     std::string name() const;
