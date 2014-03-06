@@ -67,6 +67,7 @@
 #include "filetests.h"
 #include "noreturn.h"
 #include "stringutils.h"
+
 using namespace std;
 
 /// The global verbose flag.

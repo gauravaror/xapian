@@ -21,6 +21,7 @@
  */
 
 #include <xapian.h>
+
 #include <iostream>
 #include <string>
 
