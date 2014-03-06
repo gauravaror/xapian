@@ -650,7 +650,7 @@ class CheckInitWeight : public Xapian::Weight {
 
     double get_maxpart() const { return 1.0; }
 
-    double get_sumextra(Xapian::termcount doclen) const {
+    double get_sumextra(Xapian::termcount doclen, Xapian::termcount) const {
 	return 1.0 / doclen;
     }
 
@@ -749,7 +749,7 @@ class CheckStatsWeight : public Xapian::Weight {
 	return 1.0;
     }
 
-    double get_sumextra(Xapian::termcount doclen) const {
+    double get_sumextra(Xapian::termcount doclen, Xapian::termcount) const {
 	return 1.0 / doclen;
     }
 

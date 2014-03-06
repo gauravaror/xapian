@@ -66,7 +66,7 @@ term scores one point::
         }
 	double get_maxpart() const { return 1; }
 
-	double get_sumextra(Xapian::doclength) const { return 0; }
+	double get_sumextra(Xapian::doclength, Xapian::termcount) const { return 0; }
 	double get_maxextra() const { return 0; }
 
 	bool get_sumpart_needs_doclength() const { return false; }

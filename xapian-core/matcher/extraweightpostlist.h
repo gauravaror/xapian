@@ -52,7 +52,8 @@ class ExtraWeightPostList : public PostList {
 	Xapian::docid  get_docid() const { return pl->get_docid(); }
 
 	double get_weight() const {
-	    return pl->get_weight() + wt->get_sumextra(pl->get_doclength());
+	    return pl->get_weight() + wt->get_sumextra(pl->get_doclength(),
+						       pl->get_unique_terms());
 	}
 
 	double get_maxweight() const {

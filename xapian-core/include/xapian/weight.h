@@ -218,8 +218,10 @@ public:
      *  in the calculations:
      *
      *  @param doclen The document's length (unnormalised).
+     *  @param uniqterms The number of unique terms in the document.
      */
-    virtual double get_sumextra(Xapian::termcount doclen) const = 0;
+    virtual double get_sumextra(Xapian::termcount doclen,
+				Xapian::termcount uniqterms) const = 0;
 
     /** Return an upper bound on what get_sumextra() can return for any
      *  document.
@@ -378,7 +380,8 @@ class XAPIAN_VISIBILITY_DEFAULT BoolWeight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -471,7 +474,8 @@ class XAPIAN_VISIBILITY_DEFAULT TfIdfWeight : public Weight {
 		       Xapian::termcount uniqterm) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -575,7 +579,8 @@ class XAPIAN_VISIBILITY_DEFAULT BM25Weight : public Weight {
 		       Xapian::termcount uniqterm) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -635,7 +640,8 @@ class XAPIAN_VISIBILITY_DEFAULT TradWeight : public Weight {
 		       Xapian::termcount uniqueterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -706,7 +712,8 @@ class XAPIAN_VISIBILITY_DEFAULT InL2Weight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -776,7 +783,8 @@ class XAPIAN_VISIBILITY_DEFAULT IfB2Weight : public Weight {
 		       Xapian::termcount uniqterm) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -844,7 +852,8 @@ class XAPIAN_VISIBILITY_DEFAULT IneB2Weight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -915,7 +924,8 @@ class XAPIAN_VISIBILITY_DEFAULT BB2Weight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -973,7 +983,8 @@ class XAPIAN_VISIBILITY_DEFAULT DLHWeight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -1050,7 +1061,8 @@ class XAPIAN_VISIBILITY_DEFAULT PL2Weight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -1111,7 +1123,8 @@ class XAPIAN_VISIBILITY_DEFAULT DPHWeight : public Weight {
 		       Xapian::termcount uniqterms) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen,
+			Xapian::termcount uniqterms) const;
     double get_maxextra() const;
 };
 
@@ -1264,7 +1277,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 		       Xapian::termcount uniqterm) const;
     double get_maxpart() const;
 
-    double get_sumextra(Xapian::termcount doclen) const;
+    double get_sumextra(Xapian::termcount doclen, Xapian::termcount) const;
     double get_maxextra() const;
 };
 

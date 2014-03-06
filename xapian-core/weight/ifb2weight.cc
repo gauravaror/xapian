@@ -130,7 +130,7 @@ IfB2Weight::get_maxpart() const
 }
 
 double
-IfB2Weight::get_sumextra(Xapian::termcount) const
+IfB2Weight::get_sumextra(Xapian::termcount, Xapian::termcount) const
 {
     return 0;
 }

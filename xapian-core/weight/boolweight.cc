@@ -71,7 +71,7 @@ BoolWeight::get_maxpart() const
 }
 
 double
-BoolWeight::get_sumextra(Xapian::termcount) const
+BoolWeight::get_sumextra(Xapian::termcount, Xapian::termcount) const
 {
     return 0;
 }

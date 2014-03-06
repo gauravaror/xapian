@@ -183,7 +183,7 @@ LMWeight::get_maxpart() const
 }
 
 double
-LMWeight::get_sumextra(Xapian::termcount) const
+LMWeight::get_sumextra(Xapian::termcount, Xapian::termcount) const
 {
     return 0;
 }

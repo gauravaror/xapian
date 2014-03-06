@@ -122,7 +122,7 @@ DPHWeight::get_maxpart() const
 }
 
 double
-DPHWeight::get_sumextra(Xapian::termcount) const
+DPHWeight::get_sumextra(Xapian::termcount, Xapian::termcount) const
 {
     return 0;
 }
