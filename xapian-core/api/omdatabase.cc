@@ -454,7 +454,7 @@ Database::get_doclength(Xapian::docid did) const
 Xapian::termcount
 Database::get_unique_terms(Xapian::docid did) const
 {
-    LOGCALL(API,Xapian::termcount,"Database::get_unique_terms",did);
+    LOGCALL(API, Xapian::termcount, "Database::get_unique_terms", did);
     if (did == 0)
 	docid_zero_invalid();
     unsigned int multiplier = internal.size();

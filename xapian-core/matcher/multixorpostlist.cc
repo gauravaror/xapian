@@ -173,7 +173,7 @@ MultiXorPostList::get_unique_terms() const
     for (size_t i = 0; i < n_kids; ++i) {
 	if (plist[i]->get_unique_terms() == did) {
 	    if (unique_terms_set) {
-		AssertEq(unique_terms,plist[i]->get_unique_terms());
+		AssertEq(unique_terms, plist[i]->get_unique_terms());
 	    } else {
 		unique_terms = plist[i]->get_unique_terms();
 		unique_terms_set = true;
