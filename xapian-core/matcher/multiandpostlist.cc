@@ -165,11 +165,11 @@ Xapian::termcount
 MultiAndPostList::get_unique_terms() const
 {
     Assert(did);
-    Xapian::termcount nouniqterm = plist[0]->get_unique_terms();
+    Xapian::termcount unique_terms = plist[0]->get_unique_terms();
     for (size_t i = 1; i < n_kids; ++i) {
-	AssertEq(nouniqterm, plist[i]->get_unique_terms());
+	AssertEq(unique_terms, plist[i]->get_unique_terms());
     }
-    return nouniqterm;
+    return unique_terms;
 }
 
 double

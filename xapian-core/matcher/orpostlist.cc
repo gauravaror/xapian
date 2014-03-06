@@ -409,20 +409,20 @@ Xapian::termcount
 OrPostList::get_unique_terms() const
 {
     LOGCALL(MATCH, Xapian::termcount, "OrPostList::get_unique_terms", NO_ARGS);
-    Xapian::termcount nouniqterm;
+    Xapian::termcount unique_terms;
 
     Assert(lhead != 0 && rhead != 0); // check we've started
     if (lhead > rhead) {
-	nouniqterm = r->get_unique_terms();
+	unique_terms = r->get_unique_terms();
 	LOGLINE(MATCH, "OrPostList::get_unique_terms() [right docid=" << rhead <<
-		       "] = " << nouniqterm);
+		       "] = " << unique_terms);
     } else {
-	nouniqterm = l->get_unique_terms();
+	unique_terms = l->get_unique_terms();
 	LOGLINE(MATCH, "OrPostList::get_unique_terms() [left docid=" << lhead <<
-	       	       "] = " << nouniqterm);
+		       "] = " << unique_terms);
     }
 
-    RETURN(nouniqterm);
+    RETURN(unique_terms);
 }
 
 Xapian::termcount

@@ -168,20 +168,20 @@ Xapian::termcount
 MultiXorPostList::get_unique_terms() const
 {
     Assert(did);
-    Xapian::termcount nouniqterm = 0;
-    bool nouniqterm_set = false;
+    Xapian::termcount unique_terms = 0;
+    bool unique_terms_set = false;
     for (size_t i = 0; i < n_kids; ++i) {
 	if (plist[i]->get_unique_terms() == did) {
-	    if (nouniqterm_set) {
-		AssertEq(nouniqterm,plist[i]->get_unique_terms());
+	    if (unique_terms_set) {
+		AssertEq(unique_terms,plist[i]->get_unique_terms());
 	    } else {
-		nouniqterm = plist[i]->get_unique_terms();
-		nouniqterm_set = true;	
+		unique_terms = plist[i]->get_unique_terms();
+		unique_terms_set = true;
 	    }
 	}
     }
-    Assert(nouniqterm_set);
-    return nouniqterm;
+    Assert(unique_terms_set);
+    return unique_terms;
 }
 
 double
