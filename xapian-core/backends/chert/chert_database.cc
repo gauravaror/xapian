@@ -788,7 +788,9 @@ ChertDatabase::get_unique_terms(Xapian::docid did) const
     LOGCALL(DB, Xapian::termcount, "ChertDatabase::get_unique_terms", did);
     Assert(did != 0);
     intrusive_ptr<const ChertDatabase> ptrtothis(this);
-    RETURN(postlist_table.get_doclength(did, ptrtothis));//Pending implementation
+    ChertTermList termlist(ptrtothis, did);
+    // The "approximate" size should be exact in this case.
+    RETURN(termlist.get_approx_size());
 }
 
 Xapian::doccount
