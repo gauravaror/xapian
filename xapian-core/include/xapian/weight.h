@@ -1236,7 +1236,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(COLLECTION_FREQ);
     }
 
-    // Unigram LM Constructure to use default value for smoothing.
+    // Unigram LM Constructor to use default value for smoothing.
     LMWeight()
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
 	  param_smoothing2(2000.0)

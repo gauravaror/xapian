@@ -131,7 +131,7 @@ double
 LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
 		      Xapian::termcount uniqterm) const
 {
-    // Withing Document Frequency of the term in document being considered.
+    // Within Document Frequency of the term in document being considered.
     double wdf_double(wdf);
     // Length of the Document in terms of number of terms.
     double len_double(len);
@@ -141,11 +141,12 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
      * be required and should be return instead of returning zero, as returning
      * LM score are multiplication of contribution of all terms, due to absence
      * of single term whole document is scored zero, hence apply collection
-     * frequency smoothing
+     * frequency smoothing.
      */
     weight_collection = collection_freq / total_collection_term;
     /* Maximum likelihood of current term, weight contribution of term in case
-     * query term is present in the document.*/
+     * query term is present in the document.
+     */
     weight_document = wdf_double / len_double;
 
     // Calculating weights considering different smoothing option available to user.
@@ -165,8 +166,8 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
     /* Since LM score is calculated with multiplication, instead of changing
      * the current implementation log trick have been used to calculate the
      * product since (sum of log is log of product and since aim is ranking
-     * ranking document by product or log of product won't make large difference
-     * hence log(product) will be used for ranking
+     * ranking document by product or log of product won't make a large
+     * difference hence log(product) will be used for ranking.
      */
     //weight_sum = weight_sum +1;
     return (log((weight_sum) * param_log) > 0) ? log((weight_sum) * param_log) : 0;
