@@ -199,7 +199,8 @@ public:
      *
      *  @param wdf    The within document frequency of the term in the document.
      *  @param doclen The document's length (unnormalised).
-     *  @param uniqterms Number of Unique terms in the document (used for absolute smoothing).
+     *  @param uniqterms	Number of unique terms in the document (used
+     *				for absolute smoothing).
      */
     virtual double get_sumpart(Xapian::termcount wdf,
 			       Xapian::termcount doclen,
