@@ -44,8 +44,6 @@ class ChertAllDocsPostList : public ChertPostList {
 
     Xapian::termcount get_doclength() const;
 
-    Xapian::termcount get_unique_terms() const;
-
     Xapian::termcount get_wdf() const;
 
     PositionList *read_position_list();

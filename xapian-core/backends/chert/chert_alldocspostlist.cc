@@ -56,12 +56,6 @@ ChertAllDocsPostList::get_doclength() const
 }
 
 Xapian::termcount
-ChertAllDocsPostList::get_unique_terms() const
-{
-    throw Xapian::UnimplementedError("Function get_unique_terms is not implemented for chert");
-}
-
-Xapian::termcount
 ChertAllDocsPostList::get_wdf() const
 {
     LOGCALL(DB, Xapian::termcount, "ChertAllDocsPostList::get_wdf", NO_ARGS);
