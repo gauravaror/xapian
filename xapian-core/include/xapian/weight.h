@@ -1234,7 +1234,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 
     // Unigram LM Constructor to specifically mention parameter for handling negative log value
     // and select default value for smoothing.
-    LMWeight(double param_log_)
+    explicit LMWeight(double param_log_)
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7),
 	  param_smoothing2(2000.0)
     {
