@@ -1215,7 +1215,10 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
     }
 
     // Unigram LM Constructor to specifically mention all parameters for handling negative log value and smoothing.
-    LMWeight(double param_log_, type_smoothing select_smoothing_, double param_smoothing1_, double param_smoothing2_)
+    explicit LMWeight(double param_log_ = 0.0,
+		      type_smoothing select_smoothing_ = TWO_STAGE_SMOOTHING,
+		      double param_smoothing1_ = 0.7,
+		      double param_smoothing2_ = 2000.0)
 	: select_smoothing(select_smoothing_), param_log(param_log_), param_smoothing1(param_smoothing1_),
 	  param_smoothing2(param_smoothing2_)
     {
@@ -1231,42 +1234,8 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(COLLECTION_FREQ);
 	if (select_smoothing == ABSOLUTE_DISCOUNT_SMOOTHING)
 	    need_stat(UNIQUE_TERMS);
-    }
-
-    // Unigram LM Constructor to specifically mention parameter for handling negative log value
-    // and select default value for smoothing.
-    explicit LMWeight(double param_log_)
-	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(param_log_), param_smoothing1(0.7),
-	  param_smoothing2(2000.0)
-    {
-	need_stat(AVERAGE_LENGTH);
-	need_stat(DOC_LENGTH);
-	need_stat(COLLECTION_SIZE);
-	need_stat(RSET_SIZE);
-	need_stat(TERMFREQ);
-	need_stat(RELTERMFREQ);
-	need_stat(DOC_LENGTH_MIN);
-	need_stat(WDF);
-	need_stat(WDF_MAX);
-	need_stat(COLLECTION_FREQ);
-    }
-
-    // Unigram LM constructor to use default value for smoothing.
-    LMWeight()
-	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
-	  param_smoothing2(2000.0)
-    {
-	need_stat(AVERAGE_LENGTH);
-	need_stat(DOC_LENGTH);
-	need_stat(COLLECTION_SIZE);
-	need_stat(RSET_SIZE);
-	need_stat(TERMFREQ);
-	need_stat(RELTERMFREQ);
-	need_stat(DOC_LENGTH_MIN);
-	need_stat(WDF);
-	need_stat(WDF_MAX);
-	need_stat(COLLECTION_FREQ);
-	need_stat(DOC_LENGTH_MAX);
+	if (param_log == 0.0)
+	    need_stat(DOC_LENGTH_MAX);
     }
 
     std::string name() const;
