@@ -1170,7 +1170,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
      *  @param param_log_  	A non-negative parameter controlling how much
      *				to clamp negative values returned by the log.
      *				The log is calculated by multiplying the
-     *				acactual weight by param_log.  If param_log is
+     *				actual weight by param_log.  If param_log is
      *				0.0, then the document length upper bound will
      *				be used (default: document length upper	bound)
      *
@@ -1251,7 +1251,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(COLLECTION_FREQ);
     }
 
-    // Unigram LM Constructure to use default value for smoothing.
+    // Unigram LM constructor to use default value for smoothing.
     LMWeight()
 	: select_smoothing(TWO_STAGE_SMOOTHING), param_log(0.0), param_smoothing1(0.7),
 	  param_smoothing2(2000.0)
