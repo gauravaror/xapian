@@ -51,17 +51,6 @@ class XAPIAN_VISIBILITY_DEFAULT Weight {
 	UNIQUE_TERMS = 8192
     } stat_flags;
 
-    /** Type of smoothing to use with the Language Model Weighting scheme.
-     *
-     *  Default is TWO_STAGE_SMOOTHING.
-     */
-public:
-    typedef enum {
-        TWO_STAGE_SMOOTHING = 1,
-        DIRICHLET_SMOOTHING = 2,
-        ABSOLUTE_DISCOUNT_SMOOTHING = 3,
-        JELINEK_MERCER_SMOOTHING = 4
-    } type_smoothing;
 
     /** Tell Xapian that your subclass will want a particular statistic.
      *
@@ -128,6 +117,18 @@ public:
     Xapian::termcount wdf_upper_bound_;
 
   public:
+    
+    /** Type of smoothing to use with the Language Model Weighting scheme.
+     *
+     *  Default is TWO_STAGE_SMOOTHING.
+     */
+    typedef enum {
+        TWO_STAGE_SMOOTHING = 1,
+        DIRICHLET_SMOOTHING = 2,
+        ABSOLUTE_DISCOUNT_SMOOTHING = 3,
+        JELINEK_MERCER_SMOOTHING = 4
+    } type_smoothing;
+
     class Internal;
 
     /** Virtual destructor, because we have virtual methods. */
