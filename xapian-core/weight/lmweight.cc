@@ -169,7 +169,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
      * ranking document by product or log of product won't make a large
      * difference hence log(product) will be used for ranking.
      */
-    return (log((weight_sum) * param_log) > 0) ? log((weight_sum) * param_log) : 0;
+    return (weight_sum * param_log > 1.0) ? log(weight_sum * param_log) : 0;
 }
 
 double
