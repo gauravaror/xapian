@@ -245,6 +245,26 @@ set_weighting_scheme(Xapian::Enquire & enq, const map<string, string> & opt,
 	}
 #endif
 
+#if XAPIAN_AT_LEAST(1,3,2)
+        if (startswith(scheme, "lm")) {
+            const char *p = scheme.c_str() + 2;
+            if (*p == '\0') {
+                enq.set_weighting_scheme(Xapian::LMWeight());
+                return;
+            }
+            if (C_isspace((unsigned char)*p)) {
+                double k;
+                if (!double_param(&p, &k))
+                    parameter_error("Parameter is invalid", scheme);
+                if (*p == '\0') {
+                    enq.set_weighting_scheme(Xapian::LMWeight(k));
+                    return;
+                }
+            }
+        }
+#endif
+
+
 	if (scheme != "bool") {
 	    throw "Unknown $opt{weighting} setting: " + scheme;
 	}
