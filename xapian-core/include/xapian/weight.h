@@ -1194,26 +1194,6 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
      *					parameter for Dirichlet's smoothing.
      *					(default: 2000)
      */
-    // Unigram LM constructor to select smoothing type and select parameter for log handling automatically
-    LMWeight(type_smoothing select_smoothing_, double param_smoothing1_, double param_smoothing2_)
-	: select_smoothing(select_smoothing_), param_log(0.0), param_smoothing1(param_smoothing1_),
-	  param_smoothing2(param_smoothing2_)
-    {
-	need_stat(AVERAGE_LENGTH);
-	need_stat(DOC_LENGTH);
-	need_stat(COLLECTION_SIZE);
-	need_stat(RSET_SIZE);
-	need_stat(TERMFREQ);
-	need_stat(RELTERMFREQ);
-	need_stat(DOC_LENGTH_MIN);
-	need_stat(WDF);
-	need_stat(WDF_MAX);
-	need_stat(COLLECTION_FREQ);
-	need_stat(DOC_LENGTH_MAX);
-	if (select_smoothing == ABSOLUTE_DISCOUNT_SMOOTHING)
-	    need_stat(UNIQUE_TERMS);
-    }
-
     // Unigram LM Constructor to specifically mention all parameters for handling negative log value and smoothing.
     explicit LMWeight(double param_log_ = 0.0,
 		      type_smoothing select_smoothing_ = TWO_STAGE_SMOOTHING,
