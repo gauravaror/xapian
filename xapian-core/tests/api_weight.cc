@@ -800,8 +800,8 @@ DEFINE_TESTCASE(unigramlmweight4, backend) {
     enquire2.set_query(Xapian::Query("paragraph"));
     Xapian::MSet mset2;
     //5 documents avaialble with term paragraph so mset size should be 5
-    enquire1.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::TWO_STAGE_SMOOTHING, 1, 0));
-    enquire2.set_weighting_scheme(Xapian::LMWeight(Xapian::Weight::JELINEK_MERCER_SMOOTHING, 1, 0));
+    enquire1.set_weighting_scheme(Xapian::LMWeight(0,Xapian::Weight::TWO_STAGE_SMOOTHING, 1, 0));
+    enquire2.set_weighting_scheme(Xapian::LMWeight(0,Xapian::Weight::JELINEK_MERCER_SMOOTHING, 1, 0));
     mset1 = enquire1.get_mset(0, 10);
     mset2 = enquire2.get_mset(0, 10);
 
