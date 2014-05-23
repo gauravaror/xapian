@@ -465,7 +465,7 @@ Database::get_unique_terms(Xapian::docid did) const
     if (rare(multiplier == 0))
 	no_subdatabases();
     Xapian::doccount n = (did - 1) % multiplier; // which actual database
-    Xapian::docid m = (did - 1) / multiplier + 1; //real docid in database
+    Xapian::docid m = (did - 1) / multiplier + 1; // real docid in that database
     RETURN(internal[n]->get_unique_terms(m));
 }
 
