@@ -277,7 +277,7 @@ set_weighting_scheme(Xapian::Enquire & enq, const map<string, string> & opt,
 		double smoothing1 = 0.7;
 		double smoothing2 = 2000;
 		if (!double_param(&p, &param_log))
-		    parameter_error("Parameter is invalid", scheme);
+		    parameter_error("Parameter 1 (log) is invalid", scheme);
 		if (*p && !type_smoothing_param(&p, &type))
 		    parameter_error("Parameter 2 (smoothing_type) is invalid", scheme);
 		if (*p && !double_param(&p, &smoothing1))
@@ -285,7 +285,7 @@ set_weighting_scheme(Xapian::Enquire & enq, const map<string, string> & opt,
 		if (*p && !double_param(&p, &smoothing2))
 		    parameter_error("Parameter 4 (smoothing2) is invalid", scheme);
 		if (*p)
-		    parameter_error("Extra data after parameter 5", scheme);
+		    parameter_error("Extra data after parameter 4", scheme);
 		Xapian::LMWeight wt(param_log, type, smoothing1, smoothing2);
 		enq.set_weighting_scheme(wt);
 		return;
