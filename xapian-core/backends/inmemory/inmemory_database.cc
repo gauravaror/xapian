@@ -216,7 +216,9 @@ InMemoryTermList::get_termfreq() const
     Assert(started);
     Assert(!at_end());
 
-    return db->get_termfreq((*pos).tname);
+    Xapian::doccount tf;
+    db->get_freqs((*pos).tname, &tf, NULL);
+    return tf;
 }
 
 Xapian::termcount
@@ -456,22 +458,24 @@ InMemoryDatabase::doc_exists(Xapian::docid did) const
     return (did > 0 && did <= termlists.size() && termlists[did - 1].is_valid);
 }
 
-Xapian::doccount
-InMemoryDatabase::get_termfreq(const string & tname) const
+void
+InMemoryDatabase::get_freqs(const string & term,
+			    Xapian::doccount * termfreq_ptr,
+			    Xapian::termcount * collfreq_ptr) const
 {
     if (closed) InMemoryDatabase::throw_database_closed();
-    map<string, InMemoryTerm>::const_iterator i = postlists.find(tname);
-    if (i == postlists.end()) return 0;
-    return i->second.term_freq;
-}
-
-Xapian::termcount
-InMemoryDatabase::get_collection_freq(const string &tname) const
-{
-    if (closed) InMemoryDatabase::throw_database_closed();
-    map<string, InMemoryTerm>::const_iterator i = postlists.find(tname);
-    if (i == postlists.end()) return 0;
-    return i->second.collection_freq;
+    map<string, InMemoryTerm>::const_iterator i = postlists.find(term);
+    if (i != postlists.end()) {
+	if (termfreq_ptr)
+	    *termfreq_ptr = i->second.term_freq;
+	if (collfreq_ptr)
+	    *collfreq_ptr = i->second.collection_freq;
+    } else {
+	if (termfreq_ptr)
+	    *termfreq_ptr = 0;
+	if (collfreq_ptr)
+	    *collfreq_ptr = 0;
+    }
 }
 
 Xapian::doccount

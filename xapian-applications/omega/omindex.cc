@@ -85,6 +85,7 @@ static bool follow_symlinks = false;
 static bool ignore_exclusions = false;
 static bool spelling = false;
 static off_t  max_size = 0;
+static std::string pretty_max_size;
 static bool verbose = false;
 static enum {
     EMPTY_BODY_WARN, EMPTY_BODY_INDEX, EMPTY_BODY_SKIP
@@ -100,6 +101,10 @@ static Xapian::TermGenerator indexer;
 static Xapian::doccount old_docs_not_seen;
 static Xapian::docid old_lastdocid;
 static vector<bool> updated;
+
+// The longest string after a '.' to treat as an extension.  If there's a
+// longer entry in the mime_map, we set this to that length instead.
+static size_t max_ext_len = 7;
 
 static void
 mark_as_seen(Xapian::docid did)
@@ -315,8 +320,11 @@ index_file(const string &file, const string &url, DirectoryIterator & d,
 {
     string ext;
     const char * dot_ptr = strrchr(d.leafname(), '.');
-    if (dot_ptr)
+    if (dot_ptr) {
 	ext.assign(dot_ptr + 1);
+	if (ext.size() > max_ext_len)
+	    ext.resize(0);
+    }
 
     string mimetype = mimetype_from_ext(mime_map, ext);
     if (mimetype.empty()) {
@@ -343,7 +351,8 @@ index_file(const string &file, const string &url, DirectoryIterator & d,
     }
 
     if (max_size > 0 && d.get_size() > max_size) {
-	skip(file, "Larger than size limit", SKIP_VERBOSE_ONLY);
+	skip(file, "Larger than size limit of " + pretty_max_size,
+	     SKIP_VERBOSE_ONLY);
 	return;
     }
 
@@ -419,10 +428,11 @@ index_mimetype(const string & file, const string & url, const string & ext,
 		    MyHtmlParser p;
 		    p.ignore_metarobots();
 		    try {
-			// No point going looking for charset overrides as
-			// unrtf doesn't produce them.  (FIXME: not just unrtf
-			// now).
-			p.parse_html(dump, "iso-8859-1", true);
+			p.parse_html(dump, "iso-8859-1", false);
+		    } catch (const string & newcharset) {
+			p.reset();
+			p.ignore_metarobots();
+			p.parse_html(dump, newcharset, true);
 		    } catch (ReadError) {
 			skip_cmd_failed(file, cmd);
 			return;
@@ -729,30 +739,6 @@ index_mimetype(const string & file, const string & url, const string & ext,
 	    }
 
 	    generate_sample_from_csv(dump, sample, sample_size);
-	} else if (mimetype == "application/vnd.ms-outlook") {
-	    string cmd = get_pkglibbindir() + "/outlookmsg2html";
-	    append_filename_argument(cmd, file);
-	    MyHtmlParser p;
-	    p.ignore_metarobots();
-	    try {
-		dump = stdout_to_string(cmd);
-		// FIXME: what should the default charset be?
-		p.parse_html(dump, "iso-8859-1", false);
-	    } catch (const string & newcharset) {
-		p.reset();
-		p.ignore_metarobots();
-		p.parse_html(dump, newcharset, true);
-	    } catch (ReadError) {
-		skip_cmd_failed(file, cmd);
-		return;
-	    }
-	    dump = p.dump;
-	    title = p.title;
-	    keywords = p.keywords;
-	    topic = p.topic;
-	    sample = p.sample;
-	    author = p.author;
-	    created = p.created;
 	} else if (mimetype == "image/svg+xml") {
 	    SvgParser svgparser;
 	    const string & text = d.file_to_string();
@@ -892,7 +878,7 @@ index_mimetype(const string & file, const string & url, const string & ext,
 	    indexer.increase_termpos(100);
 	    string leaf = d.leafname();
 	    string::size_type dot = leaf.find_last_of('.');
-	    if (dot != string::npos)
+	    if (dot != string::npos && leaf.size() - dot - 1 <= max_ext_len)
 		leaf.resize(dot);
 	    indexer.index_text(leaf);
 	}
@@ -1228,6 +1214,11 @@ main(int argc, char **argv)
     mime_map["xlr"] = "application/vnd.ms-excel"; // Later Microsoft Works produced XL format but with a different extension.
     mime_map["ppt"] = "application/vnd.ms-powerpoint";
     mime_map["pps"] = "application/vnd.ms-powerpoint"; // Powerpoint slideshow
+    // Adobe PageMaker apparently uses .pub for an unrelated format, but
+    // libmagic seems to misidentify MS .pub as application/msword, so we
+    // can't just leave it to libmagic.  We don't handle Adobe PageMaker
+    // files yet, so this isn't a big issue currently.
+    mime_map["pub"] = "application/x-mspublisher";
     mime_map["msg"] = "application/vnd.ms-outlook"; // Outlook .msg email
 
     // Perl:
@@ -1299,10 +1290,15 @@ main(int argc, char **argv)
     // (as it is in CP1250).
     commands["image/vnd.djvu"] = Filter("djvutxt");
     // The --text option unhelpfully converts all non-ASCII characters to "?"
-    // so we use --html instead, which produces HTML entities.  Currently the
-    // --nopict option doesn't work, but hopefully it'll get fixed.
+    // so we use --html instead, which produces HTML entities.  The --nopict
+    // option suppresses exporting picture files as pictNNNN.wmf in the current
+    // directory.  Note that this option was ignored in some older versions,
+    // but it was fixed in unrtf 0.20.4.
     commands["text/rtf"] = Filter("unrtf --nopict --html 2>/dev/null", "text/html");
     commands["text/x-rst"] = Filter("rst2html", "text/html");
+    commands["application/x-mspublisher"] = Filter("pub2xhtml", "text/html");
+    commands["application/vnd.ms-outlook"] =
+	Filter(get_pkglibbindir() + "/outlookmsg2html", "text/html");
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0) {
 	// -v was the short option for --version in 1.2.3 and earlier, but
@@ -1494,6 +1490,23 @@ main(int argc, char **argv)
 	    off_t size = parse_size(optarg);
 	    if (size >= 0) {
 		max_size = size;
+		const char * suffix;
+		// Set lsb to the lowest set bit in max_size.
+		off_t lsb = max_size & -max_size;
+		if (lsb >= off_t(1L << 30)) {
+		    size >>= 30;
+		    suffix = "GB";
+		} else if (lsb >= off_t(1L << 20)) {
+		    size >>= 20;
+		    suffix = "MB";
+		} else if (lsb >= off_t(1L << 10)) {
+		    size >>= 10;
+		    suffix = "KB";
+		} else {
+		    suffix = "B";
+		}
+		pretty_max_size = str(size);
+		pretty_max_size += suffix;
 		break;
 	    }
 	    cerr << PROG_NAME": bad max size '" << optarg << "'" << endl;
@@ -1618,6 +1631,12 @@ main(int argc, char **argv)
 	indexer.set_stemmer(stemmer);
 
 	runfilter_init();
+
+	// Find the longest extension in the map.
+	map<string,string>::const_iterator mt;
+	for (mt = mime_map.begin(); mt != mime_map.end(); ++mt) {
+	    max_ext_len = max(max_ext_len, mt->first.size());
+	}
 
 	index_directory(root + start_url, baseurl + start_url, depth_limit, mime_map, sample_size);
 	if (delete_removed_documents && old_docs_not_seen) {
