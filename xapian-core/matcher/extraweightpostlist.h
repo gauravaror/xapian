@@ -56,7 +56,7 @@ class ExtraWeightPostList : public PostList {
              * to maintain consistency with get_sumpart, As of now none of weighting scheme is using
              * it. Current 0 is being passed, change it to pl->get_unique_terms() in case you
              * need access uniq_terms. */
-	    return pl->get_weight() + wt->get_sumextra(pl->get_doclength(),0);
+	    return pl->get_weight() + wt->get_sumextra(pl->get_doclength(), 0);
 	}
 
 	double get_maxweight() const {
