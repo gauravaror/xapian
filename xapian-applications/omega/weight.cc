@@ -70,23 +70,16 @@ type_smoothing_param(const char ** p, Xapian::Weight::type_smoothing * ptr_val)
     char *end;
     errno = 0;
     int v = strtol(*p, &end,10);
-    if (*p == end || errno) return false;
+    if (*p == end || errno || v < 1 || v > 4)
+	return false;
     *p = end;
-    if ( v == 1) {
-        *ptr_val = Xapian::Weight::TWO_STAGE_SMOOTHING;
-    }
-    else if ( v == 2 ) {
-        *ptr_val = Xapian::Weight::DIRICHLET_SMOOTHING;
-    }
-    else if ( v == 3) {
-        *ptr_val = Xapian::Weight::ABSOLUTE_DISCOUNT_SMOOTHING;
-    }
-    else if ( v == 4) {
-        *ptr_val = Xapian::Weight::JELINEK_MERCER_SMOOTHING;
-    }
-    else  {
-        *ptr_val = Xapian::Weight::TWO_STAGE_SMOOTHING;
-    }
+    static const Xapian::Weight::type_smoothing smooth_tab[4] = {
+	Xapian::Weight::TWO_STAGE_SMOOTHING,
+	Xapian::Weight::DIRICHLET_SMOOTHING,
+	Xapian::Weight::ABSOLUTE_DISCOUNT_SMOOTHING,
+	Xapian::Weight::JELINEK_MERCER_SMOOTHING
+    };
+    *ptr_val = smooth_tab[v - 1];
     return true;
 }
 #endif
