@@ -1,3 +1,123 @@
+Thu May 29 12:13:06 GMT 2014  Olly Betts <olly@survex.com>
+
+	* HACKING: Replace a link to the outdated autotools "goat book" with a
+	  link to the "Portable Shell" chapter of the autoconf manual.
+
+Thu May 29 03:31:10 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,api/snipperinternal.h,include/xapian/snipper.h: Allow
+	  the user to specify how long a snippet they want.  Only add "..." if
+	  the sample was actually truncated.
+
+Wed May 28 12:52:26 GMT 2014  Olly Betts <olly@survex.com>
+
+	* include/xapian/snipper.h: Add the standard guards to prevent user
+	  code from including this header directly.
+
+Tue May 27 04:19:12 GMT 2014  Olly Betts <olly@survex.com>
+
+	* include/Makefile.mk: Ship include/xapian/snipper.h in tarball.
+
+Tue May 27 04:03:09 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,include/xapian/snipper.h,
+	  tests/generate-api_generated: Add missing assignment operator to
+	  Xapian::Snipper class.
+
+Tue May 27 03:43:03 GMT 2014  Olly Betts <olly@survex.com>
+
+	* include/xapian/snipper.h: Add missing doxygen comments.
+
+Tue May 27 03:41:08 GMT 2014  Olly Betts <olly@survex.com>
+
+	* include/xapian/snipper.h,tests/api_snipper.cc: Whitespace tweaks.
+
+Tue May 27 03:36:19 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,include/xapian/snipper.h,tests/api_snipper.cc: Remove
+	  getters for obtaining info about the relevance model, and instead
+	  add a get_description() method which includes all such info in the
+	  returned description.
+
+Tue May 27 03:06:36 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Use an iterator instead of subscripting.
+
+Tue May 27 03:03:33 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,api/snipperinternal.h,include/xapian/snipper.h: Use
+	  appropriate named types rather than "int" or "unsigned int".
+
+Tue May 27 03:02:48 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipperinternal.h: Remove constants which are no longer used.
+
+Tue May 27 02:48:44 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,api/snipperinternal.h,include/xapian/snipper.h:
+	  Rework Snipper methods set_smoothing_coef() and set_window_size() as
+	  optional parameters of generate_snippet().
+
+Tue May 27 02:33:39 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,api/snipperinternal.h: Just pass rm_docno through to
+	  Snipper::Internal::calculate_rm() as a parameter rather than storing
+	  it in a member variable.
+
+Tue May 27 02:25:41 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Use clear() method to empty a container.
+
+Tue May 27 02:22:37 GMT 2014  Olly Betts <olly@survex.com>
+
+	* tests/api_snipper.cc: Drop unused <algorithm>.
+
+Tue May 27 02:21:53 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Eliminate ret_value variable.
+
+Tue May 27 02:20:25 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Avoid unnecessary substr operations.
+
+Tue May 27 02:17:32 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Prefer ++i to i++ in loops.
+
+Tue May 27 02:16:14 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Use TermIterator::positionlist_count().
+
+Tue May 27 02:14:52 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc,api/snipperinternal.h,include/xapian/snipper.h: Fix
+	  typos in comments and variable names in new snipper code.
+
+Tue May 27 02:13:09 GMT 2014  Olly Betts <olly@survex.com>
+
+	* tests/Makefile.am: Hook up new Snipper API tests to actually be
+	  used.
+
+Tue May 27 02:09:49 GMT 2014  Mihai Bivol <mm.bivol@gmail.com>
+
+	* tests/api_snipper.cc: Add Snipper API tests.
+
+Tue May 27 02:04:26 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/snipper.cc: Add missing #include <config.h>.
+
+Tue May 27 02:00:32 GMT 2014  Mihai Bivol <mm.bivol@gmail.com>
+
+	* api/Makefile.mk,api/snipper.cc,api/snipperinternal.h,
+	  include/xapian.h,include/xapian/snipper.h: Add Xapian::Snipper
+	  class.
+
+Mon May 26 05:52:22 GMT 2014  Olly Betts <olly@survex.com>
+
+	* api/omdatabase.cc,backends/brass/brass_postlist.h,
+	  backends/chert/chert_postlist.h,backends/database.h: Fix comment
+	  typos.
+
 Fri May 23 11:59:26 GMT 2014  Olly Betts <olly@survex.com>
 
 	* api/matchspy.cc: Pass std::string by const reference.
