@@ -63,6 +63,7 @@ double_param(const char ** p, double * ptr_val)
     *ptr_val = v;
     return true;
 }
+
 #if XAPIAN_AT_LEAST(1,3,2)
 static bool
 type_smoothing_param(const char ** p, Xapian::Weight::type_smoothing * ptr_val)
@@ -83,6 +84,7 @@ type_smoothing_param(const char ** p, Xapian::Weight::type_smoothing * ptr_val)
     return true;
 }
 #endif
+
 void
 set_weighting_scheme(Xapian::Enquire & enq, const map<string, string> & opt,
 		     bool force_boolean)
