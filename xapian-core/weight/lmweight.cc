@@ -136,7 +136,7 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
     // Length of the Document in terms of number of terms.
     double len_double(len);
     // variable to store weight contribution of term in the document scoring for LM.
-    double weight_collection, weight_document, weight_sum;
+    double weight_collection, weight_sum;
     /* In case the within document frequency of term is zero smoothing will
      * be required and should be return instead of returning zero, as returning
      * LM score are multiplication of contribution of all terms, due to absence
@@ -144,13 +144,13 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
      * frequency smoothing.
      */
     weight_collection = collection_freq / total_collection_term;
-    /* Maximum likelihood of current term, weight contribution of term in case
-     * query term is present in the document.
-     */
-    weight_document = wdf_double / len_double;
 
     // Calculating weights considering different smoothing option available to user.
     if (select_smoothing == JELINEK_MERCER_SMOOTHING) {
+	/* Maximum likelihood of current term, weight contribution of term in
+	 * case query term is present in the document.
+	 */
+	double weight_document = wdf_double / len_double;
 	weight_sum = (param_smoothing1 * weight_collection) +
 		     ((1 - param_smoothing1) * weight_document);
     } else if (select_smoothing == DIRICHLET_SMOOTHING) {
