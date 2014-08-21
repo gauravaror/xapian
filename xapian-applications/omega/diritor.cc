@@ -184,7 +184,7 @@ DirectoryIterator::get_magic_mimetype()
 	res = "application/x-compound-document-file";
 	const char * leaf = leafname();
 	const char * ext = strrchr(leaf, '.');
-	if (ext && strlen(ext) == 3) {
+	if (ext && strlen(++ext) == 3) {
 	    char e[3];
 	    for (int i = 0; i != 3; ++i) {
 		if (ext[i] <= 'Z' && ext[i] >= 'A')
@@ -195,7 +195,7 @@ DirectoryIterator::get_magic_mimetype()
 	    switch (e[0]) {
 		case 'd':
 		    if (e[1] == 'o')
-			res = "applications/msword";
+			res = "application/msword";
 		    break;
 		case 'm':
 		    if (e[1] == 's' && e[2] == 'g')

@@ -8,7 +8,7 @@ AC_INIT([xapian-bindings], [1.3.1], [http://xapian.org/bugs])
 
 dnl See xapian-core's HACKING document for details of the reasons for required
 dnl versions.
-AM_INIT_AUTOMAKE([1.12.2 parallel-tests -Wportability tar-ustar no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.12.2 parallel-tests -Wportability subdir-objects tar-ustar no-dist-gzip dist-xz])
 AC_CONFIG_SRCDIR([xapian-headers.i])
 
 AC_CONFIG_HEADERS([config.h])
@@ -165,7 +165,7 @@ if test yes = "$enable_documentation" ; then
   dnl Check for rst2html. (Needed to make HTML from reStructuredText format)
   dnl Also look for rst2html.py, which archlinux reportedly installs it as.
   AC_PATH_PROGS(RST2HTML, [rst2html rst2html.py], [])
-  test -z "$RST2HTML" && AC_MSG_ERROR([rst2html is required to build documentation])
+  test -z "$RST2HTML" && AC_MSG_ERROR([rst2html is required to build documentation (try package python-docutils)])
 fi
 
 if test x$USE_MAINTAINER_MODE = xyes; then
@@ -482,6 +482,15 @@ if test x$USE_MAINTAINER_MODE = xyes; then
   fi
   test -z "$PYTHON" && AC_MSG_ERROR([python is required in maintainer mode])
 fi
+
+dnl If we're building documentation for either python version,
+dnl we need sphinx-build
+case $enable_documentation$BINDINGS in
+yes*python*)
+  AC_PATH_PROG(SPHINX_BUILD, sphinx-build, [])
+  test -z "$SPHINX_BUILD" && AC_MSG_ERROR([sphinx-build is required to build python documentation (try packages python-sphinx and python3-sphinx)])
+  ;;
+esac
 
 if test no != "$with_php" ; then
   dnl See comment for AC_PATH_PROGS(SWIG, ...).
@@ -1008,7 +1017,7 @@ if test no != "$with_ruby" ; then
 
 	  dnl In a VPATH build, the ruby subdirectory won't exist the first
 	  dnl time.
-	  test -d ruby || mkdir ruby
+	  AS_MKDIR_P([ruby])
 
 	  dnl Newer Ruby has ruby/io.h - older has rubyio.h.  Ruby doesn't
 	  dnl seem to provide any way to generate code which works with
@@ -1344,8 +1353,8 @@ AC_SUBST([AUTOM4TE])
 AC_CONFIG_FILES([Makefile
  doxygen_xml.conf
  xapian-version.h
- python/Makefile python/version.i
- python3/Makefile python3/version.i
+ python/Makefile python/docs/conf.py python/version.i
+ python3/Makefile python3/docs/conf.py python3/version.i
  php/Makefile
  java/Makefile
  tcl8/Makefile tcl8/pkgIndex.tcl
