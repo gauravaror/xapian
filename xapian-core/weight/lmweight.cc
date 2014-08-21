@@ -175,10 +175,26 @@ LMWeight::get_sumpart(Xapian::termcount wdf, Xapian::termcount len,
 double
 LMWeight::get_maxpart() const
 {
-    // Sufficiently large bound is being returned, to optimize the matching
-    // process this needs to be fixed and changed to good max bound
-    double wdf_max(max(get_wdf_upper_bound(), Xapian::termcount(1)));
-    return (wdf_max);
+    //Variable to strore the collection frequency
+    double weight_collection,upper_bound;
+    /* Collection frequency for the upper bound, it is used for smoothing*/
+    weight_collection = collection_freq / total_collection_term;
+
+    // Calculating upper bound considering different smoothing option available to user.
+    if (select_smoothing == JELINEK_MERCER_SMOOTHING) {
+    	upper_bound = (param_smoothing1 * weight_collection) + (1 - param_smoothing1);
+    } else if (select_smoothing == DIRICHLET_SMOOTHING) {
+	    upper_bound = (1 + (param_smoothing1 * weight_collection)) / (1 + param_smoothing1);
+    } else if (select_smoothing == ABSOLUTE_DISCOUNT_SMOOTHING) {
+    	upper_bound =  param_smoothing1 * weight_collection + 1;
+    } else {
+	upper_bound = (((1 - param_smoothing1) * (1 + (param_smoothing2 * weight_collection)) / (1 + param_smoothing2)) + (param_smoothing1 * weight_collection));
+    }
+
+    /* Since weight are calculated using log trick, using same with the bounds. Refer
+     * comment in get_sumpart for the details.
+     */
+    return (upper_bound * param_log > 1.0) ? log(upper_bound * param_log) : 1.0;
 }
 
 double
