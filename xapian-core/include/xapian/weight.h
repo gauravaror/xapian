@@ -1185,7 +1185,7 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
      *					JELINEK_MERCER_SMOOTHING, it plays the
      *					role of estimation and in
      *					DIRICHLET_SMOOTHING the role of query
-     *					modelling. (default JELINEK_MERER,
+     *					modelling. (default JELINEK_MERCER,
      *					ABSOLUTE, TWOSTAGE(0.7),
      *					DIRCHLET(2000))
      *
