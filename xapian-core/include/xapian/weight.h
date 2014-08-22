@@ -1152,24 +1152,15 @@ class XAPIAN_VISIBILITY_DEFAULT DPHWeight : public Weight {
  * parameters which specify the smoothing used.
  */
 class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
-    /** The collection frequency of the term.
-     *
-     *  This is used to calculate the smoothing factor in case the within
-     *  document frequency of the term is zero.
-     */
-    Xapian::termcount collection_freq;
-
-    /** Approximate number of terms in the collection.
-     *
-     *  This is used when smoothing for the term in the document.
-     */
-    Xapian::termcount total_collection_term;
 
     /** The type of smoothing to use. */
     type_smoothing select_smoothing;
 
     // Parameters for handling negative value of log, and for smoothing.
     double param_log, param_smoothing1, param_smoothing2;
+
+    //Collection weight.
+    double weight_collection;
 
     LMWeight * clone() const;
 
@@ -1219,14 +1210,12 @@ class XAPIAN_VISIBILITY_DEFAULT LMWeight : public Weight {
 	need_stat(RSET_SIZE);
 	need_stat(TERMFREQ);
 	need_stat(RELTERMFREQ);
-	need_stat(DOC_LENGTH_MIN);
+	need_stat(DOC_LENGTH_MAX);
 	need_stat(WDF);
 	need_stat(WDF_MAX);
 	need_stat(COLLECTION_FREQ);
 	if (select_smoothing == ABSOLUTE_DISCOUNT_SMOOTHING)
 	    need_stat(UNIQUE_TERMS);
-	if (param_log == 0.0)
-	    need_stat(DOC_LENGTH_MAX);
     }
 
     std::string name() const;
